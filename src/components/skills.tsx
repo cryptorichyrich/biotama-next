@@ -2,53 +2,53 @@ import { skillGroups } from "@/data/skills";
 
 export function Skills() {
   return (
-    <section id="skills" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20">
+    <section id="skills" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20 bg-[#000000]">
       <p className="section-label mb-4">
-        /<span className="text-[var(--color-mist)]">skills</span>
+        <span className="text-[var(--color-green-term)]">$</span> which $(compgen -c)
       </p>
 
-      <h2 className="text-3xl sm:text-4xl font-display font-semibold tracking-tight mb-4">
-        Technologies I <span className="gradient-text">work with</span>
+      <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-semibold tracking-tight mb-4 gradient-text">
+        Technologies I work with
       </h2>
 
-      <p className="text-[var(--color-mist)] text-lg max-w-2xl mb-16">
+      <p className="text-[var(--color-amber-dim)] text-lg max-w-2xl mb-16 font-[family-name:var(--font-mono)]">
         The tools and frameworks that power the systems I build.
       </p>
 
-      {/* Grid of skill category cards */}
+      {/* Grid of glass-card skill category cards */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {skillGroups.map((group) => (
           <div
             key={group.category}
-            className="glass rounded-xl p-6 card"
+            className="glass-card p-6 tilt-3d gold-reveal"
           >
-            <h3 className="text-sm font-mono font-semibold tracking-widest uppercase text-[var(--color-indigo-bright)] mb-4">
+            {/* Category name in gold Spectral */}
+            <h3 className="font-[family-name:var(--font-display)] font-semibold text-lg text-[var(--color-gold)] mb-4">
               {group.category}
             </h3>
 
-            {/* Skill tag pills */}
+            {/* Skills as amber mono tags with green level dots */}
             <div className="flex flex-wrap gap-2">
               {group.skills.map((skill) => (
                 <div
                   key={skill.name}
-                  className="group relative"
+                  className="group relative inline-flex items-center gap-2 px-3 py-1.5 font-[family-name:var(--font-mono)] text-xs text-[var(--color-amber-text)] bg-[var(--color-glass-bg)] border border-[var(--color-glass-border)] rounded-lg hover:border-[var(--color-gold-subtle)] transition-colors duration-200"
                 >
-                  <span className="inline-block px-3 py-1 text-xs font-mono font-medium rounded-full border border-[var(--color-border)] text-[var(--color-mist)] bg-[var(--color-dark-water)] hover:border-[var(--color-indigo-bright)] hover:text-[var(--color-indigo-light)] transition-colors duration-200">
-                    {skill.name}
-                  </span>
-                  {/* Level indicator dot */}
+                  <span>{skill.name}</span>
+                  {/* Green level dots */}
                   {skill.level && (
-                    <span
-                      className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full border border-[var(--color-black-pearl)]"
-                      style={{
-                        backgroundColor:
-                          skill.level >= 4
-                            ? "var(--color-indigo-bright)"
-                            : skill.level >= 3
-                            ? "var(--color-teal)"
-                            : "var(--color-mist)",
-                      }}
-                    />
+                    <div className="flex gap-[2px]">
+                      {Array.from({ length: 5 }, (_, i) => (
+                        <span
+                          key={i}
+                          className={`w-[3px] h-[3px] rounded-full ${
+                            i < skill.level!
+                              ? "bg-[var(--color-green-term)] shadow-[0_0_4px_var(--color-green-term-glow)]"
+                              : "bg-[var(--color-text-muted)]"
+                          }`}
+                        />
+                      ))}
+                    </div>
                   )}
                 </div>
               ))}

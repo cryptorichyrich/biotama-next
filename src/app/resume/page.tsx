@@ -2,12 +2,9 @@
 
 import Link from "next/link";
 import {
-  ArrowLeft,
   Mail,
   Phone,
   MapPin,
-  Briefcase,
-  Calendar,
   ExternalLink,
   Download,
 } from "lucide-react";
@@ -22,25 +19,26 @@ export default function ResumePage() {
       <style>{`
         @media print {
           nav, .no-print { display: none !important; }
-          body { background: white !important; color: black !important; }
+          body { background: #000 !important; color: #e8c840 !important; }
           .resume-container { max-width: 100% !important; padding: 0 !important; box-shadow: none !important; }
-          a { color: #2563eb !important; text-decoration: underline !important; }
+          a { color: #c9a84c !important; text-decoration: underline !important; }
+          .glass-card { background: transparent !important; backdrop-filter: none !important; border: 1px solid rgba(201, 168, 76, 0.3) !important; }
+          .glass-card::before { display: none !important; }
         }
       `}</style>
 
       {/* Print/PDF controls */}
-      <div className="no-print max-w-[1200px] mx-auto px-6 pt-8 pb-4 flex items-center justify-between">
+      <div className="no-print max-w-[900px] mx-auto px-6 pt-8 pb-4 flex items-center justify-between">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors duration-200 cursor-pointer group"
+          className="inline-flex items-center gap-2 text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)] hover:text-[var(--color-green-term)] transition-colors duration-200 cursor-pointer group"
         >
-          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform duration-200" />
+          <span className="text-[var(--color-green-term)] group-hover:-translate-x-1 transition-transform duration-200">&lt;-</span>
           Back to Home
         </Link>
         <button
           onClick={() => window.print()}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-all duration-200 cursor-pointer font-[family-name:var(--font-mono)] gradient-border-animated"
-          style={{ color: "var(--color-indigo-light)", background: "var(--color-bg-glass)" }}
+          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-text)] hover:text-[var(--color-amber-bright)] transition-colors duration-200 glass-card rounded-lg cursor-pointer"
         >
           <Download size={16} />
           Print / PDF
@@ -49,29 +47,31 @@ export default function ResumePage() {
 
       <main className="pb-16">
         <div className="resume-container max-w-[900px] mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Main card */}
-          <div className="card p-8 md:p-12">
-            {/* Header */}
-            <div className="pb-8 mb-8" style={{ borderBottom: "1px solid var(--color-border)" }}>
-              <p className="section-label mb-3">/resume</p>
+          {/* Main glass-card container */}
+          <div className="glass-card p-8 md:p-12">
+            {/* Header — name in gold Spectral */}
+            <div className="pb-8 mb-8 section-divider">
+              <p className="section-label mb-3">
+                <span className="text-[var(--color-green-term)]">$</span> cat /home/bio/.resume
+              </p>
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight font-[family-name:var(--font-display)] mb-3">
                 <span className="gradient-text">{profile.name}</span>
               </h1>
-              <p className="text-xl font-semibold mt-2" style={{ color: "var(--color-accent)" }}>
+              <p className="text-xl font-semibold mt-2 font-[family-name:var(--font-mono)] text-[var(--color-amber-text)]">
                 {profile.role}
               </p>
-              <p className="text-[var(--color-text-secondary)] mt-3 max-w-2xl leading-relaxed">
+              <p className="text-[var(--color-amber-dim)] mt-3 max-w-2xl leading-relaxed font-[family-name:var(--font-mono)]">
                 {profile.tagline}
               </p>
-              <div className="flex flex-wrap items-center gap-4 mt-4 text-sm text-[var(--color-text-tertiary)]">
+              <div className="flex flex-wrap items-center gap-4 mt-4 text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)]">
                 <span className="flex items-center gap-1.5">
-                  <Mail size={14} /> {profile.email}
+                  <Mail size={14} className="text-[var(--color-green-term)]" /> {profile.email}
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Phone size={14} /> {profile.phone}
+                  <Phone size={14} className="text-[var(--color-green-term)]" /> {profile.phone}
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <MapPin size={14} /> {profile.location}
+                  <MapPin size={14} className="text-[var(--color-green-term)]" /> {profile.location}
                 </span>
               </div>
               <div className="flex items-center gap-3 mt-4">
@@ -81,10 +81,9 @@ export default function ResumePage() {
                     href={s.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm cursor-pointer flex items-center gap-1 transition-colors duration-200 hover:text-[var(--color-accent-hover)]"
-                    style={{ color: "var(--color-accent)" }}
+                    className="glass-legend text-xs font-[family-name:var(--font-mono)] text-[var(--color-green-term)] hover:text-[var(--color-amber-bright)] transition-colors duration-200 inline-flex items-center gap-1 cursor-pointer"
                   >
-                    <ExternalLink size={12} />
+                    <ExternalLink size={10} />
                     {s.platform}
                   </a>
                 ))}
@@ -93,27 +92,31 @@ export default function ResumePage() {
 
             {/* Professional Summary */}
             <section className="mb-12">
-              <p className="section-label mb-4">/summary</p>
+              <p className="section-label mb-4">
+                <span className="text-[var(--color-green-term)]">$</span> /summary
+              </p>
               <div className="section-divider mb-5" />
-              <p className="text-[var(--color-text-secondary)] leading-relaxed text-base md:text-lg">
+              <p className="text-[var(--color-amber-text)] leading-relaxed text-base md:text-lg font-[family-name:var(--font-mono)]">
                 {profile.bio}
               </p>
             </section>
 
             {/* Metrics */}
             <section className="mb-12">
-              <p className="section-label mb-4">/by-the-numbers</p>
+              <p className="section-label mb-4">
+                <span className="text-[var(--color-green-term)]">$</span> /by-the-numbers
+              </p>
               <div className="section-divider mb-5" />
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {profile.metrics.map((m) => (
                   <div
                     key={m.label}
-                    className="card p-5 text-center hover:-translate-y-1 transition-all duration-300"
+                    className="glass-card p-5 text-center transition-all duration-300 hover:-translate-y-1"
                   >
                     <p className="text-2xl md:text-3xl font-bold font-[family-name:var(--font-display)] gradient-text">
                       {m.value}
                     </p>
-                    <p className="text-xs text-[var(--color-text-tertiary)] mt-1.5 font-[family-name:var(--font-mono)] uppercase tracking-wider">
+                    <p className="text-xs font-[family-name:var(--font-mono)] text-[var(--color-green-term)] mt-1.5 uppercase tracking-wider">
                       {m.label}
                     </p>
                   </div>
@@ -121,60 +124,54 @@ export default function ResumePage() {
               </div>
             </section>
 
-            {/* Experience */}
+            {/* Experience — gold timeline dots */}
             <section className="mb-12">
-              <p className="section-label mb-4">/experience</p>
+              <p className="section-label mb-4">
+                <span className="text-[var(--color-green-term)]">$</span> /experience
+              </p>
               <div className="section-divider mb-6" />
               <div className="space-y-8">
                 {experiences.map((exp) => (
-                  <div key={exp.id} className="card p-6 hover:-translate-y-1 transition-all duration-300">
+                  <div key={exp.id} className="glass-card p-6 transition-all duration-300 hover:-translate-y-1">
                     {/* Role & company header */}
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
                       <div>
-                        <h3 className="text-lg font-bold text-[var(--color-text-primary)] font-[family-name:var(--font-display)]">
+                        <h3 className="text-lg font-bold font-[family-name:var(--font-display)] text-[var(--color-amber-text)]">
                           {exp.role}
                         </h3>
-                        <p className="font-semibold" style={{ color: "var(--color-accent)" }}>
+                        <p className="font-semibold font-[family-name:var(--font-mono)] text-[var(--color-gold)]">
                           {exp.company}
                         </p>
                       </div>
-                      <div className="flex items-center gap-1.5 text-sm text-[var(--color-text-tertiary)] shrink-0 font-[family-name:var(--font-mono)]">
-                        <Calendar size={13} />
-                        <span>
-                          {exp.startDate} – {exp.endDate}
-                        </span>
+                      <div className="flex items-center gap-1.5 text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)] shrink-0">
+                        <span>{exp.startDate} – {exp.endDate}</span>
                         <span className="mx-1">·</span>
-                        <Briefcase size={13} />
                         <span>{exp.location}</span>
                       </div>
                     </div>
 
-                    {/* Highlights */}
+                    {/* Highlights — gold timeline dots */}
                     <ul className="space-y-2 mt-3">
                       {exp.highlights.map((h, j) => (
                         <li
                           key={j}
-                          className="text-sm text-[var(--color-text-secondary)] flex items-start gap-3 leading-relaxed"
+                          className="text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)] flex items-start gap-3 leading-relaxed"
                         >
                           <span
-                            className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0"
-                            style={{ background: "var(--color-accent)" }}
+                            className="mt-1.5 w-2 h-2 rounded-full shrink-0"
+                            style={{ background: "var(--color-gold)" }}
                           />
                           {h}
                         </li>
                       ))}
                     </ul>
 
-                    {/* Tech stack */}
+                    {/* Tech stack as .glass-legend badges */}
                     <div className="flex flex-wrap gap-1.5 mt-4">
                       {exp.tech.map((t) => (
                         <span
                           key={t}
-                          className="px-2.5 py-0.5 text-xs font-medium rounded-md font-[family-name:var(--font-mono)]"
-                          style={{
-                            background: "var(--color-accent-subtle)",
-                            color: "var(--color-indigo-light)",
-                          }}
+                          className="glass-legend text-xs font-[family-name:var(--font-mono)] text-[var(--color-green-term)]"
                         >
                           {t}
                         </span>
@@ -187,26 +184,24 @@ export default function ResumePage() {
 
             {/* Projects */}
             <section className="mb-12">
-              <p className="section-label mb-4">/projects</p>
+              <p className="section-label mb-4">
+                <span className="text-[var(--color-green-term)]">$</span> /projects
+              </p>
               <div className="section-divider mb-6" />
               <div className="grid sm:grid-cols-2 gap-4">
                 {projects.filter((p) => p.featured).map((proj) => (
-                  <div key={proj.id} className="card p-5 hover:-translate-y-1 transition-all duration-300 group">
-                    <h3 className="font-bold text-[var(--color-text-primary)] font-[family-name:var(--font-display)] mb-2 group-hover:text-[var(--color-accent-hover)] transition-colors duration-200">
+                  <div key={proj.id} className="glass-card p-5 transition-all duration-300 hover:-translate-y-1 group">
+                    <h3 className="font-bold font-[family-name:var(--font-display)] text-[var(--color-amber-text)] mb-2 group-hover:text-[var(--color-gold)] transition-colors duration-200">
                       {proj.name}
                     </h3>
-                    <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-3">
+                    <p className="text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)] leading-relaxed mb-3">
                       {proj.description}
                     </p>
                     <div className="flex flex-wrap gap-1.5">
                       {proj.tech.map((t) => (
                         <span
                           key={t}
-                          className="px-2 py-0.5 text-xs rounded-md font-[family-name:var(--font-mono)]"
-                          style={{
-                            background: "var(--color-accent-subtle)",
-                            color: "var(--color-indigo-light)",
-                          }}
+                          className="glass-legend text-xs font-[family-name:var(--font-mono)] text-[var(--color-green-term)]"
                         >
                           {t}
                         </span>
@@ -217,38 +212,39 @@ export default function ResumePage() {
               </div>
             </section>
 
-            {/* Technical Skills */}
+            {/* Technical Skills — category cards with green level dots */}
             <section>
-              <p className="section-label mb-4">/technical-skills</p>
+              <p className="section-label mb-4">
+                <span className="text-[var(--color-green-term)]">$</span> /technical-skills
+              </p>
               <div className="section-divider mb-6" />
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {skillGroups.map((group) => (
-                  <div key={group.category} className="card p-5 hover:-translate-y-1 transition-all duration-300">
-                    <h3 className="font-semibold text-[var(--color-text-primary)] mb-3 font-[family-name:var(--font-display)] text-sm uppercase tracking-wider">
+                  <div key={group.category} className="glass-card p-5 transition-all duration-300 hover:-translate-y-1">
+                    <h3 className="font-semibold text-[var(--color-green-term)] mb-3 font-[family-name:var(--font-mono)] text-xs uppercase tracking-wider">
                       {group.category}
                     </h3>
-                    <div className="flex flex-wrap gap-1.5">
+                    <div className="space-y-2">
                       {group.skills.map((s) => (
-                        <span
-                          key={s.name}
-                          className="px-2.5 py-1 text-xs font-medium rounded-md font-[family-name:var(--font-mono)]"
-                          style={{
-                            background: s.level && s.level >= 4
-                              ? "var(--color-accent-subtle)"
-                              : "var(--color-bg-tertiary)",
-                            color: s.level && s.level >= 4
-                              ? "var(--color-indigo-light)"
-                              : "var(--color-text-tertiary)",
-                            border: "1px solid var(--color-border)",
-                          }}
-                        >
-                          {s.name}
-                          {s.level && (
-                            <span className="ml-1.5 opacity-50">
-                              {"· " + s.level}
-                            </span>
+                        <div key={s.name} className="flex items-center justify-between">
+                          <span className="text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-text)]">
+                            {s.name}
+                          </span>
+                          {s.level != null && (
+                            <div className="flex gap-0.5">
+                              {Array.from({ length: 5 }, (_, i) => (
+                                <span
+                                  key={i}
+                                  className={`w-1.5 h-1.5 rounded-full ${
+                                    i < (s.level ?? 0)
+                                      ? "bg-[var(--color-green-term)]"
+                                      : "bg-[var(--color-text-muted)]"
+                                  }`}
+                                />
+                              ))}
+                            </div>
                           )}
-                        </span>
+                        </div>
                       ))}
                     </div>
                   </div>

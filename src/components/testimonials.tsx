@@ -21,50 +21,50 @@ export function Testimonials() {
   return (
     <section
       id="testimonials"
-      className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20"
+      className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20 bg-[#070707]"
     >
       <p className="section-label mb-4">
-        /<span className="text-[var(--color-mist)]">testimonials</span>
+        <span className="text-[var(--color-green-term)]">$</span> cat ~/colleagues/feedback.log
       </p>
 
-      <h2 className="text-3xl sm:text-4xl font-display font-semibold tracking-tight mb-4">
-        What people <span className="gradient-text">say</span>
+      <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-semibold tracking-tight mb-4 gradient-text">
+        What people say
       </h2>
 
-      <p className="text-[var(--color-mist)] text-lg max-w-2xl mb-16">
+      <p className="text-[var(--color-amber-dim)] text-lg max-w-2xl mb-16 font-[family-name:var(--font-mono)]">
         Feedback from colleagues and leaders I&apos;ve worked with.
       </p>
 
       <div className="max-w-3xl mx-auto">
-        {/* Glass quote card with left indigo border accent */}
-        <div className="glass rounded-xl p-8 md:p-10 card relative overflow-hidden">
-          {/* Left indigo border accent */}
-          <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[var(--color-indigo-bright)] via-[var(--color-indigo-glow)] to-transparent" />
+        {/* Glass card with left gold border accent */}
+        <div className="glass-card p-8 md:p-10 relative overflow-hidden gold-reveal">
+          {/* Left gold border accent */}
+          <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-[var(--color-gold)] via-[var(--color-gold-dim)] to-transparent shadow-[0_0_12px_var(--color-gold-glow)]" />
 
-          {/* Decorative quote marks */}
-          <div className="absolute top-4 right-6 text-6xl text-[var(--color-indigo-bright)] opacity-[0.06] select-none font-serif leading-none pointer-events-none">
+          {/* Decorative quote */}
+          <div className="absolute top-4 right-6 text-6xl text-[var(--color-gold)] opacity-[0.06] select-none font-serif leading-none pointer-events-none">
             &rdquo;
           </div>
 
-          {/* Quote content (no animation library — simple key-based remount) */}
+          {/* Quote content */}
           <div key={t.id} className="transition-opacity duration-300">
-            <blockquote className="text-base md:text-lg font-display leading-relaxed text-[var(--color-ice)] mb-8 min-h-[120px]">
+            <blockquote className="text-base md:text-lg font-[family-name:var(--font-mono)] italic text-[var(--color-amber-text)] leading-relaxed mb-8 min-h-[120px]">
               &ldquo;{t.quote}&rdquo;
             </blockquote>
 
-            {/* Author */}
+            {/* Attribution in green mono */}
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[var(--color-indigo-bright)] flex items-center justify-center text-white font-bold text-xs font-display shrink-0">
+              <div className="w-10 h-10 rounded-full bg-[var(--color-green-term-bg)] border border-[var(--color-green-term-dim)] flex items-center justify-center text-[var(--color-green-term)] font-bold text-xs font-[family-name:var(--font-mono)] shrink-0 shadow-[0_0_8px_var(--color-green-term-glow)]">
                 {t.name
                   .split(" ")
                   .map((n) => n[0])
                   .join("")}
               </div>
               <div>
-                <p className="font-display font-semibold text-[var(--color-ice)] text-sm">
+                <p className="font-[family-name:var(--font-mono)] font-semibold text-[var(--color-green-term)] text-sm">
                   {t.name}
                 </p>
-                <p className="text-xs text-[var(--color-mist)]">
+                <p className="text-xs font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)]">
                   {t.role}, {t.company}
                 </p>
               </div>
@@ -72,11 +72,11 @@ export function Testimonials() {
           </div>
         </div>
 
-        {/* Active dot navigation */}
+        {/* Dot navigation with gold dots */}
         <div className="flex items-center justify-center gap-3 mt-8">
           <button
             onClick={prev}
-            className="p-2 rounded-full glass card text-[var(--color-mist)] hover:text-[var(--color-indigo-bright)] transition-colors duration-200 cursor-pointer"
+            className="p-2 rounded-full border border-[var(--color-glass-border)] text-[var(--color-amber-dim)] hover:text-[var(--color-amber-text)] hover:border-[var(--color-gold-subtle)] transition-all duration-200 cursor-pointer"
             aria-label="Previous testimonial"
           >
             <ChevronLeft size={18} />
@@ -89,8 +89,8 @@ export function Testimonials() {
                 onClick={() => setCurrent(i)}
                 className={`w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
                   i === current
-                    ? "bg-[var(--color-indigo-bright)] shadow-[0_0_8px_rgba(92,92,240,0.5)] scale-110"
-                    : "bg-[var(--color-deep-slate)] hover:bg-[var(--color-slate)]"
+                    ? "bg-[var(--color-gold)] shadow-[0_0_8px_var(--color-gold-glow)] scale-110"
+                    : "bg-[var(--color-text-muted)] hover:bg-[var(--color-gold-dim)]"
                 }`}
                 aria-label={`Go to testimonial ${i + 1}`}
               />
@@ -99,7 +99,7 @@ export function Testimonials() {
 
           <button
             onClick={next}
-            className="p-2 rounded-full glass card text-[var(--color-mist)] hover:text-[var(--color-indigo-bright)] transition-colors duration-200 cursor-pointer"
+            className="p-2 rounded-full border border-[var(--color-glass-border)] text-[var(--color-amber-dim)] hover:text-[var(--color-amber-text)] hover:border-[var(--color-gold-subtle)] transition-all duration-200 cursor-pointer"
             aria-label="Next testimonial"
           >
             <ChevronRight size={18} />

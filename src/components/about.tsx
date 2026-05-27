@@ -1,38 +1,45 @@
 import { profile } from "@/data/profile";
-import { cn } from "@/lib/utils";
 
 export function About() {
   return (
-    <section id="about" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20">
-      <p className="section-label mb-4">
-        /<span className="text-[var(--color-mist)]">about</span>
+    <section id="about" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20 bg-[#070707]">
+      {/* Section label */}
+      <p className="section-label mb-4 gold-reveal">
+        $ cat /home/{profile.name.toLowerCase().split(" ")[0]}/bio.md
       </p>
 
-      <h2 className="text-3xl sm:text-4xl font-display font-semibold tracking-tight mb-6">
-        A decade of <span className="gradient-text">building systems</span>
+      <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-semibold tracking-tight mb-6 gradient-text">
+        A decade of building systems
       </h2>
 
-      {/* Pull-quote style bio */}
-      <div className="relative max-w-3xl mb-16">
-        <blockquote className="text-xl md:text-2xl font-display font-medium leading-relaxed text-[var(--color-ice)] border-l-4 border-[var(--color-indigo-bright)] pl-6 py-2">
-          &ldquo;{profile.bio}&rdquo;
-        </blockquote>
-        <div className="absolute -top-4 -left-2 text-6xl text-[var(--color-indigo-bright)] opacity-20 select-none pointer-events-none font-serif leading-none">
+      {/* Pull-quote bio style — .glass-card with big decorative open-quote */}
+      <div className="glass-card p-8 md:p-10 mb-16 max-w-3xl relative gold-reveal">
+        {/* Decorative open-quote */}
+        <div className="absolute -top-2 -left-2 text-7xl text-[var(--color-gold)] opacity-20 select-none pointer-events-none font-serif leading-none">
           &ldquo;
+        </div>
+
+        <blockquote className="text-lg md:text-xl font-[family-name:var(--font-mono)] text-[var(--color-amber-text)] leading-relaxed relative z-10">
+          {profile.bio}
+        </blockquote>
+
+        {/* Decorative close-quote */}
+        <div className="absolute -bottom-4 -right-1 text-7xl text-[var(--color-gold)] opacity-20 select-none pointer-events-none font-serif leading-none">
+          &rdquo;
         </div>
       </div>
 
-      {/* Metric counters */}
+      {/* Metric counters in glass-card grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {profile.metrics.map((metric) => (
           <div
             key={metric.label}
-            className="glass rounded-xl p-6 text-center card"
+            className="glass-card p-6 text-center tilt-3d gold-reveal"
           >
-            <p className="text-3xl md:text-4xl font-display font-bold gradient-text">
+            <p className="text-3xl md:text-4xl font-[family-name:var(--font-display)] font-bold text-[var(--color-gold)]">
               {metric.value}
             </p>
-            <p className="text-sm text-[var(--color-mist)] mt-1 font-mono tracking-wide">
+            <p className="text-sm text-[var(--color-amber-dim)] mt-1 font-[family-name:var(--font-mono)] tracking-wide">
               {metric.label}
             </p>
           </div>

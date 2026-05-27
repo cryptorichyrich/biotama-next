@@ -1,25 +1,18 @@
 import type { Metadata } from "next";
-import { Inter, DM_Sans, JetBrains_Mono } from "next/font/google";
+import { Spectral, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const spectral = Spectral({
+  variable: "--font-spectral",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  display: "swap",
-});
-
-const dmSans = DM_Sans({
-  variable: "--font-display",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["200", "300", "400", "500", "600", "700"],
   display: "swap",
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -55,7 +48,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${dmSans.variable} ${jetbrainsMono.variable} scroll-smooth`}
+      className={`${spectral.variable} ${jetbrainsMono.variable} scroll-smooth`}
     >
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -63,6 +56,10 @@ export default function RootLayout({
           rel="preconnect"
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Spectral:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"
         />
         <script
           type="application/ld+json"
@@ -95,10 +92,9 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body
-        className={`${inter.className} antialiased min-h-screen flex flex-col bg-[#05070a] text-[#eaf1f8]`}
-      >
-        <div className="noise-overlay" />
+      <body className="font-mono antialiased min-h-screen flex flex-col bg-[#000000] text-[#f0e8d0]">
+        <div className="crt-overlay" />
+        <div className="crt-scanline" aria-hidden="true" />
         {children}
       </body>
     </html>

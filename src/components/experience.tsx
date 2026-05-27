@@ -2,78 +2,80 @@ import { experiences } from "@/data/experience";
 
 export function Experience() {
   return (
-    <section id="experience" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20">
+    <section id="experience" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20 bg-[#000000]">
+      {/* Header — terminal style */}
       <p className="section-label mb-4">
-        /<span className="text-[var(--color-mist)]">experience</span>
+        <span className="text-[var(--color-green-term)]">$</span> cat /var/log/impact.log
       </p>
 
-      <h2 className="text-3xl sm:text-4xl font-display font-semibold tracking-tight mb-4">
-        Where I&apos;ve <span className="gradient-text">made an impact</span>
+      <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-semibold tracking-tight mb-16 gradient-text">
+        Where I&apos;ve made an impact
       </h2>
 
-      <p className="text-[var(--color-mist)] text-lg max-w-2xl mb-16">
-        A decade of architecting fintech systems, payment gateways, and marketplace platforms.
-      </p>
-
-      {/* Vertical timeline */}
+      {/* Timeline container */}
       <div className="relative">
-        {/* Indigo glow line */}
-        <div className="absolute left-4 md:left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[var(--color-indigo-bright)] via-[var(--color-indigo-glow)] to-transparent shadow-[0_0_12px_rgba(92,92,240,0.4)] hidden md:block" />
+        {/* Perfectly centered vertical gold timeline line */}
+        <div
+          className="absolute left-1/2 top-0 bottom-0 w-[1px] -translate-x-1/2 bg-gradient-to-b from-[var(--color-gold)] via-[var(--color-gold-dim)] to-transparent hidden md:block"
+          style={{ boxShadow: "0 0 8px var(--color-gold-glow), 0 0 16px var(--color-gold-subtle)" }}
+        />
 
-        <div className="flex flex-col gap-10">
-          {experiences.map((exp, i) => (
-            <div key={exp.id} className="relative md:pl-16">
-              {/* Timeline dot with glow */}
-              <div className="hidden md:flex absolute left-0 top-2 w-4 h-4 rounded-full bg-[var(--color-indigo-bright)] -translate-x-[9px] shadow-[0_0_10px_rgba(92,92,240,0.6)] ring-4 ring-[var(--color-black-pearl)]" />
+        <div className="flex flex-col gap-12">
+          {experiences.map((exp, i) => {
+            const isLeft = i % 2 === 0;
 
-              {/* Glass card */}
-              <div className="glass rounded-xl p-6 md:p-8 card gradient-border">
-                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3 mb-4">
-                  <div>
-                    <h3 className="text-xl font-display font-semibold text-[var(--color-ice)]">
+            return (
+              <div key={exp.id} className="relative md:grid md:grid-cols-2 md:gap-8">
+                {/* Gold dot on the center line */}
+                <div className="hidden md:flex absolute left-1/2 top-6 -translate-x-1/2 z-10">
+                  <div className="w-4 h-4 rounded-full bg-[var(--color-gold)] shadow-[0_0_12px_var(--color-gold-glow),0_0_24px_var(--color-gold-subtle)] ring-4 ring-[#000000]" />
+                </div>
+
+                {/* Card — alternates left/right */}
+                <div className={`${isLeft ? "md:col-start-1 md:pr-8" : "md:col-start-2 md:pl-8"} gold-reveal`}>
+                  <div className="glass-card p-6 md:p-8 tilt-3d">
+                    {/* Role in gold Spectral */}
+                    <h3 className="text-xl font-[family-name:var(--font-display)] font-semibold text-[var(--color-gold)]">
                       {exp.role}
                     </h3>
-                    <p className="text-[var(--color-indigo-bright)] font-medium text-sm mt-0.5">
+
+                    {/* Company / Date in amber mono */}
+                    <p className="font-[family-name:var(--font-mono)] text-sm text-[var(--color-amber-text)] mt-1">
                       {exp.company}
                     </p>
-                  </div>
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-mono text-[var(--color-mist)]">
-                    <span className="inline-flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-indigo-bright)]" />
-                      {exp.startDate} &ndash; {exp.endDate}
-                    </span>
-                    <span className="text-[var(--color-slate)]">|</span>
-                    <span>{exp.location}</span>
-                  </div>
-                </div>
+                    <p className="font-[family-name:var(--font-mono)] text-xs text-[var(--color-amber-dim)] mt-0.5">
+                      {exp.startDate} — {exp.endDate} | {exp.location}
+                    </p>
 
-                {/* Highlights */}
-                <ul className="space-y-2 mb-5">
-                  {exp.highlights.map((h, j) => (
-                    <li
-                      key={j}
-                      className="text-[var(--color-mist)] text-sm flex items-start gap-3 leading-relaxed"
-                    >
-                      <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[var(--color-indigo-bright)] shrink-0" />
-                      {h}
-                    </li>
-                  ))}
-                </ul>
+                    {/* Highlights with green • dots */}
+                    <ul className="space-y-2 mt-5 mb-5">
+                      {exp.highlights.map((h, j) => (
+                        <li
+                          key={j}
+                          className="text-[var(--color-text-white)] text-sm flex items-start gap-3 leading-relaxed font-[family-name:var(--font-mono)]"
+                        >
+                          <span className="mt-1.5 w-2 h-2 rounded-full bg-[var(--color-green-term)] shrink-0 shadow-[0_0_6px_var(--color-green-term-glow)]" />
+                          {h}
+                        </li>
+                      ))}
+                    </ul>
 
-                {/* Tech tags */}
-                <div className="flex flex-wrap gap-2">
-                  {exp.tech.map((t) => (
-                    <span
-                      key={t}
-                      className="px-3 py-1 text-xs font-mono font-medium rounded-full border border-[var(--color-border)] text-[var(--color-mist)] bg-[var(--color-dark-water)]"
-                    >
-                      {t}
-                    </span>
-                  ))}
+                    {/* Tech tags as .glass-legend badges */}
+                    <div className="flex flex-wrap gap-2 mt-auto">
+                      {exp.tech.map((t) => (
+                        <span
+                          key={t}
+                          className="glass-legend text-xs font-[family-name:var(--font-mono)] text-[var(--color-green-term)]"
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

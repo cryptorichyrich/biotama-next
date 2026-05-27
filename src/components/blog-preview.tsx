@@ -7,16 +7,16 @@ export function BlogPreview() {
   const posts = getLatestPosts(6);
 
   return (
-    <section id="blog" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20">
+    <section id="blog" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20 bg-[#000000]">
       <p className="section-label mb-4">
-        /<span className="text-[var(--color-mist)]">blog</span>
+        <span className="text-[var(--color-green-term)]">$</span> cat ~/thoughts/*.md | tail -6
       </p>
 
-      <h2 className="text-3xl sm:text-4xl font-display font-semibold tracking-tight mb-4">
-        Thoughts on <span className="gradient-text">engineering</span>
+      <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-semibold tracking-tight mb-4 gradient-text">
+        Thoughts on engineering
       </h2>
 
-      <p className="text-[var(--color-mist)] text-lg max-w-2xl mb-16">
+      <p className="text-[var(--color-amber-dim)] text-lg max-w-2xl mb-16 font-[family-name:var(--font-mono)]">
         Writing about fintech, architecture, and the craft of software.
       </p>
 
@@ -24,42 +24,44 @@ export function BlogPreview() {
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {posts.map((post) => (
           <Link key={post.slug} href={`/blog/${post.slug}`} className="group block">
-            <article className="glass rounded-xl p-6 card h-full flex flex-col transition-all duration-300 hover:-translate-y-1">
-              {/* Date and tags row */}
+            <article className="glass-card p-6 h-full flex flex-col tilt-3d transition-all duration-300 hover:-translate-y-1">
+              {/* Date in amber dim mono */}
               <div className="flex items-center justify-between gap-2 mb-3">
-                <span className="text-xs font-mono text-[var(--color-cool-gray)]">
+                <span className="text-xs font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)]">
                   {formatDate(post.date)}
                 </span>
+
+                {/* Tags as .glass-legend badges */}
                 <div className="flex gap-1.5 flex-wrap justify-end">
                   {post.tags.slice(0, 2).map((tag) => (
                     <span
                       key={tag}
-                      className="px-2 py-0.5 text-[10px] font-mono font-medium rounded-full border border-[var(--color-border)] text-[var(--color-cool-gray)]"
+                      className="glass-legend text-[10px] font-[family-name:var(--font-mono)] text-[var(--color-green-term)]"
                     >
                       {tag}
                     </span>
                   ))}
                   {post.tags.length > 2 && (
-                    <span className="px-2 py-0.5 text-[10px] font-mono font-medium text-[var(--color-cool-gray)]">
+                    <span className="text-[10px] font-[family-name:var(--font-mono)] text-[var(--color-text-muted)]">
                       +{post.tags.length - 2}
                     </span>
                   )}
                 </div>
               </div>
 
-              {/* Title */}
-              <h3 className="text-base font-display font-semibold text-[var(--color-ice)] mb-2 line-clamp-2 group-hover:text-[var(--color-indigo-light)] transition-colors duration-200">
+              {/* Title in amber Spectral, hover → gold */}
+              <h3 className="text-base font-[family-name:var(--font-display)] font-semibold text-[var(--color-amber-text)] mb-2 line-clamp-2 group-hover:text-[var(--color-gold)] transition-colors duration-200">
                 {post.title}
               </h3>
 
               {/* Description */}
-              <p className="text-sm text-[var(--color-mist)] leading-relaxed flex-1 line-clamp-3">
+              <p className="text-sm font-[family-name:var(--font-mono)] text-[var(--color-text-white)] leading-relaxed flex-1 line-clamp-3">
                 {post.description}
               </p>
 
-              {/* Spacer + arrow indicator */}
-              <div className="mt-4 flex items-center gap-1 text-xs font-medium text-[var(--color-indigo-bright)] opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                Read more <ArrowRight size={14} />
+              {/* Arrow indicator */}
+              <div className="mt-4 flex items-center gap-1 text-xs font-[family-name:var(--font-mono)] text-[var(--color-green-term)] opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <span className="text-[var(--color-green-term)]">&gt;</span> Read more <ArrowRight size={14} />
               </div>
             </article>
           </Link>
@@ -70,8 +72,9 @@ export function BlogPreview() {
       <div className="mt-12 text-center">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 px-6 py-3 glass card text-sm font-medium text-[var(--color-indigo-bright)] hover:text-[var(--color-indigo-light)] transition-colors duration-200 rounded-lg"
+          className="inline-flex items-center gap-2 px-6 py-3 font-[family-name:var(--font-mono)] text-sm font-medium text-[var(--color-amber-text)] hover:text-[var(--color-amber-bright)] transition-colors duration-200 glass-card rounded-lg"
         >
+          <span className="text-[var(--color-green-term)]">$</span>
           View All Posts
           <ArrowRight size={16} />
         </Link>

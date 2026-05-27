@@ -4,18 +4,17 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-[var(--color-border)]">
+    <footer className="border-t border-[var(--color-glass-border)] bg-[#000000]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          {/* Logo */}
+          {/* BL. in gold Spectral */}
           <div className="flex items-center gap-2">
-            <span className="text-lg font-display font-bold tracking-tight text-[var(--color-ice)]">
-              BL
+            <span className="text-lg font-[family-name:var(--font-display)] font-bold tracking-tight text-[var(--color-gold)]">
+              BL.
             </span>
-            <span className="text-[var(--color-indigo-bright)] font-display text-lg">.</span>
           </div>
 
-          {/* Links */}
+          {/* Nav links in amber mono */}
           <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
             {[
               { label: "About", href: "#about" },
@@ -28,17 +27,22 @@ export function Footer() {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-xs font-mono text-[var(--color-cool-gray)] hover:text-[var(--color-ice)] transition-colors duration-200"
+                className="text-xs font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)] hover:text-[var(--color-amber-text)] transition-colors duration-200"
               >
                 {link.label}
               </a>
             ))}
           </nav>
 
-          {/* Copyright */}
-          <p className="text-xs font-mono text-[var(--color-cool-gray)]">
-            &copy; {year} {profile.name}
-          </p>
+          {/* $ exit in green mono */}
+          <div className="flex items-center gap-3">
+            <p className="text-xs font-[family-name:var(--font-mono)] text-[var(--color-text-muted)]">
+              &copy; {year} {profile.name}
+            </p>
+            <span className="text-xs font-[family-name:var(--font-mono)] text-[var(--color-green-term)]">
+              $ exit
+            </span>
+          </div>
         </div>
       </div>
     </footer>

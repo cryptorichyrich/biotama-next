@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Calendar, User, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { getBlogPostBySlug, blogPosts } from "@/data/blog-posts";
@@ -36,7 +36,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-/** Simple markdown-to-HTML converter (no external libraries) */
+/**
+ * Vault Terminal markdown renderer.
+ * Converts simple markdown to JSX elements using the amber/gold/black design.
+ * h1-h3 → Spectral (amber-text hover gold)
+ * p/code/pre/ul/li/bold/inline-code all in amber mono with green accents.
+ * Code blocks get .glass-inset styling.
+ */
 function renderMarkdown(markdown: string) {
   const lines = markdown.split("\n");
   const elements: JSX.Element[] = [];
@@ -50,10 +56,14 @@ function renderMarkdown(markdown: string) {
       elements.push(
         <pre
           key={key++}
-          className="overflow-x-auto my-6 p-5 rounded-xl text-sm font-[family-name:var(--font-mono)] leading-relaxed"
-          style={{ background: "var(--color-bg-tertiary)", border: "1px solid var(--color-border)" }}
+          className="glass-inset overflow-x-auto my-6 p-5 text-sm font-[family-name:var(--font-mono)] leading-relaxed text-[var(--color-amber-dim)]"
         >
-          <code>{codeBlockContent.replace(/\n$/, "")}</code>
+          {codeBlockLang && (
+            <div className="text-[10px] font-[family-name:var(--font-mono)] text-[var(--color-green-term)] mb-2 uppercase tracking-wider">
+              // {codeBlockLang}
+            </div>
+          )}
+          <code className="text-[var(--color-amber-text)]">{codeBlockContent.replace(/\n$/, "")}</code>
         </pre>
       );
       codeBlockContent = "";
@@ -98,7 +108,7 @@ function renderMarkdown(markdown: string) {
         if (boldMatch.index > lastBoldIdx) {
           boldParts.push(remaining.slice(lastBoldIdx, boldMatch.index));
         }
-        boldParts.push(<strong key={`b-${boldMatch.index}`} className="text-[var(--color-text-primary)] font-semibold">{boldMatch[1]}</strong>);
+        boldParts.push(<strong key={`b-${boldMatch.index}`} className="text-[var(--color-amber-bright)] font-semibold">{boldMatch[1]}</strong>);
         lastBoldIdx = boldMatch.index + boldMatch[0].length;
       }
       if (lastBoldIdx < remaining.length) {
@@ -118,9 +128,7 @@ function renderMarkdown(markdown: string) {
             codeParts.push(part.slice(lastIdx, codeMatch.index));
           }
           codeParts.push(
-            <code key={`c-${idx}-${codeMatch.index}`} className="px-1.5 py-0.5 rounded text-sm font-[family-name:var(--font-mono)]"
-              style={{ background: "var(--color-accent-subtle)", color: "var(--color-indigo-light)" }}
-            >
+            <code key={`c-${idx}-${codeMatch.index}`} className="glass-legend text-sm font-[family-name:var(--font-mono)] text-[var(--color-green-term)]">
               {codeMatch[1]}
             </code>
           );
@@ -143,10 +151,10 @@ function renderMarkdown(markdown: string) {
       continue;
     }
 
-    // Headings
+    // Headings — Spectral amber, hover gold
     if (line.startsWith("### ")) {
       elements.push(
-        <h3 key={key++} className="text-xl font-bold mt-8 mb-3 text-[var(--color-text-primary)] font-[family-name:var(--font-display)]">
+        <h3 key={key++} className="text-xl font-bold mt-8 mb-3 text-[var(--color-amber-text)] font-[family-name:var(--font-display)] hover:text-[var(--color-gold)] transition-colors duration-200">
           {renderInline(line.slice(4))}
         </h3>
       );
@@ -154,7 +162,7 @@ function renderMarkdown(markdown: string) {
     }
     if (line.startsWith("## ")) {
       elements.push(
-        <h2 key={key++} className="text-2xl font-bold mt-10 mb-4 text-[var(--color-text-primary)] font-[family-name:var(--font-display)]">
+        <h2 key={key++} className="text-2xl font-bold mt-10 mb-4 text-[var(--color-amber-text)] font-[family-name:var(--font-display)] hover:text-[var(--color-gold)] transition-colors duration-200">
           {renderInline(line.slice(3))}
         </h2>
       );
@@ -162,7 +170,7 @@ function renderMarkdown(markdown: string) {
     }
     if (line.startsWith("# ")) {
       elements.push(
-        <h1 key={key++} className="text-3xl font-bold mt-10 mb-4 text-[var(--color-text-primary)] font-[family-name:var(--font-display)]">
+        <h1 key={key++} className="text-3xl font-bold mt-10 mb-4 text-[var(--color-amber-text)] font-[family-name:var(--font-display)] hover:text-[var(--color-gold)] transition-colors duration-200">
           {renderInline(line.slice(2))}
         </h1>
       );
@@ -172,7 +180,6 @@ function renderMarkdown(markdown: string) {
     // Lists
     if (trimmed.startsWith("- ") || trimmed.startsWith("* ")) {
       const items: { text: string; index: number }[] = [{ text: trimmed.slice(2), index: i }];
-      // Collect subsequent list items
       let j = i + 1;
       while (j < lines.length) {
         const nextTrimmed = lines[j].trim();
@@ -187,18 +194,21 @@ function renderMarkdown(markdown: string) {
       }
       i = j - 1;
       elements.push(
-        <ul key={key++} className="list-disc pl-6 mb-5 space-y-1.5 text-[var(--color-text-secondary)] leading-relaxed">
+        <ul key={key++} className="list-none pl-0 mb-5 space-y-1.5 font-[family-name:var(--font-mono)] leading-relaxed">
           {items.map((item) => (
-            <li key={item.index}>{renderInline(item.text)}</li>
+            <li key={item.index} className="flex items-start gap-2 text-[var(--color-amber-dim)]">
+              <span className="text-[var(--color-green-term)] shrink-0 mt-1">&gt;</span>
+              <span>{renderInline(item.text)}</span>
+            </li>
           ))}
         </ul>
       );
       continue;
     }
 
-    // Regular paragraph
+    // Regular paragraph — amber mono
     elements.push(
-      <p key={key++} className="text-base md:text-lg leading-relaxed mb-5 text-[var(--color-text-secondary)]">
+      <p key={key++} className="text-base md:text-lg leading-relaxed mb-5 font-[family-name:var(--font-mono)] text-[var(--color-amber-text)]">
         {renderInline(line)}
       </p>
     );
@@ -229,71 +239,68 @@ export default async function BlogPostPage({ params }: Props) {
       <Navbar />
       <main className="pt-24 pb-16">
         <article className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Back link */}
+          {/* Back link — green arrow */}
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-accent)] transition-colors duration-200 mb-8 cursor-pointer group"
+            className="inline-flex items-center gap-2 text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)] hover:text-[var(--color-green-term)] transition-colors duration-200 mb-8 cursor-pointer group"
           >
-            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform duration-200" />
+            <span className="text-[var(--color-green-term)] group-hover:-translate-x-1 transition-transform duration-200">&lt;-</span>
             Back to Blog
           </Link>
 
-          {/* Tags */}
+          {/* Tags as .glass-legend badges */}
           <div className="flex flex-wrap gap-2 mb-4">
             {post.tags.map((tag) => (
               <span
                 key={tag}
-                className="px-3 py-1 text-xs font-medium rounded-md font-[family-name:var(--font-mono)]"
-                style={{
-                  background: "var(--color-accent-subtle)",
-                  color: "var(--color-indigo-light)",
-                }}
+                className="glass-legend text-xs font-[family-name:var(--font-mono)] text-[var(--color-green-term)]"
               >
                 {tag}
               </span>
             ))}
           </div>
 
-          {/* Title */}
+          {/* Title — gold gradient-text */}
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight font-[family-name:var(--font-display)] mb-6">
             <span className="gradient-text">{post.title}</span>
           </h1>
 
-          {/* Meta bar */}
-          <div className="flex flex-wrap items-center gap-6 text-sm text-[var(--color-text-tertiary)] mb-10 pb-8" style={{ borderBottom: "1px solid var(--color-border)" }}>
+          {/* Meta bar — date in amber dim mono */}
+          <div className="flex flex-wrap items-center gap-6 text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)] mb-10 pb-8 section-divider">
             <div className="flex items-center gap-2">
-              <User size={14} />
-              <span className="font-[family-name:var(--font-mono)]">Bio Lumbantoruan</span>
+              <span className="text-[var(--color-green-term)]">$</span>
+              <span>author: Bio Lumbantoruan</span>
             </div>
             <div className="flex items-center gap-2">
-              <Calendar size={14} />
-              <span className="font-[family-name:var(--font-mono)]">{formatDate(post.date)}</span>
+              <span className="text-[var(--color-green-term)]">$</span>
+              <span>date: {formatDate(post.date)}</span>
             </div>
           </div>
 
-          {/* Content */}
+          {/* Content — Vault Terminal styled */}
           <div className="prose-content max-w-none">
             {renderMarkdown(post.content)}
           </div>
 
           {/* Related posts */}
           {relatedPosts.length > 0 && (
-            <div className="mt-16 pt-10" style={{ borderTop: "1px solid var(--color-border)" }}>
-              <p className="section-label mb-6">/related</p>
+            <div className="mt-16 pt-10">
+              <p className="section-label mb-6">
+                <span className="text-[var(--color-green-term)]">$</span> /related
+              </p>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {relatedPosts.map((rp) => (
                   <Link key={rp.slug} href={`/blog/${rp.slug}`} className="group block">
-                    <div className="card p-5 hover:-translate-y-1 transition-all duration-300 cursor-pointer h-full">
-                      <div className="flex items-center gap-2 text-xs text-[var(--color-text-tertiary)] mb-2">
-                        <Calendar size={12} />
-                        <span className="font-[family-name:var(--font-mono)]">{formatDate(rp.date)}</span>
+                    <div className="glass-card p-5 transition-all duration-300 cursor-pointer h-full hover:-translate-y-1">
+                      <div className="text-xs font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)] mb-2">
+                        {formatDate(rp.date)}
                       </div>
-                      <h3 className="font-semibold text-[var(--color-text-primary)] line-clamp-2 mb-2 font-[family-name:var(--font-display)] group-hover:text-[var(--color-accent-hover)] transition-colors duration-200">
+                      <h3 className="font-semibold text-[var(--color-amber-text)] line-clamp-2 mb-2 font-[family-name:var(--font-display)] group-hover:text-[var(--color-gold)] transition-colors duration-200">
                         {rp.title}
                       </h3>
-                      <p className="text-xs text-[var(--color-text-tertiary)] line-clamp-2">{rp.description}</p>
-                      <div className="flex items-center gap-1 mt-3 text-xs text-[var(--color-accent)] opacity-0 group-hover:opacity-100 transition-all duration-200">
-                        <span>Read</span>
+                      <p className="text-xs font-[family-name:var(--font-mono)] text-[var(--color-text-tertiary)] line-clamp-2">{rp.description}</p>
+                      <div className="flex items-center gap-1 mt-3 text-xs font-[family-name:var(--font-mono)] text-[var(--color-green-term)] opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <span>&gt; Read</span>
                         <ArrowRight size={12} />
                       </div>
                     </div>
