@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { ArrowDown, FileDown } from "lucide-react";
 import { profile } from "@/data/profile";
 import { SocialIcons } from "@/components/SocialIcons";
@@ -85,56 +85,6 @@ function TerminalWindow() {
     </div>
   );
 }
-
-/* ────────────────────── Animated Stat Counter ────────────────────── */
-
-function StatCounter({
-  value,
-  label,
-  delay,
-}: {
-  value: string;
-  label: string;
-  delay: number;
-}) {
-  const [inView, setInView] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.3 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div
-      ref={ref}
-      className={`glass-card p-5 text-center transition-all duration-700 ease-out gold-reveal ${
-        inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-      }`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      <span className="block text-2xl md:text-3xl font-bold font-[family-name:var(--font-display)] text-[var(--color-gold)]">
-        {value}
-      </span>
-      <span className="block text-xs md:text-sm text-[var(--color-amber-dim)] mt-1 font-[family-name:var(--font-mono)] tracking-wide uppercase">
-        {label}
-      </span>
-    </div>
-  );
-}
-
-/* ──────────────────────── Main Hero Component ──────────────────────── */
 
 export function Hero() {
   const [visible, setVisible] = useState(false);
@@ -250,22 +200,6 @@ export function Hero() {
           <div className="flex-1 md:max-w-[480px]">
             <TerminalWindow />
           </div>
-        </div>
-
-        {/* ── STAT COUNTERS ── */}
-        <div
-          className={`mt-16 md:mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 transition-all duration-1000 delay-700 ${
-            visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-          }`}
-        >
-          {profile.metrics.map((metric, i) => (
-            <StatCounter
-              key={metric.label}
-              value={metric.value}
-              label={metric.label}
-              delay={200 + i * 120}
-            />
-          ))}
         </div>
 
         {/* ── Scroll indicator ── */}

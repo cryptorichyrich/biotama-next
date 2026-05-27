@@ -90,40 +90,6 @@ export default function ResumePage() {
               </div>
             </div>
 
-            {/* Professional Summary */}
-            <section className="mb-12">
-              <p className="section-label mb-4">
-                <span className="text-[var(--color-green-term)]">$</span> /summary
-              </p>
-              <div className="section-divider mb-5" />
-              <p className="text-[var(--color-amber-text)] leading-relaxed text-base md:text-lg font-[family-name:var(--font-mono)]">
-                {profile.bio}
-              </p>
-            </section>
-
-            {/* Metrics */}
-            <section className="mb-12">
-              <p className="section-label mb-4">
-                <span className="text-[var(--color-green-term)]">$</span> /by-the-numbers
-              </p>
-              <div className="section-divider mb-5" />
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                {profile.metrics.map((m) => (
-                  <div
-                    key={m.label}
-                    className="glass-card p-5 text-center transition-all duration-300 hover:-translate-y-1"
-                  >
-                    <p className="text-2xl md:text-3xl font-bold font-[family-name:var(--font-display)] gradient-text">
-                      {m.value}
-                    </p>
-                    <p className="text-xs font-[family-name:var(--font-mono)] text-[var(--color-green-term)] mt-1.5 uppercase tracking-wider">
-                      {m.label}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </section>
-
             {/* Experience — gold timeline dots */}
             <section className="mb-12">
               <p className="section-label mb-4">
