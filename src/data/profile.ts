@@ -47,7 +47,7 @@ export const profile: Profile = {
   location: "Jakarta, Indonesia",
   bio: "",
   photoUrl: "/photo.jpg",
-  summary: "Fullstack architect. 10 years of fintech, e-commerce, and SaaS in production. React, Next.js, TypeScript, Node.js, NestJS, FastAPI, PostgreSQL. Payment gateways across 69 countries. One freelance marketplace from scratch. Currently building Srabutan — fullstack, CI/CD, containerized.",
+  summary: "Senior fullstack architect with 10+ years of experience building high-performance web applications across fintech, e-commerce, and SaaS domains. Proven track record of architecting scalable systems — from payment gateways processing transactions across 69 countries to AI-powered freelance marketplaces. Deep expertise in React, Next.js, Astro, Node.js, NestJS, FastAPI and modern cloud infrastructure. Combines engineering excellence with business acumen to deliver solutions that satisfy both C-level stakeholders and end-users while maintaining strict regulatory compliance.",
   metrics: [
     { label: "Years Live", value: "10" },
     { label: "Pepperstone Clients", value: "14K+" },

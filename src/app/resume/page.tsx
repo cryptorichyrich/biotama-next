@@ -4,13 +4,21 @@ import Link from "next/link";
 import { profile } from "@/data/profile";
 import { experiences } from "@/data/experience";
 import { skillGroups } from "@/data/skills";
+import QRCode from "@/components/QRCode";
 
-const socialLinks = profile.socials.filter((s) =>
-  ["LinkedIn", "GitHub"].includes(s.platform)
-);
+const socialLinks = [
+  { platform: "LinkedIn", url: profile.socials.find((s) => s.platform === "LinkedIn")?.url ?? "" },
+  { platform: "GitHub", url: profile.socials.find((s) => s.platform === "GitHub")?.url ?? "" },
+  { platform: "Website", url: "https://cryptorichyrich.github.io/biotama-next/" },
+];
+
+const linkLabels: Record<string, string> = {
+  LinkedIn: "linkedin.com/in/agustinus-biotamalo",
+  GitHub: "github.com/cryptorichyrich",
+  Website: "biotama.cv",
+};
 
 function formatDate(dateStr: string): string {
-  // Already formatted like "Jan 2026" or "Present"
   return dateStr;
 }
 
@@ -18,52 +26,20 @@ export default function ResumePage() {
   return (
     <>
       <style>{`
-        @page {
-          size: A4;
-          margin: 15mm;
-        }
-
+        @page { size: A4; margin: 12mm; }
         @media print {
           html, body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             background: #ffffff !important;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact; print-color-adjust: exact;
           }
           .no-print { display: none !important; }
-          .resume-content { box-shadow: none !important; max-width: 100% !important; padding: 0 !important; }
-          a { color: #1e293b !important; text-decoration: underline; }
-          .page-break { page-break-before: always; }
+          a { color: #1e293b !important; }
         }
-
-        body {
-          font-family: 'Inter', Arial, Helvetica, sans-serif;
-        }
-
-        .resume-content {
-          background: #ffffff;
-          color: #1e293b;
-          max-width: 210mm;
-          margin: 0 auto;
-        }
-
-        @media screen {
-          .resume-content {
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-          }
-        }
-
-        @media print {
-          .resume-content {
-            box-shadow: none;
-          }
-        }
-
-        .print-button:hover {
-          background-color: #1e293b !important;
-          color: #ffffff !important;
-        }
+        body { font-family: 'Inter', Arial, Helvetica, sans-serif; }
+        .resume-content { background: #ffffff; color: #1e293b; max-width: 210mm; margin: 0 auto; }
+        @media screen { .resume-content { box-shadow: 0 1px 3px rgba(0,0,0,0.1); } }
+        .print-button:hover { background-color: #1e293b !important; color: #ffffff !important; }
       `}</style>
 
       {/* Screen-only controls */}
@@ -84,124 +60,155 @@ export default function ResumePage() {
       </div>
 
       {/* Resume Content */}
-      <div className="resume-content bg-white text-slate-800 p-8 md:p-10 lg:p-12">
-        {/* ── Header ── */}
-        <header className="border-b border-slate-200 pb-5 mb-5">
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">{profile.name}</h1>
-          <p className="text-lg font-medium text-slate-700 mt-1">{profile.role}</p>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 text-sm text-slate-600">
-            <span>{profile.email}</span>
-            <span className="hidden sm:inline text-slate-300">|</span>
+      <div className="resume-content bg-white text-slate-800 p-[15mm] print:p-0">
+        {/* ── HEADER ── */}
+        <header className="border-b-2 border-slate-800 pb-4 mb-5">
+          <h1 className="text-2xl font-extrabold tracking-tight text-slate-900">
+            {profile.name}
+          </h1>
+          <p className="mt-1 text-sm font-semibold uppercase tracking-widest text-slate-600">
+            Senior Fullstack Architect &bull; Fintech Specialist
+          </p>
+          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-slate-600">
             <span>{profile.phone}</span>
-            <span className="hidden sm:inline text-slate-300">|</span>
+            <span>{profile.email}</span>
             <span>{profile.location}</span>
           </div>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-sm text-slate-600">
-            {socialLinks.map((s) => (
+          <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1.5 text-xs">
+            {socialLinks.map((s) => s.url && (
               <a
                 key={s.platform}
                 href={s.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-slate-600 hover:text-slate-900 underline underline-offset-2 decoration-slate-300"
+                className="text-blue-700 hover:underline flex items-center gap-2"
               >
-                {s.platform}
+                <QRCode url={s.url} size={24} />
+                {linkLabels[s.platform]}
               </a>
             ))}
           </div>
         </header>
 
-        {/* ── Professional Summary ── */}
-        <section className="mb-6">
-          <h2 className="text-base font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-1 mb-3">
+        {/* ── PROFESSIONAL SUMMARY ── */}
+        <section className="mb-5">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-slate-800">
             Professional Summary
           </h2>
-          <p className="text-sm text-slate-700 leading-relaxed">{profile.summary}</p>
+          <p className="mt-2 text-[11px] leading-relaxed text-slate-700">
+            {profile.summary}
+          </p>
         </section>
 
-        {/* ── Experience ── */}
-        <section className="mb-6">
-          <h2 className="text-base font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-1 mb-3">
+        {/* ── EXPERIENCE ── */}
+        <section className="mb-5">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-slate-800">
             Experience
           </h2>
-          <div className="space-y-5">
-            {experiences.map((exp) => (
-              <div key={exp.id}>
-                <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-0.5">
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-900">{exp.role}</h3>
-                    <p className="text-sm font-medium text-slate-700">{exp.company}</p>
-                  </div>
-                  <div className="text-xs text-slate-500 whitespace-nowrap sm:text-right">
-                    {formatDate(exp.startDate)} – {formatDate(exp.endDate)} | {exp.location}
-                  </div>
+          {experiences.map((exp) => (
+            <div key={exp.id} className="mt-4">
+              <div className="flex items-baseline justify-between">
+                <div>
+                  <h3 className="text-[13px] font-bold text-slate-900">{exp.role}</h3>
+                  <p className="text-[11px] font-semibold text-slate-600">{exp.company}</p>
                 </div>
-                <ul className="mt-2 space-y-1">
-                  {exp.highlights.map((h, i) => (
-                    <li key={i} className="text-xs text-slate-700 leading-relaxed pl-3 relative">
-                      <span className="absolute left-0 top-[0.45em] w-1 h-1 rounded-full bg-slate-400" />
-                      {h}
-                    </li>
-                  ))}
-                </ul>
-                {exp.tech.length > 0 && (
-                  <p className="text-xs text-slate-500 mt-1.5">
-                    <span className="font-medium">Technologies:</span> {exp.tech.join(", ")}
-                  </p>
-                )}
+                <span className="text-[10px] text-slate-500 whitespace-nowrap">
+                  {formatDate(exp.startDate)} — {formatDate(exp.endDate)}
+                </span>
+              </div>
+              <ul className="mt-1.5 space-y-1">
+                {exp.highlights.map((h, i) => (
+                  <li key={i} className="text-[10.5px] leading-relaxed text-slate-700">
+                    <span className="mr-1 text-slate-400">•</span>
+                    {h}
+                  </li>
+                ))}
+              </ul>
+              {exp.tech.length > 0 && (
+                <p className="mt-1.5 text-[9px] text-slate-400">
+                  <span className="font-semibold text-slate-500">Tech:</span> {exp.tech.join(" • ")}
+                </p>
+              )}
+            </div>
+          ))}
+        </section>
+
+        {/* ── KEY PROJECTS ── */}
+        <section className="mb-5">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-slate-800">
+            Key Projects
+          </h2>
+          <div className="mt-3 grid grid-cols-2 gap-x-5 gap-y-3">
+            <div>
+              <h3 className="text-[11px] font-bold text-slate-900">Srabutan.com — Freelance Marketplace</h3>
+              <p className="text-[10px] leading-relaxed text-slate-600 mt-0.5">
+                Architected Indonesia&apos;s freelance marketplace with AI-powered matching, microservices architecture, and real-time collaboration. Full-stack development with CI/CD pipelines.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-[11px] font-bold text-slate-900">BaxiaMarkets — Financial Platform</h3>
+              <p className="text-[10px] leading-relaxed text-slate-600 mt-0.5">
+                Built a 5-year fintech platform serving global traders with WordPress/Laravel/React stack, SumSub KYC compliance, multi-PSP payment processing, and responsive client portal.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-[11px] font-bold text-slate-900">CrosSyncOrder — Forex Trade Copier SaaS</h3>
+              <p className="text-[10px] leading-relaxed text-slate-600 mt-0.5">
+                Designed a real-time trade synchronization system across MetaTrader 4/5 and cTrader using WebSocket + ZeroMQ, containerized with Docker/Kubernetes on Railway.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-[11px] font-bold text-slate-900">AI-Powered Sales Dashboard</h3>
+              <p className="text-[10px] leading-relaxed text-slate-600 mt-0.5">
+                Full-stack dashboard with Next.js + FastAPI backend, integrating Google Gemini AI for natural language sales insights with markdown rendering and data visualization.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* ── TECHNICAL SKILLS ── */}
+        <section className="mb-5">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-slate-800">
+            Technical Skills
+          </h2>
+          <div className="mt-3 space-y-2 text-[10.5px]">
+            {skillGroups.map((group) => (
+              <div key={group.category}>
+                <span className="font-bold text-slate-800">{group.category}: </span>
+                <span className="text-slate-600">
+                  {group.skills.map((s) => s.name).join(" • ")}
+                </span>
               </div>
             ))}
           </div>
         </section>
 
-        {/* ── Education ── */}
-        <section className="mb-6">
-          <h2 className="text-base font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-1 mb-3">
-            Education
+        {/* ── EDUCATION & CERTIFICATIONS ── */}
+        <section className="mb-5">
+          <h2 className="text-xs font-bold uppercase tracking-widest text-slate-800">
+            Education &amp; Certifications
           </h2>
-          {profile.education.map((edu, i) => (
-            <div key={i} className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between text-sm">
-              <div>
-                <p className="font-semibold text-slate-900">{edu.degree}</p>
-                <p className="text-slate-600">{edu.institution}</p>
-              </div>
-              <div className="text-xs text-slate-500 whitespace-nowrap sm:text-right">
-                {edu.startYear} – {edu.endYear} | GPA: {edu.gpa}
-              </div>
-            </div>
-          ))}
-        </section>
-
-        {/* ── Certifications ── */}
-        {profile.certifications.length > 0 && (
-          <section className="mb-6">
-            <h2 className="text-base font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-1 mb-3">
-              Certifications
-            </h2>
-            <ul className="space-y-1">
-              {profile.certifications.map((cert, i) => (
-                <li key={i} className="text-sm text-slate-700">
-                  {cert.title} – {cert.institution} ({cert.date})
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        {/* ── Technical Skills ── */}
-        <section>
-          <h2 className="text-base font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-1 mb-3">
-            Technical Skills
-          </h2>
-          <div className="space-y-2">
-            {skillGroups.map((group) => (
-              <div key={group.category} className="text-sm">
-                <span className="font-semibold text-slate-900">{group.category}: </span>
-                <span className="text-slate-700">
-                  {group.skills.map((s) => s.name).join(", ")}
-                </span>
+          <div className="mt-3">
+            {profile.education.map((edu, i) => (
+              <div key={i} className="flex items-baseline justify-between">
+                <div>
+                  <h3 className="text-[11px] font-bold text-slate-900">{edu.degree} — {edu.institution}</h3>
+                  <p className="text-[10px] text-slate-600">Specialization in Software Development • GPA {edu.gpa}</p>
+                </div>
+                <span className="text-[10px] text-slate-500">{edu.startYear} — {edu.endYear}</span>
               </div>
             ))}
+            <div className="mt-3 text-[10px] text-slate-600">
+              <p className="font-semibold text-slate-800 text-[11px]">Certifications:</p>
+              <div className="mt-1 space-y-0.5">
+                {profile.certifications.map((cert, i) => (
+                  <div key={i} className="flex items-baseline gap-1">
+                    <span className="text-slate-400">▸</span>
+                    <span><strong className="text-slate-700">{cert.title}</strong> — {cert.institution} ({cert.date})</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
       </div>
