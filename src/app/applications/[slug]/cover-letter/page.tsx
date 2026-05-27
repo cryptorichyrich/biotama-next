@@ -5,6 +5,11 @@ import { profile } from "@/data/profile";
 
 const DB = JSON.parse(readFileSync(join(process.cwd(), "src/data/applications-db.json"), "utf-8"));
 
+const parseArr = (v: any, def: any = []) => {
+  if (!v || v === "[]" || v === "") return def;
+  try { const p = JSON.parse(typeof v === "string" ? v : JSON.stringify(v)); return Array.isArray(p) ? p : def; } catch { return def; }
+};
+
 function getApp(slug: string) {
   return DB.find((r: any) => r.slug === slug) || null;
 }
@@ -13,15 +18,16 @@ export function generateStaticParams() {
   return DB.map((r: any) => ({ slug: r.slug }));
 }
 
-export default function CoverLetterPage({ params }: { params: { slug: string } }) {
-  const app = getApp(params.slug);
+export default async function CoverLetterPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const app = getApp(slug);
   const today = new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 
   const tailoring = app ? {
     coverLetterHook: app.tailoring_cover_letter_hook || "",
     customSummary: app.tailoring_custom_summary || "",
-    keyAchievements: app.tailoring_key_achievements || [],
-    highlightProjects: app.tailoring_highlight_projects || [],
+    keyAchievements: parseArr(app.tailoring_key_achievements),
+    highlightProjects: parseArr(app.tailoring_highlight_projects),
   } : null;
 
   const contact = app ? {
@@ -34,7 +40,7 @@ export default function CoverLetterPage({ params }: { params: { slug: string } }
       <style>{`@page { size: A4; margin: 20mm; } @media print { html,body { margin:0; padding:0; background:#fff!important; -webkit-print-color-adjust:exact; print-color-adjust:exact; } .no-print { display:none!important; } .letter-content { box-shadow:none!important; padding:0!important; } } body { font-family:'Inter',Arial,Helvetica,sans-serif; } .letter-content { background:#fff; color:#1e293b; max-width:210mm; margin:0 auto; } @media screen { .letter-content { box-shadow:0 1px 3px rgba(0,0,0,0.1); } } @media print { .letter-content { box-shadow:none; } } .print-button:hover { background-color:#1e293b!important; color:#fff!important; }`}</style>
 
       <div className="no-print max-w-[210mm] mx-auto px-4 pt-6 pb-4 flex items-center justify-between">
-        <Link href={`/applications/${params.slug}`} className="inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900 transition-colors">← Back to Application</Link>
+        <Link href={`/applications/${slug}`} className="inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900 transition-colors">← Back to Application</Link>
         <button id="printBtn" className="print-button inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-slate-800 rounded-md hover:bg-slate-900 transition-colors cursor-pointer shadow-sm">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Download PDF

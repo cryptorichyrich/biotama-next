@@ -6,14 +6,29 @@ import { MapPin, Briefcase, DollarSign, Calendar, Globe, ExternalLink, FileText,
 const DB = JSON.parse(readFileSync(join(process.cwd(), "src/data/applications-db.json"), "utf-8"));
 
 function toApp(row: any) {
+  const parseArr = (v: any, def: any = []) => {
+    if (!v || v === "[]" || v === "") return def;
+    try { const p = JSON.parse(typeof v === "string" ? v : JSON.stringify(v)); return Array.isArray(p) ? p : def; } catch { return def; }
+  };
   return {
     slug: row.slug,
     company: { name: row.company_name, website: row.company_website || "", logo: row.company_logo || "", location: row.company_location, industry: row.company_industry },
     position: { title: row.position_title, department: row.position_department || "", type: row.position_type, remote: !!row.position_remote, salaryRange: row.position_salary_range || "" },
     source: { url: row.source_url || "", platform: row.source_platform || "", dateFound: row.source_date_found },
     application: { status: row.app_status, dateApplied: row.app_date_applied || "", notes: row.app_notes || "" },
-    jobDescription: { summary: row.jd_summary || "", responsibilities: row.jd_responsibilities || [], requirements: row.jd_requirements || [], niceToHave: row.jd_nice_to_have || [] },
-    tailoring: { emphasizeSkills: row.tailoring_emphasize_skills || [], highlightProjects: row.tailoring_highlight_projects || [], customSummary: row.tailoring_custom_summary || "", keyAchievements: row.tailoring_key_achievements || [], coverLetterHook: row.tailoring_cover_letter_hook || "" },
+    jobDescription: {
+      summary: row.jd_summary || "",
+      responsibilities: parseArr(row.jd_responsibilities),
+      requirements: parseArr(row.jd_requirements).map((r: any) => typeof r === "string" ? { skill: r, importance: "required" } : r),
+      niceToHave: parseArr(row.jd_nice_to_have),
+    },
+    tailoring: {
+      emphasizeSkills: parseArr(row.tailoring_emphasize_skills),
+      highlightProjects: parseArr(row.tailoring_highlight_projects),
+      customSummary: row.tailoring_custom_summary || "",
+      keyAchievements: parseArr(row.tailoring_key_achievements),
+      coverLetterHook: row.tailoring_cover_letter_hook || "",
+    },
     contact: { name: row.contact_name || "", title: row.contact_title || "", email: row.contact_email || "", linkedIn: row.contact_linkedin || "" },
   };
 }
@@ -30,8 +45,9 @@ export function generateStaticParams() {
   return DB.map((r: any) => ({ slug: r.slug }));
 }
 
-export default function ApplicationPage({ params }: { params: { slug: string } }) {
-  const row = DB.find((r: any) => r.slug === params.slug);
+export default async function ApplicationPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const row = DB.find((r: any) => r.slug === slug);
   if (!row) {
     return (
       <main className="pt-24 pb-16 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">

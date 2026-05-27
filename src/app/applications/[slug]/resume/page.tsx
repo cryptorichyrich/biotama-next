@@ -8,13 +8,17 @@ import { skillGroups } from "@/data/skills";
 const DB = JSON.parse(readFileSync(join(process.cwd(), "src/data/applications-db.json"), "utf-8"));
 
 function getApp(slug: string) {
+  const parseArr = (v: any, def: any = []) => {
+    if (!v || v === "[]" || v === "") return def;
+    try { const p = JSON.parse(typeof v === "string" ? v : JSON.stringify(v)); return Array.isArray(p) ? p : def; } catch { return def; }
+  };
   const row = DB.find((r: any) => r.slug === slug);
   if (!row) return null;
   return {
     slug: row.slug,
     tailoring: {
       customSummary: row.tailoring_custom_summary || "",
-      keyAchievements: row.tailoring_key_achievements || [],
+      keyAchievements: parseArr(row.tailoring_key_achievements),
     },
   };
 }
@@ -23,8 +27,9 @@ export function generateStaticParams() {
   return DB.map((r: any) => ({ slug: r.slug }));
 }
 
-export default function TailoredResumePage({ params }: { params: { slug: string } }) {
-  const app = getApp(params.slug);
+export default async function TailoredResumePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const app = getApp(slug);
   const socialLinks = profile.socials.filter((s) => ["LinkedIn", "GitHub"].includes(s.platform));
 
   return (
@@ -32,7 +37,7 @@ export default function TailoredResumePage({ params }: { params: { slug: string 
       <style>{`@page { size: A4; margin: 15mm; } @media print { html,body { margin:0; padding:0; background:#fff!important; -webkit-print-color-adjust:exact; print-color-adjust:exact; } .no-print { display:none!important; } .resume-content { box-shadow:none!important; max-width:100%!important; padding:0!important; } a { color:#1e293b!important; text-decoration:underline; } } body { font-family:'Inter',Arial,Helvetica,sans-serif; } .resume-content { background:#fff; color:#1e293b; max-width:210mm; margin:0 auto; } @media screen { .resume-content { box-shadow:0 1px 3px rgba(0,0,0,0.1); } } @media print { .resume-content { box-shadow:none; } } .print-button:hover { background-color:#1e293b!important; color:#fff!important; }`}</style>
 
       <div className="no-print max-w-[210mm] mx-auto px-4 pt-6 pb-4 flex items-center justify-between">
-        <Link href={`/applications/${params.slug}`} className="inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900 transition-colors">← Back to Application</Link>
+        <Link href={`/applications/${slug}`} className="inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900 transition-colors">← Back to Application</Link>
         <button id="printBtn" className="print-button inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-slate-800 rounded-md hover:bg-slate-900 transition-colors cursor-pointer shadow-sm">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Download PDF
