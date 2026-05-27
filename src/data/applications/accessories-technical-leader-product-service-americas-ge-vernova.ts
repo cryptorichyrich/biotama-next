@@ -1,6 +1,6 @@
 import type { Application } from "./schema";
 
-export const applicationaccessories_technical_leader_product_service_americas_ge_vernova: Application = {
+export const application_accessories_technical_leader_product_service_americas_ge_vernova: Application = {
   slug: 'accessories-technical-leader-product-service-americas-ge-vernova',
   company: {
     name: 'GE Vernova',
@@ -14,7 +14,7 @@ export const applicationaccessories_technical_leader_product_service_americas_ge
     department: "",
     type: 'full-time',
     remote: true,
-    salaryRange: 'See description',
+    salaryRange: "See description",
   },
   source: {
     url: 'https://www.themuse.com/jobs/gevernova/accessories-technical-leader-product-service-americas-b59a5f',
@@ -27,7 +27,7 @@ export const applicationaccessories_technical_leader_product_service_americas_ge
     notes: "",
   },
   jobDescription: {
-    summary: '<p><b><b><b><b>Job Description Summary</b></b></b></b><br><br>The role is focused on providing technical leadership and mentoring for the Americas Accessories Product Service team. This includes offering direct technical support to global power plants equipped with GE Vernova equipment through three main workstreams:<br>(1) Mentoring the team on accessory system related technical inquiries from customers and field engineers via engineering response (ER) cases. This involves operationally managin',
+    summary: "<p><b><b><b><b>Job Description Summary</b></b></b></b><br><br>The role is focused on providing technical leadership and mentoring for the Americas Accessories Product Service team. This includes offering direct technical support to global power plants equipped with GE Vernova equipment through three main workstreams:<br>(1) Mentoring the team on accessory system related technical inquiries from customers and field engineers via engineering response (ER) cases. This involves operationally managin",
     responsibilities: [],
     requirements: [],
     niceToHave: [],

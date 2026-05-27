@@ -1,6 +1,6 @@
 import type { Application } from "./schema";
 
-export const applicationstaff_product_engineer_lawnstarter_2090890: Application = {
+export const application_staff_product_engineer_lawnstarter_2090890: Application = {
   slug: 'staff-product-engineer-lawnstarter-2090890',
   company: {
     name: 'LawnStarter',
@@ -14,7 +14,7 @@ export const applicationstaff_product_engineer_lawnstarter_2090890: Application 
     department: "",
     type: 'full-time',
     remote: true,
-    salaryRange: '$80k - $100k',
+    salaryRange: "$80k - $100k",
   },
   source: {
     url: 'https://remotive.com/remote-jobs/product/staff-product-engineer-2090890',
@@ -27,7 +27,7 @@ export const applicationstaff_product_engineer_lawnstarter_2090890: Application 
     notes: "",
   },
   jobDescription: {
-    summary: 'Staff Product Engineer at LawnStarter - a remote product management role based in Brazil. Responsibilities include product engineering across frontend and backend, working with React, AWS, and AI/ML technologies.',
+    summary: "Staff Product Engineer at LawnStarter - a remote product management role based in Brazil. Responsibilities include product engineering across frontend and backend, working with React, AWS, and AI/ML technologies.",
     responsibilities: [],
     requirements: [],
     niceToHave: [],

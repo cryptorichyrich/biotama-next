@@ -1,6 +1,6 @@
 import type { Application } from "./schema";
 
-export const applicationstaff_security_engineer_proactive_security_doordash: Application = {
+export const application_staff_security_engineer_proactive_security_doordash: Application = {
   slug: 'staff-security-engineer-proactive-security-doordash',
   company: {
     name: 'DoorDash',
@@ -14,7 +14,7 @@ export const applicationstaff_security_engineer_proactive_security_doordash: App
     department: "",
     type: 'full-time',
     remote: true,
-    salaryRange: 'See description',
+    salaryRange: "See description",
   },
   source: {
     url: 'https://www.themuse.com/jobs/doordash/staff-security-engineer-proactive-security-c605dd',
@@ -27,7 +27,7 @@ export const applicationstaff_security_engineer_proactive_security_doordash: App
     notes: "",
   },
   jobDescription: {
-    summary: 'About the Team At DoorDash we\'re building the industry\'s most scalable and reliable delivery network to support our three-sided marketplace of consumers, merchants, and Dashers. Security is paramount to the success of our business, and DoorDash Security aspires to be the world\'s most admired security team. We are committed to building the world\'s most trusted on-demand, logistics engine for delivery! We\'re expanding our team of great minds to help us secure and maintain a 24x7, no downtime, glob',
+    summary: "About the Team At DoorDash we're building the industry's most scalable and reliable delivery network to support our three-sided marketplace of consumers, merchants, and Dashers. Security is paramount to the success of our business, and DoorDash Security aspires to be the world's most admired security team. We are committed to building the world's most trusted on-demand, logistics engine for delivery! We're expanding our team of great minds to help us secure and maintain a 24x7, no downtime, glob",
     responsibilities: [],
     requirements: [],
     niceToHave: [],

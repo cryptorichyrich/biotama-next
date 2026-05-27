@@ -1,6 +1,6 @@
 import type { Application } from "./schema";
 
-export const applicationsolution_architect_salesforce: Application = {
+export const application_solution_architect_salesforce: Application = {
   slug: 'solution-architect-salesforce',
   company: {
     name: 'Salesforce',
@@ -14,7 +14,7 @@ export const applicationsolution_architect_salesforce: Application = {
     department: "",
     type: 'full-time',
     remote: true,
-    salaryRange: 'See description',
+    salaryRange: "See description",
   },
   source: {
     url: 'https://www.themuse.com/jobs/salesforce/solution-architect-3f8d7c',
@@ -27,7 +27,7 @@ export const applicationsolution_architect_salesforce: Application = {
     notes: "",
   },
   jobDescription: {
-    summary: '<p>To get the best candidate experience, please consider applying for a maximum of 3 roles within 12 months to ensure you are not duplicating efforts.<br><br>Job Category<br>Customer Success<br><br>Job Details<br><br><b><b>About Salesforce</b></b><br><br>Salesforce is the #1 AI CRM, where humans with agents drive customer success together. Here, ambition meets action. Tech meets trust. And innovation isn\'t a buzzword - it\'s a way of life. The world of work as we know it is changing and we\'re loo',
+    summary: "<p>To get the best candidate experience, please consider applying for a maximum of 3 roles within 12 months to ensure you are not duplicating efforts.<br><br>Job Category<br>Customer Success<br><br>Job Details<br><br><b><b>About Salesforce</b></b><br><br>Salesforce is the #1 AI CRM, where humans with agents drive customer success together. Here, ambition meets action. Tech meets trust. And innovation isn't a buzzword - it's a way of life. The world of work as we know it is changing and we're loo",
     responsibilities: [],
     requirements: [],
     niceToHave: [],

@@ -1,6 +1,6 @@
 import type { Application } from "./schema";
 
-export const applicationsecurity_engineer_insider_threat_doordash: Application = {
+export const application_security_engineer_insider_threat_doordash: Application = {
   slug: 'security-engineer-insider-threat-doordash',
   company: {
     name: 'DoorDash',
@@ -14,7 +14,7 @@ export const applicationsecurity_engineer_insider_threat_doordash: Application =
     department: "",
     type: 'full-time',
     remote: true,
-    salaryRange: 'See description',
+    salaryRange: "See description",
   },
   source: {
     url: 'https://www.themuse.com/jobs/doordash/security-engineer-insider-threat',
@@ -27,7 +27,7 @@ export const applicationsecurity_engineer_insider_threat_doordash: Application =
     notes: "",
   },
   jobDescription: {
-    summary: 'About the Team At DoorDash we\'re building the industry\'s most scalable and reliable delivery network to support our three-sided marketplace of consumers, merchants, and Dashers. Security is integral to the success of the business, as we secure the data and protect the privacy of our business and various stakeholders. The Security Operations team spans several capabilities, to include Threat Response, Threat Hunt, Threat Intelligence, Detection Engineering, Corporate Security, and Security Platfo',
+    summary: "About the Team At DoorDash we're building the industry's most scalable and reliable delivery network to support our three-sided marketplace of consumers, merchants, and Dashers. Security is integral to the success of the business, as we secure the data and protect the privacy of our business and various stakeholders. The Security Operations team spans several capabilities, to include Threat Response, Threat Hunt, Threat Intelligence, Detection Engineering, Corporate Security, and Security Platfo",
     responsibilities: [],
     requirements: [],
     niceToHave: [],

@@ -1,6 +1,6 @@
 import type { Application } from "./schema";
 
-export const applicationsenior_software_engineer_sothebys: Application = {
+export const application_senior_software_engineer_sothebys: Application = {
   slug: 'senior-software-engineer-sothebys',
   company: {
     name: 'Sotheby\'s',
@@ -14,7 +14,7 @@ export const applicationsenior_software_engineer_sothebys: Application = {
     department: "",
     type: 'full-time',
     remote: true,
-    salaryRange: 'See description',
+    salaryRange: "See description",
   },
   source: {
     url: 'https://www.themuse.com/jobs/sothebys/senior-software-engineer',
@@ -27,7 +27,7 @@ export const applicationsenior_software_engineer_sothebys: Application = {
     notes: "",
   },
   jobDescription: {
-    summary: 'ABOUT SOTHEBY\'S Established in 1744, Sotheby’s promotes access and ownership of exceptional art and luxury objects through auctions, private sales and retail. Our deep expertise across 70 selling categories is supported by a leading technology platform and a global network of specialists spanning 40 countries. Selling categories include Contemporary Art, Modern and Impressionist Art, Old Masters, Chinese Works of Art, Jewelry, Watches, Wine and Spirits and Design, as well as collectible cars and',
+    summary: "ABOUT SOTHEBY'S Established in 1744, Sotheby\u2019s promotes access and ownership of exceptional art and luxury objects through auctions, private sales and retail. Our deep expertise across 70 selling categories is supported by a leading technology platform and a global network of specialists spanning 40 countries. Selling categories include Contemporary Art, Modern and Impressionist Art, Old Masters, Chinese Works of Art, Jewelry, Watches, Wine and Spirits and Design, as well as collectible cars and",
     responsibilities: [],
     requirements: [],
     niceToHave: [],

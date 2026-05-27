@@ -1,0 +1,150 @@
+import sqlite3, os, json, re
+
+db_path = r"C:\Users\fxwis\biotama-next\job-tracker.db"
+apps_dir = r"C:\Users\fxwis\biotama-next\src\data\applications"
+
+conn = sqlite3.connect(db_path)
+conn.row_factory = sqlite3.Row
+
+# Fix slugs in DB: replace dots with hyphens
+conn.execute("UPDATE applications SET slug = REPLACE(slug, '.', '-') WHERE slug LIKE '%.%'")
+conn.commit()
+print("DB slugs updated (dots -> hyphens)")
+
+rows = conn.execute("SELECT slug, company_name, company_website, company_logo, company_location, company_industry, position_title, position_department, position_type, position_remote, position_salary_range, source_url, source_platform, source_date_found, app_status, app_date_applied, app_notes, jd_summary, jd_responsibilities, jd_requirements, jd_nice_to_have, tailoring_emphasize_skills, tailoring_highlight_projects, tailoring_custom_summary, tailoring_key_achievements, tailoring_cover_letter_hook, contact_name, contact_title, contact_email, contact_linkedin FROM applications ORDER BY slug").fetchall()
+print(f"DB rows: {len(rows)}")
+
+# Delete old files EXCEPT index.ts and schema.ts
+old_files = [f for f in os.listdir(apps_dir) if f.endswith('.ts') and f not in ('index.ts', 'schema.ts')]
+print(f"Deleting {len(old_files)} old files...")
+for f in old_files:
+    os.remove(os.path.join(apps_dir, f))
+
+def to_ident(slug):
+    raw = slug.replace('-', '_')
+    raw = raw.replace('.', '_')
+    return re.sub(r'[^a-zA-Z0-9_]', '_', 'application_' + raw)
+
+def esc(txt):
+    if txt is None:
+        return ""
+    return txt.replace("\\", "\\\\").replace("'", "\\'")
+
+imports = []
+apps_array = []
+
+for r in rows:
+    slug = r['slug']
+    ident = to_ident(slug)
+    filename = f"{slug}.ts"
+    
+    try: responsibilities = json.loads(r['jd_responsibilities']) if r['jd_responsibilities'] else []
+    except: responsibilities = []
+    try: requirements = json.loads(r['jd_requirements']) if r['jd_requirements'] else []
+    except: requirements = []
+    try: nice_to_have = json.loads(r['jd_nice_to_have']) if r['jd_nice_to_have'] else []
+    except: nice_to_have = []
+    try: emphasize_skills = json.loads(r['tailoring_emphasize_skills']) if r['tailoring_emphasize_skills'] else []
+    except: emphasize_skills = []
+    try: highlight_projects = json.loads(r['tailoring_highlight_projects']) if r['tailoring_highlight_projects'] else []
+    except: highlight_projects = []
+    try: key_achievements = json.loads(r['tailoring_key_achievements']) if r['tailoring_key_achievements'] else []
+    except: key_achievements = []
+    
+    summary_json = json.dumps(r['jd_summary'] or '')
+    custom_summary_json = json.dumps(r['tailoring_custom_summary'] or '')
+    cover_letter_json = json.dumps(r['tailoring_cover_letter_hook'] or '')
+    
+    cn = esc(r['company_name'])
+    cl = esc(r['company_location'])
+    ci = esc(r['company_industry'])
+    pt = esc(r['position_title'])
+    pdept = esc(r['position_department'] or '')
+    ptype = r['position_type']
+    p_sal = esc(r['position_salary_range'] or '')
+    su = esc(r['source_url'] or '')
+    sp = esc(r['source_platform'] or '')
+    cw = esc(r['company_website'] or '')
+    clo = esc(r['company_logo'] or '')
+    df = r['source_date_found']
+    st = r['app_status']
+    da = esc(r['app_date_applied'] or '')
+    no = esc(r['app_notes'] or '')
+    cnt_n = esc(r['contact_name'] or '')
+    cnt_t = esc(r['contact_title'] or '')
+    cnt_e = esc(r['contact_email'] or '')
+    cnt_l = esc(r['contact_linkedin'] or '')
+    remote = 'true' if r['position_remote'] else 'false'
+
+    content = f"""import type {{ Application }} from "./schema";
+
+export const {ident}: Application = {{
+  slug: '{slug}',
+  company: {{
+    name: '{cn}',
+    website: "{cw}",
+    logo: "{clo}",
+    location: '{cl}',
+    industry: '{ci}',
+  }},
+  position: {{
+    title: '{pt}',
+    department: "{pdept}",
+    type: '{ptype}',
+    remote: {remote},
+    salaryRange: "{p_sal}",
+  }},
+  source: {{
+    url: '{su}',
+    platform: '{sp}',
+    dateFound: '{df}',
+  }},
+  application: {{
+    status: '{st}',
+    dateApplied: "{da}",
+    notes: "{no}",
+  }},
+  jobDescription: {{
+    summary: {summary_json},
+    responsibilities: {json.dumps(responsibilities)},
+    requirements: {json.dumps(requirements)},
+    niceToHave: {json.dumps(nice_to_have)},
+  }},
+  tailoring: {{
+    emphasizeSkills: {json.dumps(emphasize_skills)},
+    highlightProjects: {json.dumps(highlight_projects)},
+    customSummary: {custom_summary_json},
+    keyAchievements: {json.dumps(key_achievements)},
+    coverLetterHook: {cover_letter_json},
+  }},
+  contact: {{
+    name: "{cnt_n}",
+    title: "{cnt_t}",
+    email: "{cnt_e}",
+    linkedIn: "{cnt_l}",
+  }},
+}};
+"""
+    
+    with open(os.path.join(apps_dir, filename), 'w') as f:
+        f.write(content)
+    
+    imports.append(f"import {{ {ident} }} from \"./{filename.replace('.ts', '')}\";")
+    apps_array.append(ident)
+
+# Write index.ts
+index_content = "// Auto-generated by Hermes\n"
+index_content += 'import type { Application } from "./schema";\n\n'
+index_content += 'export type { Application };\n\n'
+index_content += '\n'.join(imports) + '\n\n'
+index_content += f"export const applications: Application[] = [{', '.join(apps_array)}];\n\n"
+index_content += """export function getApplicationBySlug(slug: string): Application | undefined {
+  return applications.find((app) => app.slug === slug);
+}
+"""
+
+with open(os.path.join(apps_dir, 'index.ts'), 'w') as f:
+    f.write(index_content)
+
+conn.close()
+print(f"Done! Generated {len(rows)} application files + index.ts")

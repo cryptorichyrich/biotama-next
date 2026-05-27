@@ -1,6 +1,6 @@
 import type { Application } from "./schema";
 
-export const applicationsoftware_engineer_ii_q_centrix: Application = {
+export const application_software_engineer_ii_q_centrix: Application = {
   slug: 'software-engineer-ii-q-centrix',
   company: {
     name: 'Q-Centrix',
@@ -14,7 +14,7 @@ export const applicationsoftware_engineer_ii_q_centrix: Application = {
     department: "",
     type: 'full-time',
     remote: true,
-    salaryRange: 'See description',
+    salaryRange: "See description",
   },
   source: {
     url: 'https://www.themuse.com/jobs/qcentrix/software-engineer-ii',
@@ -27,7 +27,7 @@ export const applicationsoftware_engineer_ii_q_centrix: Application = {
     notes: "",
   },
   jobDescription: {
-    summary: '&nbsp; MRO is&nbsp; The Single Source for Smarter Data™ —driving a new era of clinical data intelligence where data is connected, structured, and transformed into actionable insights. The result: confident decisions, operational precision, accelerated research, and most importantly, better patient care.&nbsp; &nbsp; This innovative model for clinical data management is built for speed and scale, combining connectivity, deep clinical&nbsp;expertise, and advanced automation to turn a fragmented he',
+    summary: "&nbsp; MRO is&nbsp; The Single Source for Smarter Data\u2122 \u2014driving a new era of clinical data intelligence where data is connected, structured, and transformed into actionable insights. The result: confident decisions, operational precision, accelerated research, and most importantly, better patient care.&nbsp; &nbsp; This innovative model for clinical data management is built for speed and scale, combining connectivity, deep clinical&nbsp;expertise, and advanced automation to turn a fragmented he",
     responsibilities: [],
     requirements: [],
     niceToHave: [],

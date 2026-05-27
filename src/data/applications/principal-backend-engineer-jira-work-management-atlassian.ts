@@ -1,6 +1,6 @@
 import type { Application } from "./schema";
 
-export const applicationprincipal_backend_engineer_jira_work_management_atlassian: Application = {
+export const application_principal_backend_engineer_jira_work_management_atlassian: Application = {
   slug: 'principal-backend-engineer-jira-work-management-atlassian',
   company: {
     name: 'Atlassian',
@@ -14,7 +14,7 @@ export const applicationprincipal_backend_engineer_jira_work_management_atlassia
     department: "",
     type: 'full-time',
     remote: true,
-    salaryRange: 'See description',
+    salaryRange: "See description",
   },
   source: {
     url: 'https://www.themuse.com/jobs/atlassian/principal-backend-engineer-jira-work-management',
@@ -27,7 +27,7 @@ export const applicationprincipal_backend_engineer_jira_work_management_atlassia
     notes: "",
   },
   jobDescription: {
-    summary: 'Working at Atlassian Atlassian can hire people in any country where we have a legal entity. Assuming you have eligible working rights and a sufficient time zone overlap with your team, you can choose to work remotely or from an office (unless it\'s necessary for your role to be performed in the office). Interviews and onboarding are conducted virtually, a part of being a distributed-first company. With a sufficient timezone overlap with the team, we\'re able to hire eligible candidates for this ro',
+    summary: "Working at Atlassian Atlassian can hire people in any country where we have a legal entity. Assuming you have eligible working rights and a sufficient time zone overlap with your team, you can choose to work remotely or from an office (unless it's necessary for your role to be performed in the office). Interviews and onboarding are conducted virtually, a part of being a distributed-first company. With a sufficient timezone overlap with the team, we're able to hire eligible candidates for this ro",
     responsibilities: [],
     requirements: [],
     niceToHave: [],

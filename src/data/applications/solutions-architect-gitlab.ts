@@ -1,6 +1,6 @@
 import type { Application } from "./schema";
 
-export const applicationsolutions_architect_gitlab: Application = {
+export const application_solutions_architect_gitlab: Application = {
   slug: 'solutions-architect-gitlab',
   company: {
     name: 'GitLab',
@@ -14,7 +14,7 @@ export const applicationsolutions_architect_gitlab: Application = {
     department: "",
     type: 'full-time',
     remote: true,
-    salaryRange: 'See description',
+    salaryRange: "See description",
   },
   source: {
     url: 'https://www.themuse.com/jobs/gitlab/solutions-architect-062177',
@@ -27,7 +27,7 @@ export const applicationsolutions_architect_gitlab: Application = {
     notes: "",
   },
   jobDescription: {
-    summary: '<div><p>GitLab is the intelligent orchestration platform for DevSecOps. GitLab enables organizations to increase developer productivity, improve operational efficiency, reduce security and compliance risk, and accelerate digital transformation. More than 50 million registered users and more than 50% of the Fortune 100* trust GitLab to ship better, more secure software faster.</p>\n<p>The same principles built into our products are reflected in how our team works: we embrace AI as a core productiv',
+    summary: "<div><p>GitLab is the intelligent orchestration platform for DevSecOps. GitLab enables organizations to increase developer productivity, improve operational efficiency, reduce security and compliance risk, and accelerate digital transformation. More than 50 million registered users and more than 50% of the Fortune 100* trust GitLab to ship better, more secure software faster.</p>\n<p>The same principles built into our products are reflected in how our team works: we embrace AI as a core productiv",
     responsibilities: [],
     requirements: [],
     niceToHave: [],

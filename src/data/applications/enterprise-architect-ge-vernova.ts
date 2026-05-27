@@ -1,6 +1,6 @@
 import type { Application } from "./schema";
 
-export const applicationenterprise_architect_ge_vernova: Application = {
+export const application_enterprise_architect_ge_vernova: Application = {
   slug: 'enterprise-architect-ge-vernova',
   company: {
     name: 'GE Vernova',
@@ -14,7 +14,7 @@ export const applicationenterprise_architect_ge_vernova: Application = {
     department: "",
     type: 'full-time',
     remote: true,
-    salaryRange: 'See description',
+    salaryRange: "See description",
   },
   source: {
     url: 'https://www.themuse.com/jobs/gevernova/enterprise-architect-0b39e1',
@@ -27,7 +27,7 @@ export const applicationenterprise_architect_ge_vernova: Application = {
     notes: "",
   },
   jobDescription: {
-    summary: '<p><b><b><b><b>Job Description Summary</b></b></b></b><br><br>Responsible for multiple projects as a project leader or internal consultant. Will lead highly complex projects that require in-depth domain knowledge or two or more specialized architecture areas. Will work across multiple technical or functional domains.<br><br><b><b>Job Description</b></b><br><br><b>Roles and Responsibilities</b><br>In this role you will:• Contribute to the development of project and data delivery platforms with re',
+    summary: "<p><b><b><b><b>Job Description Summary</b></b></b></b><br><br>Responsible for multiple projects as a project leader or internal consultant. Will lead highly complex projects that require in-depth domain knowledge or two or more specialized architecture areas. Will work across multiple technical or functional domains.<br><br><b><b>Job Description</b></b><br><br><b>Roles and Responsibilities</b><br>In this role you will:\u2022 Contribute to the development of project and data delivery platforms with re",
     responsibilities: [],
     requirements: [],
     niceToHave: [],

@@ -1,6 +1,6 @@
 import type { Application } from "./schema";
 
-export const applicationsenior_security_engineer_red_team_doordash: Application = {
+export const application_senior_security_engineer_red_team_doordash: Application = {
   slug: 'senior-security-engineer-red-team-doordash',
   company: {
     name: 'DoorDash',
@@ -14,7 +14,7 @@ export const applicationsenior_security_engineer_red_team_doordash: Application 
     department: "",
     type: 'full-time',
     remote: true,
-    salaryRange: 'See description',
+    salaryRange: "See description",
   },
   source: {
     url: 'https://www.themuse.com/jobs/doordash/senior-security-engineer-red-team',
@@ -27,7 +27,7 @@ export const applicationsenior_security_engineer_red_team_doordash: Application 
     notes: "",
   },
   jobDescription: {
-    summary: 'About the Team At DoorDash we\'re building the industry\'s most scalable and reliable delivery network to support our three-sided marketplace of consumers, merchants, and Dashers. Security is paramount to the success of our business, and DoorDash Security aspires to be the world\'s best security team. We are committed to protecting our people, partners, customers, and technologies with robust safeguards and unwavering vigilance. About the Role The Senior Security Engineer, Red Team will be responsi',
+    summary: "About the Team At DoorDash we're building the industry's most scalable and reliable delivery network to support our three-sided marketplace of consumers, merchants, and Dashers. Security is paramount to the success of our business, and DoorDash Security aspires to be the world's best security team. We are committed to protecting our people, partners, customers, and technologies with robust safeguards and unwavering vigilance. About the Role The Senior Security Engineer, Red Team will be responsi",
     responsibilities: [],
     requirements: [],
     niceToHave: [],

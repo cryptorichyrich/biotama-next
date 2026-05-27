@@ -1,6 +1,6 @@
 import type { Application } from "./schema";
 
-export const applicationclient_platform_engineer_iii_doordash: Application = {
+export const application_client_platform_engineer_iii_doordash: Application = {
   slug: 'client-platform-engineer-iii-doordash',
   company: {
     name: 'DoorDash',
@@ -14,7 +14,7 @@ export const applicationclient_platform_engineer_iii_doordash: Application = {
     department: "",
     type: 'full-time',
     remote: true,
-    salaryRange: 'See description',
+    salaryRange: "See description",
   },
   source: {
     url: 'https://www.themuse.com/jobs/doordash/client-platform-engineer-iii-9840c2',
@@ -27,7 +27,7 @@ export const applicationclient_platform_engineer_iii_doordash: Application = {
     notes: "",
   },
   jobDescription: {
-    summary: 'About the Team The Client Platform Engineering team is responsible for configuration, management and automation of macOS, iOS, Windows, ChromeOS and Android endpoints to help DoorDash, Deliveroo and Wolt employees and merchants do their best work. CPE is a global team with members in the United States, United Kingdom and Finland. About the Role We are looking for a Client Platform Engineer in the U.S. with a strong security background who values responsibility and accountability for the manageme',
+    summary: "About the Team The Client Platform Engineering team is responsible for configuration, management and automation of macOS, iOS, Windows, ChromeOS and Android endpoints to help DoorDash, Deliveroo and Wolt employees and merchants do their best work. CPE is a global team with members in the United States, United Kingdom and Finland. About the Role We are looking for a Client Platform Engineer in the U.S. with a strong security background who values responsibility and accountability for the manageme",
     responsibilities: [],
     requirements: [],
     niceToHave: [],

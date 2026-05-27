@@ -1,6 +1,6 @@
 import type { Application } from "./schema";
 
-export const applicationtech_lead_full_stack_rails_engineer_mitre_media: Application = {
+export const application_tech_lead_full_stack_rails_engineer_mitre_media: Application = {
   slug: 'tech-lead-full-stack-rails-engineer-mitre-media',
   company: {
     name: 'Mitre Media',
@@ -14,7 +14,7 @@ export const applicationtech_lead_full_stack_rails_engineer_mitre_media: Applica
     department: "",
     type: 'full-time',
     remote: true,
-    salaryRange: '$170k - $200k',
+    salaryRange: "$170k - $200k",
   },
   source: {
     url: 'https://remotive.com/remote-jobs/software-development/tech-lead-full-stack-rails-engineer-2069746',
@@ -27,7 +27,7 @@ export const applicationtech_lead_full_stack_rails_engineer_mitre_media: Applica
     notes: "",
   },
   jobDescription: {
-    summary: '<p class="h1" dir="ltr" style="line-height: 1.38; background-color: #ffffff; margin-top: 24pt; margin-bottom: 0pt; padding: 0pt 0pt 6pt 0pt;"><span style="color: #000000; font-weight: bold; white-space-collapse: preserve;">About Mitre Media</span></p>\n<p dir="ltr" style="line-height: 1.38; background-color: #ffffff; margin-top: 0pt; margin-bottom: 0pt; padding: 0pt 0pt 18pt 0pt;"><span style="color: #000000; background-color: transparent; font-weight: 400; font-style: normal; font-variant: norma',
+    summary: "<p class=\"h1\" dir=\"ltr\" style=\"line-height: 1.38; background-color: #ffffff; margin-top: 24pt; margin-bottom: 0pt; padding: 0pt 0pt 6pt 0pt;\"><span style=\"color: #000000; font-weight: bold; white-space-collapse: preserve;\">About Mitre Media</span></p>\n<p dir=\"ltr\" style=\"line-height: 1.38; background-color: #ffffff; margin-top: 0pt; margin-bottom: 0pt; padding: 0pt 0pt 18pt 0pt;\"><span style=\"color: #000000; background-color: transparent; font-weight: 400; font-style: normal; font-variant: norma",
     responsibilities: [],
     requirements: [],
     niceToHave: [],

@@ -1,6 +1,6 @@
 import type { Application } from "./schema";
 
-export const applicationsenior_manager_software_engineering_henry_schein: Application = {
+export const application_senior_manager_software_engineering_henry_schein: Application = {
   slug: 'senior-manager-software-engineering-henry-schein',
   company: {
     name: 'Henry Schein',
@@ -14,7 +14,7 @@ export const applicationsenior_manager_software_engineering_henry_schein: Applic
     department: "",
     type: 'full-time',
     remote: true,
-    salaryRange: 'See description',
+    salaryRange: "See description",
   },
   source: {
     url: 'https://www.themuse.com/jobs/henryschein/senior-manager-software-engineering',
@@ -27,7 +27,7 @@ export const applicationsenior_manager_software_engineering_henry_schein: Applic
     notes: "",
   },
   jobDescription: {
-    summary: 'Job Description Manager, Software Engineering Job Description About Us At Henry Schein One UK, we are a tech company with a mission to redefine dental care, creating a future where personalised, AI-driven treatment and intelligent practice management come together to enhance patient care and build a thriving dental practice. Celebrated as one of the \'Sunday Times UK\'s Best Places to Work, our culture at Henry Schein One UK as an inclusive and forward-thinking company means we are committed to cr',
+    summary: "Job Description Manager, Software Engineering Job Description About Us At Henry Schein One UK, we are a tech company with a mission to redefine dental care, creating a future where personalised, AI-driven treatment and intelligent practice management come together to enhance patient care and build a thriving dental practice. Celebrated as one of the 'Sunday Times UK's Best Places to Work, our culture at Henry Schein One UK as an inclusive and forward-thinking company means we are committed to cr",
     responsibilities: [],
     requirements: [],
     niceToHave: [],

@@ -1,6 +1,6 @@
 import type { Application } from "./schema";
 
-export const applicationios_developer_nooro_1956455: Application = {
+export const application_ios_developer_nooro_1956455: Application = {
   slug: 'ios-developer-nooro-1956455',
   company: {
     name: 'nooro',
@@ -14,7 +14,7 @@ export const applicationios_developer_nooro_1956455: Application = {
     department: "",
     type: 'full-time',
     remote: true,
-    salaryRange: '$60k-$130k (depending on experience)',
+    salaryRange: "$60k-$130k (depending on experience)",
   },
   source: {
     url: 'https://remotive.com/remote-jobs/software-development/ios-developer-1956455',
@@ -27,7 +27,7 @@ export const applicationios_developer_nooro_1956455: Application = {
     notes: "",
   },
   jobDescription: {
-    summary: 'iOS Developer at nooro - a US-based remote role. Building iOS applications using Swift, Core Data, and MVVM architecture. Requires experience with REST APIs, Git, and UI/UX design collaboration via Figma.',
+    summary: "iOS Developer at nooro - a US-based remote role. Building iOS applications using Swift, Core Data, and MVVM architecture. Requires experience with REST APIs, Git, and UI/UX design collaboration via Figma.",
     responsibilities: [],
     requirements: [],
     niceToHave: [],
