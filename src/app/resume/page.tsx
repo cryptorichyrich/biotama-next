@@ -9,7 +9,7 @@ import QRCode from "@/components/QRCode";
 const socialLinks = [
   { platform: "LinkedIn", url: profile.socials.find((s) => s.platform === "LinkedIn")?.url ?? "" },
   { platform: "GitHub", url: profile.socials.find((s) => s.platform === "GitHub")?.url ?? "" },
-  { platform: "Website", url: "https://cryptorichyrich.github.io/biotama-next/" },
+  { platform: "Website", url: "https://biotama.cv" },
 ];
 
 const linkLabels: Record<string, string> = {
