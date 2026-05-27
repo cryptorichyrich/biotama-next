@@ -7,9 +7,9 @@ import { blogPosts } from "@/data/blog-posts";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Blog — Bio Lumbantoruan",
+  title: "AI Generated Articles — Bio Lumbantoruan",
   description:
-    "Thoughts on fintech, architecture, and the craft of software engineering.",
+    "Curated, edited, published.",
 };
 
 export default function BlogPage() {
@@ -35,11 +35,10 @@ export default function BlogPage() {
               <span className="text-[var(--color-green-term)]">$</span> cat ~/thoughts/*.md
             </p>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight font-[family-name:var(--font-display)] mb-6">
-              <span className="gradient-text">Blog</span>
+              <span className="gradient-text">AI Generated Articles</span>
             </h1>
             <p className="text-lg text-[var(--color-amber-dim)] max-w-2xl leading-relaxed font-[family-name:var(--font-mono)]">
-              Thoughts on fintech, architecture, and the craft of software
-              engineering.
+              Curated, edited, published.
             </p>
             <div className="section-divider mt-8" />
           </div>

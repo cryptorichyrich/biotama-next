@@ -96,6 +96,11 @@ export default function RootLayout({
         <div className="crt-overlay" />
         <div className="crt-scanline" aria-hidden="true" />
         {children}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.querySelectorAll('.glass-card').forEach((el,i)=>{el.style.setProperty('--shine-delay',String(Math.random()*12))})`,
+          }}
+        />
       </body>
     </html>
   );

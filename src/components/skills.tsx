@@ -12,7 +12,7 @@ export function Skills() {
       </h2>
 
       <p className="text-[var(--color-amber-dim)] text-lg max-w-2xl mb-16 font-[family-name:var(--font-mono)]">
-        The tools and frameworks that power the systems I build.
+        A few things I&rsquo;ve worked with&hellip;
       </p>
 
       {/* Grid of glass-card skill category cards */}
