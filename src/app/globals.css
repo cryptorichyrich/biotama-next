@@ -555,22 +555,30 @@ body {
   background: #ffffff;
 }
 
-/* ── Light mode: green highlighted quotes ── */
+/* ── Light mode: gold highlighted quotes ── */
 [data-theme="light"] .about-quote blockquote,
 [data-theme="light"] .testimonial-quote blockquote {
-  color: #2e7d32;
+  color: #c9a84c;
   font-style: italic;
 }
 [data-theme="light"] .about-quote .quote-author,
 [data-theme="light"] .testimonial-quote .quote-author {
-  color: #2e7d32;
+  color: #c9a84c;
 }
 [data-theme="light"] .about-quote .quote-mark,
 [data-theme="light"] .testimonial-quote .quote-mark {
-  color: rgba(46, 125, 50, 0.15);
+  color: rgba(201, 168, 76, 0.2);
 }
 
-/* ── Light mode: experience timeline ring matches bg ── */
-[data-theme="light"] .timeline-ring {
-  --timeline-ring-color: var(--color-bg);
+/* ── Light mode: stabilo green highlighter for role text ── */
+[data-theme="light"] .role-highlight {
+  color: #1b5e20 !important;
+  background: linear-gradient(180deg, transparent 55%, #a5d6a7 55%, #a5d6a7 85%, transparent 85%);
+  display: inline;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+[data-theme="dark"] .role-highlight {
+  color: var(--color-amber-text);
 }
