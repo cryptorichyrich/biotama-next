@@ -1,6 +1,24 @@
+"use client";
+
+import dynamic from "next/dynamic";
+
+const DataRunner = dynamic(() => import("@/components/DataRunner"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[280px] rounded-lg flex items-center justify-center bg-black border border-[var(--color-green-term)]">
+      <span className="font-mono text-xs text-[var(--color-green-term)] opacity-50">$ loading game module...</span>
+    </div>
+  ),
+});
+
 export function About() {
   return (
     <section id="about" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20 bg-[#070707]">
+      {/* 3D Terminal Game */}
+      <div className="mb-8">
+        <DataRunner />
+      </div>
+
       {/* Section label */}
       <p className="section-label mb-4 gold-reveal">
         <span className="text-[var(--color-green-term)]">$</span> cat /var/log/sysadmin/wisdom.log
