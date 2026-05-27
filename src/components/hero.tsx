@@ -137,7 +137,7 @@ export function Hero() {
 
             {/* Role — highlighter green (stabilo) in light mode */}
             <p
-              className={`mt-4 text-lg sm:text-xl md:text-2xl font-[family-name:var(--font-mono)] text-[var(--color-amber-text)] role-highlight transition-all duration-1000 delay-150 ${
+              className={`mt-4 text-lg sm:text-xl md:text-2xl font-[family-name:var(--font-mono)] role-highlight transition-all duration-1000 delay-150 ${
                 visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
               }`}
             >

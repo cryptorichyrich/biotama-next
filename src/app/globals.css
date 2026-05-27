@@ -572,13 +572,23 @@ body {
 
 /* ── Light mode: stabilo green highlighter for role text ── */
 [data-theme="light"] .role-highlight {
-  color: #1b5e20 !important;
-  background: linear-gradient(180deg, transparent 55%, #a5d6a7 55%, #a5d6a7 85%, transparent 85%);
+  color: #1b5e20;
+  background: #b9f6ca;
+  padding: 0.125em 0.25em;
+  border-radius: 3px;
   display: inline;
-  padding: 0 2px;
-  border-radius: 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  font-weight: 600;
 }
 
 [data-theme="dark"] .role-highlight {
-  color: var(--color-amber-text);
+  color: #003d00;
+  background: linear-gradient(#a5d6a7 0%, #a5d6a7 100%);
+  padding: 0.125em 0.25em;
+  border-radius: 3px;
+  display: inline;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  font-weight: 600;
 }

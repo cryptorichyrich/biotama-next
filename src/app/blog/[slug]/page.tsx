@@ -265,6 +265,35 @@ export default async function BlogPostPage({ params }: Props) {
             <span className="gradient-text">{post.title}</span>
           </h1>
 
+          {/* Article JSON-LD */}
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Article",
+                headline: post.title,
+                description: post.description,
+                author: {
+                  "@type": "Person",
+                  name: "Bio Lumbantoruan",
+                  url: "https://biotama.cv",
+                },
+                datePublished: post.date,
+                dateModified: post.date,
+                keywords: post.tags.join(", "),
+                mainEntityOfPage: {
+                  "@type": "WebPage",
+                  "@id": `https://biotama.cv/blog/${post.slug}`,
+                },
+                publisher: {
+                  "@type": "Person",
+                  name: "Bio Lumbantoruan",
+                },
+              }),
+            }}
+          />
+
           {/* Meta bar — date in amber dim mono */}
           <div className="flex flex-wrap items-center gap-6 text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)] mb-10 pb-8 section-divider">
             <div className="flex items-center gap-2">

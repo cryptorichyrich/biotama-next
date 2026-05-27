@@ -1,0 +1,60 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a0a"/>
+      <stop offset="100%" stop-color="#1a1400"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c7a04d"/>
+      <stop offset="50%" stop-color="#ecd29c"/>
+      <stop offset="100%" stop-color="#c7a04d"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00ff41"/>
+      <stop offset="100%" stop-color="#00cc33"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Grid pattern -->
+  <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(201,168,76,0.05)" stroke-width="1"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+
+  <!-- Terminal window -->
+  <rect x="60" y="60" width="1080" height="510" rx="12" fill="rgba(0,0,0,0.4)" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+
+  <!-- Terminal dots -->
+  <circle cx="90" cy="90" r="6" fill="#00ff41" opacity="0.8"/>
+  <circle cx="110" cy="90" r="6" fill="#c7a04d" opacity="0.5"/>
+  <circle cx="130" cy="90" r="6" fill="#c7a04d" opacity="0.3"/>
+
+  <!-- $ whoami -->
+  <text x="80" y="150" font-family="'Courier New', monospace" font-size="20" fill="#00ff41">$ whoami</text>
+  <text x="100" y="185" font-family="'Spectral', Georgia, serif" font-size="28" font-weight="bold" fill="#c7a04d">Bio Lumbantoruan</text>
+
+  <!-- System Architect -->
+  <text x="100" y="225" font-family="'Courier New', monospace" font-size="18" fill="#c7a04d">System Architect · Fintech Engineer</text>
+
+  <!-- Terminal commands -->
+  <text x="80" y="280" font-family="'Courier New', monospace" font-size="16" fill="#00ff41">$ systemctl status payment-gateway</text>
+  <text x="80" y="305" font-family="'Courier New', monospace" font-size="14" fill="#c7a04d">  ─── ● active (running)</text>
+
+  <text x="80" y="340" font-family="'Courier New', monospace" font-size="16" fill="#00ff41">$ systemctl status database-cluster</text>
+  <text x="80" y="365" font-family="'Courier New', monospace" font-size="14" fill="#c7a04d">  ─── ● active (running)</text>
+
+  <!-- Terminal prompt -->
+  <text x="80" y="420" font-family="'Courier New', monospace" font-size="16" fill="#00ff41">$ cat /var/log/impact.log</text>
+  <text x="100" y="455" font-family="'Courier New', monospace" font-size="14" fill="rgba(201,168,76,0.6)">Designing systems that move money across 69 countries.</text>
+
+  <!-- Blinking cursor -->
+  <rect x="260" y="403" width="10" height="18" fill="#00ff41" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;0;0.7" dur="1s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- Bottom label -->
+  <text x="600" y="545" font-family="'Courier New', monospace" font-size="14" fill="rgba(201,168,76,0.3)" text-anchor="middle">biotama.cv</text>
+</svg>
