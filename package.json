@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "generate-resume-pdf": "tsx scripts/generate-resume-pdf.ts",
+    "generate-application-pdfs": "tsx scripts/generate-application-pdfs.ts",
+    "generate-pdfs": "npm run generate-resume-pdf && npm run generate-application-pdfs"
   },
   "dependencies": {
     "framer-motion": "^12.40.0",
@@ -17,12 +20,16 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^20.19.41",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
+    "puppeteer": "^25.1.0",
+    "puppeteer-report": "^3.2.0",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.22.3",
     "typescript": "^5"
   }
 }
