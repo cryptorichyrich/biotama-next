@@ -36,6 +36,14 @@ yarn-error.log*
 # vercel
 .vercel
 
+# temp files
+*.json-wal
+*-results-*.json
+.schema
+.schema-wal
+query
+query-wal
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
