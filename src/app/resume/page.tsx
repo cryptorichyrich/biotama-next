@@ -1,225 +1,210 @@
 "use client";
 
 import Link from "next/link";
-import {
-  Mail,
-  Phone,
-  MapPin,
-  ExternalLink,
-  Download,
-} from "lucide-react";
 import { profile } from "@/data/profile";
 import { experiences } from "@/data/experience";
-import { projects } from "@/data/projects";
 import { skillGroups } from "@/data/skills";
+
+const socialLinks = profile.socials.filter((s) =>
+  ["LinkedIn", "GitHub"].includes(s.platform)
+);
+
+function formatDate(dateStr: string): string {
+  // Already formatted like "Jan 2026" or "Present"
+  return dateStr;
+}
 
 export default function ResumePage() {
   return (
     <>
       <style>{`
+        @page {
+          size: A4;
+          margin: 15mm;
+        }
+
         @media print {
-          nav, .no-print { display: none !important; }
-          body { background: #000 !important; color: #e8c840 !important; }
-          .resume-container { max-width: 100% !important; padding: 0 !important; box-shadow: none !important; }
-          a { color: #c9a84c !important; text-decoration: underline !important; }
-          .glass-card { background: transparent !important; backdrop-filter: none !important; border: 1px solid rgba(201, 168, 76, 0.3) !important; }
-          .glass-card::before { display: none !important; }
+          html, body {
+            margin: 0;
+            padding: 0;
+            background: #ffffff !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+          }
+          .no-print { display: none !important; }
+          .resume-content { box-shadow: none !important; max-width: 100% !important; padding: 0 !important; }
+          a { color: #1e293b !important; text-decoration: underline; }
+          .page-break { page-break-before: always; }
+        }
+
+        body {
+          font-family: 'Inter', Arial, Helvetica, sans-serif;
+        }
+
+        .resume-content {
+          background: #ffffff;
+          color: #1e293b;
+          max-width: 210mm;
+          margin: 0 auto;
+        }
+
+        @media screen {
+          .resume-content {
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+          }
+        }
+
+        @media print {
+          .resume-content {
+            box-shadow: none;
+          }
+        }
+
+        .print-button:hover {
+          background-color: #1e293b !important;
+          color: #ffffff !important;
         }
       `}</style>
 
-      {/* Print/PDF controls */}
-      <div className="no-print max-w-[900px] mx-auto px-6 pt-8 pb-4 flex items-center justify-between">
+      {/* Screen-only controls */}
+      <div className="no-print max-w-[210mm] mx-auto px-4 pt-6 pb-4 flex items-center justify-between">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)] hover:text-[var(--color-green-term)] transition-colors duration-200 cursor-pointer group"
+          className="inline-flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900 transition-colors"
         >
-          <span className="text-[var(--color-green-term)] group-hover:-translate-x-1 transition-transform duration-200">&lt;-</span>
-          Back to Home
+          ← Back to Home
         </Link>
         <button
           onClick={() => window.print()}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-text)] hover:text-[var(--color-amber-bright)] transition-colors duration-200 glass-card rounded-lg cursor-pointer"
+          className="print-button inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-slate-800 rounded-md hover:bg-slate-900 transition-colors cursor-pointer shadow-sm"
         >
-          <Download size={16} />
-          Print / PDF
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
         </button>
       </div>
 
-      <main className="pb-16">
-        <div className="resume-container max-w-[900px] mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Main glass-card container */}
-          <div className="glass-card p-8 md:p-12">
-            {/* Header — name in gold Spectral */}
-            <div className="pb-8 mb-8 section-divider">
-              <p className="section-label mb-3">
-                <span className="text-[var(--color-green-term)]">$</span> cat /home/bio/.resume
-              </p>
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight font-[family-name:var(--font-display)] mb-3">
-                <span className="gradient-text">{profile.name}</span>
-              </h1>
-              <p className="text-xl font-semibold mt-2 font-[family-name:var(--font-mono)] text-[var(--color-amber-text)]">
-                {profile.role}
-              </p>
-              <p className="text-[var(--color-amber-dim)] mt-3 max-w-2xl leading-relaxed font-[family-name:var(--font-mono)]">
-                {profile.tagline}
-              </p>
-              <div className="flex flex-wrap items-center gap-4 mt-4 text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)]">
-                <span className="flex items-center gap-1.5">
-                  <Mail size={14} className="text-[var(--color-green-term)]" /> {profile.email}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <Phone size={14} className="text-[var(--color-green-term)]" /> {profile.phone}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <MapPin size={14} className="text-[var(--color-green-term)]" /> {profile.location}
-                </span>
+      {/* Resume Content */}
+      <div className="resume-content bg-white text-slate-800 p-8 md:p-10 lg:p-12">
+        {/* ── Header ── */}
+        <header className="border-b border-slate-200 pb-5 mb-5">
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">{profile.name}</h1>
+          <p className="text-lg font-medium text-slate-700 mt-1">{profile.role}</p>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 text-sm text-slate-600">
+            <span>{profile.email}</span>
+            <span className="hidden sm:inline text-slate-300">|</span>
+            <span>{profile.phone}</span>
+            <span className="hidden sm:inline text-slate-300">|</span>
+            <span>{profile.location}</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-sm text-slate-600">
+            {socialLinks.map((s) => (
+              <a
+                key={s.platform}
+                href={s.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-slate-600 hover:text-slate-900 underline underline-offset-2 decoration-slate-300"
+              >
+                {s.platform}
+              </a>
+            ))}
+          </div>
+        </header>
+
+        {/* ── Professional Summary ── */}
+        <section className="mb-6">
+          <h2 className="text-base font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-1 mb-3">
+            Professional Summary
+          </h2>
+          <p className="text-sm text-slate-700 leading-relaxed">{profile.summary}</p>
+        </section>
+
+        {/* ── Experience ── */}
+        <section className="mb-6">
+          <h2 className="text-base font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-1 mb-3">
+            Experience
+          </h2>
+          <div className="space-y-5">
+            {experiences.map((exp) => (
+              <div key={exp.id}>
+                <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-0.5">
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900">{exp.role}</h3>
+                    <p className="text-sm font-medium text-slate-700">{exp.company}</p>
+                  </div>
+                  <div className="text-xs text-slate-500 whitespace-nowrap sm:text-right">
+                    {formatDate(exp.startDate)} – {formatDate(exp.endDate)} | {exp.location}
+                  </div>
+                </div>
+                <ul className="mt-2 space-y-1">
+                  {exp.highlights.map((h, i) => (
+                    <li key={i} className="text-xs text-slate-700 leading-relaxed pl-3 relative">
+                      <span className="absolute left-0 top-[0.45em] w-1 h-1 rounded-full bg-slate-400" />
+                      {h}
+                    </li>
+                  ))}
+                </ul>
+                {exp.tech.length > 0 && (
+                  <p className="text-xs text-slate-500 mt-1.5">
+                    <span className="font-medium">Technologies:</span> {exp.tech.join(", ")}
+                  </p>
+                )}
               </div>
-              <div className="flex items-center gap-3 mt-4">
-                {profile.socials.map((s) => (
-                  <a
-                    key={s.platform}
-                    href={s.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="glass-legend text-xs font-[family-name:var(--font-mono)] text-[var(--color-green-term)] hover:text-[var(--color-amber-bright)] transition-colors duration-200 inline-flex items-center gap-1 cursor-pointer"
-                  >
-                    <ExternalLink size={10} />
-                    {s.platform}
-                  </a>
-                ))}
+            ))}
+          </div>
+        </section>
+
+        {/* ── Education ── */}
+        <section className="mb-6">
+          <h2 className="text-base font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-1 mb-3">
+            Education
+          </h2>
+          {profile.education.map((edu, i) => (
+            <div key={i} className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between text-sm">
+              <div>
+                <p className="font-semibold text-slate-900">{edu.degree}</p>
+                <p className="text-slate-600">{edu.institution}</p>
+              </div>
+              <div className="text-xs text-slate-500 whitespace-nowrap sm:text-right">
+                {edu.startYear} – {edu.endYear} | GPA: {edu.gpa}
               </div>
             </div>
+          ))}
+        </section>
 
-            {/* Experience — gold timeline dots */}
-            <section className="mb-12">
-              <p className="section-label mb-4">
-                <span className="text-[var(--color-green-term)]">$</span> /experience
-              </p>
-              <div className="section-divider mb-6" />
-              <div className="space-y-8">
-                {experiences.map((exp) => (
-                  <div key={exp.id} className="glass-card p-6 transition-all duration-300 hover:-translate-y-1">
-                    {/* Role & company header */}
-                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
-                      <div>
-                        <h3 className="text-lg font-bold font-[family-name:var(--font-display)] text-[var(--color-amber-text)]">
-                          {exp.role}
-                        </h3>
-                        <p className="font-semibold font-[family-name:var(--font-mono)] text-[var(--color-gold)]">
-                          {exp.company}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-1.5 text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)] shrink-0">
-                        <span>{exp.startDate} – {exp.endDate}</span>
-                        <span className="mx-1">·</span>
-                        <span>{exp.location}</span>
-                      </div>
-                    </div>
+        {/* ── Certifications ── */}
+        {profile.certifications.length > 0 && (
+          <section className="mb-6">
+            <h2 className="text-base font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-1 mb-3">
+              Certifications
+            </h2>
+            <ul className="space-y-1">
+              {profile.certifications.map((cert, i) => (
+                <li key={i} className="text-sm text-slate-700">
+                  {cert.title} – {cert.institution} ({cert.date})
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
-                    {/* Highlights — gold timeline dots */}
-                    <ul className="space-y-2 mt-3">
-                      {exp.highlights.map((h, j) => (
-                        <li
-                          key={j}
-                          className="text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)] flex items-start gap-3 leading-relaxed"
-                        >
-                          <span
-                            className="mt-1.5 w-2 h-2 rounded-full shrink-0"
-                            style={{ background: "var(--color-gold)" }}
-                          />
-                          {h}
-                        </li>
-                      ))}
-                    </ul>
-
-                    {/* Tech stack as .glass-legend badges */}
-                    <div className="flex flex-wrap gap-1.5 mt-4">
-                      {exp.tech.map((t) => (
-                        <span
-                          key={t}
-                          className="glass-legend text-xs font-[family-name:var(--font-mono)] text-[var(--color-green-term)]"
-                        >
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+        {/* ── Technical Skills ── */}
+        <section>
+          <h2 className="text-base font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-1 mb-3">
+            Technical Skills
+          </h2>
+          <div className="space-y-2">
+            {skillGroups.map((group) => (
+              <div key={group.category} className="text-sm">
+                <span className="font-semibold text-slate-900">{group.category}: </span>
+                <span className="text-slate-700">
+                  {group.skills.map((s) => s.name).join(", ")}
+                </span>
               </div>
-            </section>
-
-            {/* Projects */}
-            <section className="mb-12">
-              <p className="section-label mb-4">
-                <span className="text-[var(--color-green-term)]">$</span> /projects
-              </p>
-              <div className="section-divider mb-6" />
-              <div className="grid sm:grid-cols-2 gap-4">
-                {projects.filter((p) => p.featured).map((proj) => (
-                  <div key={proj.id} className="glass-card p-5 transition-all duration-300 hover:-translate-y-1 group">
-                    <h3 className="font-bold font-[family-name:var(--font-display)] text-[var(--color-amber-text)] mb-2 group-hover:text-[var(--color-gold)] transition-colors duration-200">
-                      {proj.name}
-                    </h3>
-                    <p className="text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)] leading-relaxed mb-3">
-                      {proj.description}
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {proj.tech.map((t) => (
-                        <span
-                          key={t}
-                          className="glass-legend text-xs font-[family-name:var(--font-mono)] text-[var(--color-green-term)]"
-                        >
-                          {t}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* Technical Skills — category cards with green level dots */}
-            <section>
-              <p className="section-label mb-4">
-                <span className="text-[var(--color-green-term)]">$</span> /technical-skills
-              </p>
-              <div className="section-divider mb-6" />
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {skillGroups.map((group) => (
-                  <div key={group.category} className="glass-card p-5 transition-all duration-300 hover:-translate-y-1">
-                    <h3 className="font-semibold text-[var(--color-green-term)] mb-3 font-[family-name:var(--font-mono)] text-xs uppercase tracking-wider">
-                      {group.category}
-                    </h3>
-                    <div className="space-y-2">
-                      {group.skills.map((s) => (
-                        <div key={s.name} className="flex items-center justify-between">
-                          <span className="text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-text)]">
-                            {s.name}
-                          </span>
-                          {s.level != null && (
-                            <div className="flex gap-0.5">
-                              {Array.from({ length: 5 }, (_, i) => (
-                                <span
-                                  key={i}
-                                  className={`w-1.5 h-1.5 rounded-full ${
-                                    i < (s.level ?? 0)
-                                      ? "bg-[var(--color-green-term)]"
-                                      : "bg-[var(--color-text-muted)]"
-                                  }`}
-                                />
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
+            ))}
           </div>
-        </div>
-      </main>
+        </section>
+      </div>
     </>
   );
 }

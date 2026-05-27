@@ -104,6 +104,22 @@ export function Navbar() {
             ))}
             <li className="ml-3">
               <a
+                href="/applications"
+                className={cn(
+                  "inline-flex items-center gap-2 px-5 py-2 text-sm font-[family-name:var(--font-mono)] cursor-pointer",
+                  "rounded-lg border border-[var(--color-amber-dim)]",
+                  "text-[var(--color-amber-text)]",
+                  "transition-all duration-300",
+                  "hover:bg-[var(--color-amber-dim)]/10",
+                  "hover:shadow-[0_0_16px_rgba(201,168,76,0.2)]"
+                )}
+              >
+                <span className="text-[var(--color-amber-text)]">$</span>
+                Apps
+              </a>
+            </li>
+            <li>
+              <a
                 href="/resume"
                 className={cn(
                   "inline-flex items-center gap-2 px-5 py-2 text-sm font-[family-name:var(--font-mono)] cursor-pointer",
@@ -172,6 +188,28 @@ export function Navbar() {
           ))}
           <li className="mt-4 overflow-hidden">
             <a
+              href="/applications"
+              className={cn(
+                "inline-flex items-center gap-2 px-8 py-3 text-base font-[family-name:var(--font-mono)] cursor-pointer",
+                "rounded-lg border border-[var(--color-amber-dim)]",
+                "text-[var(--color-amber-text)]",
+                "transition-all duration-300",
+                "hover:bg-[var(--color-amber-dim)]/10",
+                menuOpen
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-8 opacity-0",
+                "transition-[transform,opacity] duration-500 ease-out"
+              )}
+              style={{
+                transitionDelay: menuOpen ? `${NAV_ITEMS.length * 60}ms` : "0ms",
+              }}
+            >
+              <span className="text-[var(--color-amber-text)]">$</span>
+              Apps
+            </a>
+          </li>
+          <li className="mt-2 overflow-hidden">
+            <a
               href="/resume"
               className={cn(
                 "inline-flex items-center gap-2 px-8 py-3 text-base font-[family-name:var(--font-mono)] cursor-pointer",
@@ -185,7 +223,7 @@ export function Navbar() {
                 "transition-[transform,opacity] duration-500 ease-out"
               )}
               style={{
-                transitionDelay: menuOpen ? `${NAV_ITEMS.length * 60}ms` : "0ms",
+                transitionDelay: menuOpen ? `${(NAV_ITEMS.length + 1) * 60}ms` : "0ms",
               }}
             >
               <span className="text-[var(--color-green-term)]">$</span>

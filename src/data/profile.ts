@@ -4,6 +4,20 @@ export interface SocialLink {
   label: string;
 }
 
+export interface Education {
+  degree: string;
+  institution: string;
+  gpa: string;
+  startYear: string;
+  endYear: string;
+}
+
+export interface Certification {
+  title: string;
+  institution: string;
+  date: string;
+}
+
 export interface Profile {
   name: string;
   role: string;
@@ -13,11 +27,14 @@ export interface Profile {
   location: string;
   bio: string;
   photoUrl: string;
+  summary: string;
   metrics: {
     label: string;
     value: string;
   }[];
   socials: SocialLink[];
+  education: Education[];
+  certifications: Certification[];
 }
 
 export const profile: Profile = {
@@ -28,8 +45,9 @@ export const profile: Profile = {
   email: "fxwisdom1@gmail.com",
   phone: "+62 813 9825 3186",
   location: "Jakarta, Indonesia",
-  bio: "I've spent a decade building payment infrastructure for Pepperstone, TitanFX, and now Srabutan. PCI-DSS compliant gateways, real-time FX trading systems, and marketplace platforms that handle millions in daily throughput. Currently architecting Indonesia's next freelance marketplace from scratch — frontend to backend to cloud deployment.",
+  bio: "",
   photoUrl: "/photo.jpg",
+  summary: "Fullstack architect. 10 years of fintech, e-commerce, and SaaS in production. React, Next.js, TypeScript, Node.js, NestJS, FastAPI, PostgreSQL. Payment gateways across 69 countries. One freelance marketplace from scratch. Currently building Srabutan — fullstack, CI/CD, containerized.",
   metrics: [
     { label: "Years Live", value: "10" },
     { label: "Pepperstone Clients", value: "14K+" },
@@ -57,5 +75,18 @@ export const profile: Profile = {
       url: "https://www.facebook.com/Agustinus.Biotamalo.Lumbantoruan/",
       label: "Facebook Profile",
     },
+  ],
+  education: [
+    {
+      degree: "Bachelor of Information System",
+      institution: "Swiss German University",
+      gpa: "3.34",
+      startYear: "2007",
+      endYear: "2011",
+    },
+  ],
+  certifications: [
+    { title: "AWS Certified Solutions Architect", institution: "Amazon Web Services", date: "2023" },
+    { title: "Google Professional Cloud Architect", institution: "Google Cloud", date: "2022" },
   ],
 };
