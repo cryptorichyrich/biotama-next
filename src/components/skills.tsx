@@ -2,7 +2,7 @@ import { skillGroups } from "@/data/skills";
 
 export function Skills() {
   return (
-    <section id="skills" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20 bg-[#000000]">
+    <section id="skills" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20">
       <p className="section-label mb-4">
         <span className="text-[var(--color-green-term)]">$</span> which $(compgen -c)
       </p>

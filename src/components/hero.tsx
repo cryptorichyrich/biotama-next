@@ -101,7 +101,7 @@ export function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center bg-[#000000] overflow-hidden"
+      className="relative min-h-screen flex items-center overflow-hidden"
     >
       {/* ── CRT Boot Animation wrapper ── */}
       <div

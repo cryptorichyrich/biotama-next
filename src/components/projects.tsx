@@ -2,7 +2,7 @@ import { projects } from "@/data/projects";
 
 export function Projects() {
   return (
-    <section id="projects" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20 bg-[#070707]">
+    <section id="projects" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20">
       {/* Terminal-style header */}
       <p className="section-label mb-4">
         <span className="text-[var(--color-green-term)]">$</span> ls -la ~/projects/

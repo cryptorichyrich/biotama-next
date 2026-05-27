@@ -7,7 +7,7 @@ export function BlogPreview() {
   const posts = getLatestPosts(6);
 
   return (
-    <section id="blog" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20 bg-[#000000]">
+    <section id="blog" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20">
       <p className="section-label mb-4">
         <span className="text-[var(--color-green-term)]">$</span> cat ~/thoughts/*.md | tail -6
       </p>

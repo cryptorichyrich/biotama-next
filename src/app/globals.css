@@ -2,24 +2,55 @@
 
 /* ═══════════════════════════════════════════════════════════════
    THE VAULT TERMINAL — Design System
-   Material: Amber CRT + Gold + Terminal Green + iPhone OS Glass
+   Dark mode: Amber CRT + Gold + Terminal Green + iPhone OS Glass
+   Light mode: Clean gray-white with dark slate and gold accents
    ═══════════════════════════════════════════════════════════════ */
 
 @theme inline {
-  /* ── Core Canvas ── */
-  --color-crt-black: #000000;
-  --color-crt-black-alt: #070707;
-  --color-crt-black-void: #040404;
+  /* ── Fonts ── */
+  --font-display: "Spectral", ui-serif, Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
-  /* ── Amber CRT (Primary Atmosphere) ── */
+  /* ── Radius Scale ── */
+  --radius-glass: 20px;
+  --radius-glass-sm: 12px;
+  --radius-glass-xs: 8px;
+  --radius-pill: 9999px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DARK THEME (default) — Vault Terminal
+   ═══════════════════════════════════════════════════════════════ */
+[data-theme="dark"], html:not([data-theme]) {
+  /* ── Surface & Background ── */
+  --color-bg: #000000;
+  --color-bg-alt: #070707;
+  --color-bg-void: #040404;
+  --color-surface: rgba(201, 168, 76, 0.04);
+  --color-surface-hover: rgba(201, 168, 76, 0.07);
+  --color-elevated: rgba(201, 168, 76, 0.06);
+
+  /* ── Text ── */
+  --color-text-primary: #e8c840;
+  --color-text-secondary: #b88830;
+  --color-text-tertiary: #8a6a20;
+  --color-text-muted: #5a4510;
+  --color-text-body: #f0e8d0;
+  --color-text-heading: #f0e8d0;
+
+  /* ── Borders & Structure ── */
+  --color-border: rgba(201, 168, 76, 0.15);
+  --color-border-hover: rgba(201, 168, 76, 0.3);
+  --color-border-subtle: rgba(201, 168, 76, 0.08);
+
+  /* ── Amber CRT ── */
   --color-amber-text: #e8c840;
   --color-amber-bright: #ffd633;
   --color-amber-dim: #b88830;
   --color-amber-glow: rgba(255, 176, 0, 0.1);
   --color-amber-glow-strong: rgba(255, 176, 0, 0.2);
-  --color-amber-crt: #ffb000;
 
-  /* ── Gold (Structural/Metallic) ── */
+  /* ── Gold ── */
   --color-gold: #c9a84c;
   --color-gold-bright: #dbc06a;
   --color-gold-dim: #a88838;
@@ -27,42 +58,93 @@
   --color-gold-subtle: rgba(201, 168, 76, 0.12);
   --color-gold-mist: rgba(201, 168, 76, 0.06);
 
-  /* ── Terminal Green (Active Signals) ── */
+  /* ── Terminal Green ── */
   --color-green-term: #00ff41;
   --color-green-term-dim: #00cc33;
   --color-green-term-glow: rgba(0, 255, 65, 0.3);
   --color-green-term-bg: rgba(0, 255, 65, 0.06);
   --color-green-term-bg-hover: rgba(0, 255, 65, 0.12);
+  --color-green-term-text: #00ff41;
 
-  /* ── Glass (iPhone OS Style) ── */
-  --color-glass-bg: rgba(201, 168, 76, 0.04);
-  --color-glass-bg-hover: rgba(201, 168, 76, 0.07);
-  --color-glass-border: rgba(201, 168, 76, 0.15);
-  --color-glass-border-hover: rgba(201, 168, 76, 0.3);
-  --color-glass-glow: rgba(201, 168, 76, 0.06);
-
-  /* ── Glass Card Radial Glow ── */
+  /* ── Glass Card ── */
   --color-glass-card-glow: rgba(255, 255, 255, 0.04);
 
-  /* ── Layer Opacities ── */
-  --opacity-glass-surface: 0.04;
-  --opacity-glass-card: 0.06;
-  --opacity-glass-sidebar: 0.02;
-  --opacity-glass-modal: 0.92;
+  /* ── CRT Effects ── */
+  --crt-overlay-opacity: 0.015;
 
-  /* ── Neutral Text ── */
-  --color-text-primary: #e8c840;
-  --color-text-secondary: #b88830;
-  --color-text-tertiary: #8a6a20;
-  --color-text-muted: #5a4510;
-  --color-text-white: #f0e8d0;
+  /* ── Section backgrounds ── */
+  --color-section-bg: transparent;
 
-  /* ── Fonts ── */
-  --font-display: "Spectral", ui-serif, Georgia, serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  /* ── Navbar ── */
+  --color-navbar-bg: rgba(0, 0, 0, 0.8);
+  --color-navbar-border: rgba(201, 168, 76, 0.08);
 }
 
-/* ── Base ── */
+/* ═══════════════════════════════════════════════════════════════
+   LIGHT THEME — Clean gray-white room
+   ═══════════════════════════════════════════════════════════════ */
+[data-theme="light"] {
+  /* ── Surface & Background ── */
+  --color-bg: #f5f4f0;
+  --color-bg-alt: #efeee9;
+  --color-bg-void: #eae8e3;
+  --color-surface: rgba(0, 0, 0, 0.02);
+  --color-surface-hover: rgba(0, 0, 0, 0.04);
+  --color-elevated: #ffffff;
+
+  /* ── Text ── */
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #555555;
+  --color-text-tertiary: #888888;
+  --color-text-muted: #aaaaaa;
+  --color-text-body: #333333;
+  --color-text-heading: #111111;
+
+  /* ── Borders & Structure ── */
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-hover: rgba(0, 0, 0, 0.15);
+  --color-border-subtle: rgba(0, 0, 0, 0.04);
+
+  /* ── Amber CRT becomes gold accent ── */
+  --color-amber-text: #b8860b;
+  --color-amber-bright: #d4a017;
+  --color-amber-dim: #8b6914;
+  --color-amber-glow: rgba(184, 134, 11, 0.08);
+  --color-amber-glow-strong: rgba(184, 134, 11, 0.15);
+
+  /* ── Gold ── */
+  --color-gold: #b8860b;
+  --color-gold-bright: #d4a017;
+  --color-gold-dim: #8b6914;
+  --color-gold-glow: rgba(184, 134, 11, 0.2);
+  --color-gold-subtle: rgba(184, 134, 11, 0.08);
+  --color-gold-mist: rgba(184, 134, 11, 0.04);
+
+  /* ── Terminal Green ── */
+  --color-green-term: #2e7d32;
+  --color-green-term-dim: #1b5e20;
+  --color-green-term-glow: rgba(46, 125, 50, 0.2);
+  --color-green-term-bg: rgba(46, 125, 50, 0.06);
+  --color-green-term-bg-hover: rgba(46, 125, 50, 0.1);
+  --color-green-term-text: #2e7d32;
+
+  /* ── Glass Card ── */
+  --color-glass-card-glow: rgba(255, 255, 255, 0.6);
+
+  /* ── CRT Effects (disabled in light) ── */
+  --crt-overlay-opacity: 0;
+
+  /* ── Section backgrounds ── */
+  --color-section-bg: #ffffff;
+
+  /* ── Navbar ── */
+  --color-navbar-bg: rgba(255, 255, 255, 0.9);
+  --color-navbar-border: rgba(0, 0, 0, 0.06);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BASE
+   ═══════════════════════════════════════════════════════════════ */
 html {
   scroll-behavior: smooth;
 }
@@ -77,15 +159,15 @@ html {
 }
 
 body {
-  background: var(--color-crt-black);
-  color: var(--color-text-white);
+  background: var(--color-bg);
+  color: var(--color-text-body);
   font-family: var(--font-mono);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
-/* ── CRT Scan Line Overlay ── */
+/* ── CRT Scan Line Overlay (dark mode only) ── */
 .crt-overlay {
   position: fixed;
   inset: 0;
@@ -93,14 +175,14 @@ body {
   pointer-events: none;
   background: repeating-linear-gradient(
     0deg,
-    rgba(0, 0, 0, 0.015) 0px,
-    rgba(0, 0, 0, 0.015) 1px,
+    rgba(0, 0, 0, var(--crt-overlay-opacity, 0.015)) 0px,
+    rgba(0, 0, 0, var(--crt-overlay-opacity, 0.015)) 1px,
     transparent 1px,
     transparent 3px
   );
 }
 
-/* ── CRT Glow ── */
+/* ── CRT Glow (dark mode only) ── */
 .crt-glow {
   text-shadow: 0 0 4px var(--color-amber-glow), 0 0 8px var(--color-amber-glow-strong);
 }
@@ -125,23 +207,23 @@ body {
 ::-webkit-scrollbar-thumb:hover { background: var(--color-gold-dim); }
 
 /* ═══════════════════════════════════════════════════════════════
-   GLASS COMPONENTS — iPhone OS Style
+   GLASS COMPONENTS
    ═══════════════════════════════════════════════════════════════ */
 
-/* ── Glass Surface (Foundational) ── */
+/* ── Glass Surface ── */
 .glass {
   background: linear-gradient(
     135deg,
-    var(--color-glass-bg),
-    rgba(201, 168, 76, 0.01)
+    var(--color-surface),
+    transparent
   );
   backdrop-filter: blur(24px) saturate(1.2);
   -webkit-backdrop-filter: blur(24px) saturate(1.2);
   border: 1px solid transparent;
   border-image: linear-gradient(
     135deg,
-    var(--color-glass-border),
-    rgba(201, 168, 76, 0.04)
+    var(--color-border),
+    transparent
   ) 1;
   border-radius: var(--radius-glass);
   transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
@@ -150,51 +232,52 @@ body {
 .glass:hover {
   background: linear-gradient(
     135deg,
-    var(--color-glass-bg-hover),
-    rgba(201, 168, 76, 0.02)
+    var(--color-surface-hover),
+    transparent
   );
-  border-color: var(--color-glass-border-hover);
+  border-color: var(--color-border-hover);
 }
 
-/* ── Glass Card (Realistic Lens Effect — visionOS style) ── */
+/* ── Glass Card ── */
 .glass-card {
   position: relative;
   border-radius: 20px;
   overflow: hidden;
-  /* Base glass: amber-tinted with stronger blur */
   background:
-    /* Layer 1: soft radial glow (light source from top) */
     radial-gradient(
       ellipse 120% 70% at 50% 20%,
-      rgba(255, 255, 255, 0.06) 0%,
+      var(--color-glass-card-glow) 0%,
       transparent 60%
     ),
-    /* Layer 2: amber warmth in the center */
     radial-gradient(
       ellipse 90% 60% at 50% 50%,
-      rgba(201, 168, 76, 0.04) 0%,
+      var(--color-gold-mist) 0%,
       transparent 70%
     ),
-    /* Layer 3: bottom refraction (lens edge thickness) */
     linear-gradient(
       180deg,
       transparent 60%,
-      rgba(201, 168, 76, 0.03) 100%
+      var(--color-gold-mist) 100%
     );
   backdrop-filter: blur(32px) saturate(1.3);
   -webkit-backdrop-filter: blur(32px) saturate(1.3);
   box-shadow:
-    /* Fresnel-like edge glow (light catching the lens rim) */
     0 -1px 1px rgba(255, 255, 255, 0.04),
     0 1px 2px rgba(0, 0, 0, 0.4),
-    /* Bottom glass thickness shadow */
     0 4px 8px rgba(0, 0, 0, 0.3),
-    /* Soft ambient glow */
-    0 0 40px rgba(201, 168, 76, 0.02);
+    0 0 40px var(--color-gold-mist);
   transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* ── Lens border: multi-stop gradient that catches light ── */
+[data-theme="light"] .glass-card {
+  background: #ffffff;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 4px 12px rgba(0, 0, 0, 0.04);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 .glass-card::before {
   content: "";
   position: absolute;
@@ -204,11 +287,11 @@ body {
   background: linear-gradient(
     135deg,
     rgba(255, 255, 255, 0.12) 0%,
-    rgba(201, 168, 76, 0.15) 20%,
+    var(--color-gold-subtle) 20%,
     rgba(255, 255, 255, 0.04) 40%,
-    rgba(201, 168, 76, 0.08) 60%,
-    rgba(201, 168, 76, 0.35) 80%,
-    rgba(201, 168, 76, 0.15) 100%
+    var(--color-gold-subtle) 60%,
+    var(--color-gold-glow) 80%,
+    var(--color-gold-subtle) 100%
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -217,19 +300,16 @@ body {
   transition: opacity 0.4s ease;
 }
 
-.glass-card:hover::before {
+[data-theme="light"] .glass-card::before {
   background: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(201, 168, 76, 0.25) 20%,
-    rgba(255, 255, 255, 0.06) 40%,
-    rgba(201, 168, 76, 0.12) 60%,
-    rgba(201, 168, 76, 0.5) 80%,
-    rgba(201, 168, 76, 0.25) 100%
+    transparent 0%,
+    rgba(0, 0, 0, 0.04) 50%,
+    transparent 100%
   );
 }
 
-/* ── Lens reflection sweep (like light gliding across a camera lens) ── */
+/* ── Lens sweep animation (dark mode only) ── */
 .glass-card::after {
   content: "";
   position: absolute;
@@ -240,7 +320,7 @@ body {
     transparent 30%,
     rgba(255, 255, 255, 0.04) 38%,
     rgba(255, 255, 255, 0.06) 42%,
-    rgba(201, 168, 76, 0.04) 45%,
+    var(--color-gold-mist) 45%,
     rgba(255, 255, 255, 0.04) 48%,
     transparent 55%
   );
@@ -250,6 +330,10 @@ body {
   transition: none;
   animation: lens-sweep 8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
   animation-delay: calc(var(--shine-delay, 0) * 1s);
+}
+
+[data-theme="light"] .glass-card::after {
+  display: none;
 }
 
 @keyframes lens-sweep {
@@ -269,44 +353,42 @@ body {
     0 0 80px var(--color-gold-mist);
 }
 
-/* ── Glass Surface (Apple-style, very subtle) ── */
+[data-theme="light"] .glass-card:hover {
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* ── Glass Apple (navbar) ── */
 .glass-apple {
-  background: rgba(201, 168, 76, 0.03);
+  background: var(--color-navbar-bg);
   backdrop-filter: blur(40px) saturate(1.4);
   -webkit-backdrop-filter: blur(40px) saturate(1.4);
-  border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+  border-bottom: 1px solid var(--color-navbar-border);
   transition: all 0.3s ease;
 }
 
-/* ── Glass Inset (deep panels) ── */
+/* ── Glass Inset ── */
 .glass-inset {
-  background: rgba(201, 168, 76, 0.02);
+  background: var(--color-surface);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(201, 168, 76, 0.06);
+  border: 1px solid var(--color-border-subtle);
   border-radius: 12px;
 }
 
-/* ── Glass Legend (for labels/badges) ── */
+/* ── Glass Legend ── */
 .glass-legend {
-  background: rgba(0, 255, 65, 0.06);
+  background: var(--color-green-term-bg);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(0, 255, 65, 0.15);
+  border: 1px solid var(--color-green-term-glow);
   border-radius: 6px;
   padding: 2px 10px;
 }
 
-/* ── Radius Scale ── */
-:root {
-  --radius-glass: 20px;
-  --radius-glass-sm: 12px;
-  --radius-glass-xs: 8px;
-  --radius-pill: 9999px;
-}
-
 /* ═══════════════════════════════════════════════════════════════
-   AMBER CRT TEXT UTILITIES
+   TEXT UTILITIES
    ═══════════════════════════════════════════════════════════════ */
 
 .text-amber { color: var(--color-amber-text); }
@@ -315,9 +397,15 @@ body {
 .text-gold { color: var(--color-gold); }
 .text-green-term { color: var(--color-green-term); }
 
-/* ── Gradient text (gold to amber) ── */
 .gradient-text {
-  background: linear-gradient(135deg, #f0e8d0 0%, #ffd633 40%, #c9a84c 100%);
+  background: linear-gradient(135deg, var(--color-text-heading) 0%, var(--color-amber-bright) 40%, var(--color-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme="light"] .gradient-text {
+  background: linear-gradient(135deg, #111111 0%, #b8860b 40%, #8b6914 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -333,7 +421,7 @@ body {
   font-weight: 500;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--color-green-term);
+  color: var(--color-green-term-text);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -357,7 +445,6 @@ body {
    ANIMATIONS
    ═══════════════════════════════════════════════════════════════ */
 
-/* ── CRT Power-On Flicker ── */
 @keyframes crt-on {
   0% { opacity: 0; filter: brightness(10) blur(10px); }
   3% { opacity: 0.8; filter: brightness(3) blur(2px); }
@@ -370,7 +457,6 @@ body {
   animation: crt-on 0.5s ease-out forwards;
 }
 
-/* ── Terminal Cursor Blink ── */
 @keyframes blink {
   0%, 100% { opacity: 1; }
   50% { opacity: 0; }
@@ -380,7 +466,6 @@ body {
   animation: blink 1s step-end infinite;
 }
 
-/* ── Gold Shimmer Reveal ── */
 @keyframes gold-sweep {
   0% { background-position: -200% center; }
   100% { background-position: 200% center; }
@@ -390,21 +475,16 @@ body {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(201, 168, 76, 0.15) 50%,
+    var(--color-gold-subtle) 50%,
     transparent 100%
   );
   background-size: 200% 100%;
   animation: gold-sweep 1.5s ease-out forwards;
 }
 
-/* ── Gold Diagonal Reveal ── */
 @keyframes gold-reveal {
-  0% {
-    clip-path: inset(0 100% 0 0);
-  }
-  100% {
-    clip-path: inset(0 0 0 0);
-  }
+  0% { clip-path: inset(0 100% 0 0); }
+  100% { clip-path: inset(0 0 0 0); }
 }
 
 .gold-reveal {
@@ -420,7 +500,6 @@ body {
   animation: gold-draw 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-/* ── Amber Float (for particles) ── */
 @keyframes amber-float {
   0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
   10% { opacity: 1; }
@@ -432,7 +511,6 @@ body {
   animation: amber-float 6s ease-in-out infinite;
 }
 
-/* ── Glass Card 3D Tilt Container ── */
 .tilt-3d {
   perspective: 800px;
 }
@@ -443,15 +521,13 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   CRT SCAN ANIMATION
+   CRT SCANLINE (dark mode only)
    ═══════════════════════════════════════════════════════════════ */
 
 @keyframes scanline {
   0% { transform: translateY(0); }
   100% { transform: translateY(100vh); }
 }
-
-/* ── Glass shine reflection sweep replaced by lens-sweep above ── */
 
 .crt-scanline::after {
   content: "";
@@ -464,4 +540,17 @@ body {
   animation: scanline 4s linear infinite;
   pointer-events: none;
   z-index: 10000;
+}
+
+[data-theme="light"] .crt-scanline::after {
+  display: none;
+}
+
+[data-theme="light"] .crt-overlay {
+  display: none;
+}
+
+/* ── Light mode section alternation ── */
+[data-theme="light"] section:nth-child(even) {
+  background: #ffffff;
 }

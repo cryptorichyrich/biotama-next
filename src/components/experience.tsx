@@ -2,7 +2,7 @@ import { experiences } from "@/data/experience";
 
 export function Experience() {
   return (
-    <section id="experience" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20 bg-[#000000]">
+    <section id="experience" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20">
       {/* Header — terminal style */}
       <p className="section-label mb-4">
         <span className="text-[var(--color-green-term)]">$</span> cat /var/log/impact.log

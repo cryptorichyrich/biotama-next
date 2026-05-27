@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/ThemeProvider";
 
 const NAV_ITEMS = [
   { label: "About", href: "#about" },
@@ -134,16 +135,24 @@ export function Navbar() {
                 Resume
               </a>
             </li>
+            <li className="ml-2">
+              <ThemeToggle />
+            </li>
           </ul>
 
-          {/* Mobile toggle */}
-          <button
-            onClick={() => setMenuOpen((v) => !v)}
-            className="md:hidden relative z-50 text-[var(--color-amber-text)] p-2 cursor-pointer hover:text-[var(--color-amber-bright)] transition-colors duration-200"
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-          >
-            {menuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile toggle & theme toggle */}
+          <div className="flex items-center gap-2">
+            <div className="md:hidden">
+              <ThemeToggle />
+            </div>
+            <button
+              onClick={() => setMenuOpen((v) => !v)}
+              className="md:hidden relative z-50 text-[var(--color-amber-text)] p-2 cursor-pointer hover:text-[var(--color-amber-bright)] transition-colors duration-200"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+            >
+              {menuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -159,7 +168,7 @@ export function Navbar() {
         )}
       >
         {/* Backdrop */}
-        <div className="absolute inset-0 bg-[#000000] backdrop-blur-2xl" />
+        <div className="absolute inset-0 bg-[var(--color-bg)] backdrop-blur-2xl" />
 
         {/* Menu items */}
         <ul className="relative flex flex-col items-center gap-6">
@@ -229,6 +238,9 @@ export function Navbar() {
               <span className="text-[var(--color-green-term)]">$</span>
               Resume
             </a>
+          </li>
+          <li className="mt-4 overflow-hidden flex justify-center">
+            <ThemeToggle />
           </li>
         </ul>
       </div>

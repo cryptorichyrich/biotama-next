@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c9a84c"/>
+      <stop offset="100%" stop-color="#e8c840"/>
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="4" fill="#000000"/>
+  <text x="16" y="22" font-family="'JetBrains Mono', monospace" font-size="16" font-weight="700" fill="url(#g)" text-anchor="middle">BL</text>
+</svg>

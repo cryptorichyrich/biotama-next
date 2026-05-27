@@ -7,7 +7,7 @@ export function Footer() {
   return (
     <>
       {/* Pre-footer quote: Uncle Bob */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto bg-[#000000]">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
         <div className="glass-card p-8 md:p-10 max-w-3xl mx-auto relative gold-reveal">
           <div className="absolute -top-2 -left-2 text-7xl text-[var(--color-gold)] opacity-20 select-none pointer-events-none font-serif leading-none">
             &ldquo;
@@ -24,7 +24,7 @@ export function Footer() {
         </div>
       </section>
 
-      <footer className="border-t border-[var(--color-glass-border)] bg-[#000000]">
+      <footer className="border-t border-[var(--color-border)]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex flex-col md:flex-row items-center justify-between gap-8">
           {/* BL. in gold Spectral */}

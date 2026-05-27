@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Spectral, JetBrains_Mono } from "next/font/google";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
 const spectral = Spectral({
@@ -30,6 +31,10 @@ export const metadata: Metadata = {
     "Indonesia",
   ],
   authors: [{ name: "Bio Lumbantoruan" }],
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+  },
   openGraph: {
     title: "Bio Lumbantoruan — System Architect & Fintech Engineer",
     description:
@@ -49,6 +54,8 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${spectral.variable} ${jetbrainsMono.variable} scroll-smooth`}
+      data-theme="dark"
+      suppressHydrationWarning
     >
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -61,6 +68,7 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Spectral:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap"
           rel="stylesheet"
         />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -92,10 +100,12 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="font-mono antialiased min-h-screen flex flex-col bg-[#000000] text-[#f0e8d0]">
-        <div className="crt-overlay" />
-        <div className="crt-scanline" aria-hidden="true" />
-        {children}
+      <body className="font-mono antialiased min-h-screen flex flex-col">
+        <ThemeProvider>
+          <div className="crt-overlay" />
+          <div className="crt-scanline" aria-hidden="true" />
+          {children}
+        </ThemeProvider>
         <script
           dangerouslySetInnerHTML={{
             __html: `document.querySelectorAll('.glass-card').forEach((el,i)=>{el.style.setProperty('--shine-delay',String(Math.random()*12))})`,
