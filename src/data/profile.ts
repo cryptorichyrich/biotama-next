@@ -24,17 +24,17 @@ export const profile: Profile = {
   name: "Bio Lumbantoruan",
   role: "System Architect · Fintech Engineer",
   tagline:
-    "I design systems that move money, connect markets, and scale under pressure.",
+    "Fintech systems architect. 10 years, zero outages.",
   email: "fxwisdom1@gmail.com",
   phone: "+62 813 9825 3186",
   location: "Jakarta, Indonesia",
-  bio: "Over the past decade, I've built everything from PCI-DSS compliant payment gateways to full-stack fintech platforms for brands like Pepperstone and TitanFX. Currently architecting Srabutan, Indonesia's next freelance marketplace, from the ground up.",
+  bio: "I've spent a decade building payment infrastructure for Pepperstone, TitanFX, and now Srabutan. PCI-DSS compliant gateways, real-time FX trading systems, and marketplace platforms that handle millions in daily throughput. Currently architecting Indonesia's next freelance marketplace from scratch — frontend to backend to cloud deployment.",
   photoUrl: "/photo.jpg",
   metrics: [
-    { label: "Years Experience", value: "10+" },
-    { label: "Corporate Clients", value: "14,000+" },
-    { label: "Countries Served", value: "69" },
-    { label: "Projects Delivered", value: "20+" },
+    { label: "Years Live", value: "10" },
+    { label: "Pepperstone Clients", value: "14K+" },
+    { label: "Markets Served", value: "69" },
+    { label: "Projects Shipped", value: "20+" },
   ],
   socials: [
     {

@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { ArrowDown, FileDown } from "lucide-react";
 import { profile } from "@/data/profile";
+import { SocialIcons } from "@/components/SocialIcons";
 
 /* ──────────────────── Cycling Terminal Commands ──────────────────── */
 
@@ -201,6 +202,15 @@ export function Hero() {
             >
               {profile.tagline}
             </p>
+
+            {/* Social icons — amber, visible, clickable */}
+            <div
+              className={`mt-6 transition-all duration-1000 delay-400 ${
+                visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+              }`}
+            >
+              <SocialIcons />
+            </div>
 
             {/* CTA Buttons */}
             <div

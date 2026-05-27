@@ -1,4 +1,5 @@
 import { profile } from "@/data/profile";
+import { SocialIcons } from "@/components/SocialIcons";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -6,13 +7,16 @@ export function Footer() {
   return (
     <footer className="border-t border-[var(--color-glass-border)] bg-[#000000]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
           {/* BL. in gold Spectral */}
           <div className="flex items-center gap-2">
             <span className="text-lg font-[family-name:var(--font-display)] font-bold tracking-tight text-[var(--color-gold)]">
               BL.
             </span>
           </div>
+
+          {/* Social icons in footer */}
+          <SocialIcons />
 
           {/* Nav links in amber mono */}
           <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">

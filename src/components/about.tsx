@@ -9,7 +9,7 @@ export function About() {
       </p>
 
       <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-semibold tracking-tight mb-6 gradient-text">
-        A decade of building systems
+        A decade of payment infrastructure
       </h2>
 
       {/* Pull-quote bio style — .glass-card with big decorative open-quote */}

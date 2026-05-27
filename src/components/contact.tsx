@@ -1,12 +1,6 @@
-import { Mail, ExternalLink } from "lucide-react";
+import { Mail } from "lucide-react";
 import { profile } from "@/data/profile";
-
-const SOCIAL_ICONS: Record<string, string> = {
-  LinkedIn: "in",
-  GitHub: "gh",
-  Twitter: "x",
-  Facebook: "fb",
-};
+import { SocialIcons } from "@/components/SocialIcons";
 
 export function Contact() {
   return (
@@ -37,25 +31,8 @@ export function Contact() {
         {/* Divider */}
         <div className="section-divider my-8" />
 
-        {/* Social links with green arrow */}
-        <div className="flex items-center justify-center gap-4">
-          {profile.socials.map((s) => (
-            <a
-              key={s.platform}
-              href={s.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 px-4 py-2.5 font-[family-name:var(--font-mono)] text-sm text-[var(--color-text-white)] hover:text-[var(--color-amber-text)] transition-all duration-200 cursor-pointer"
-              aria-label={s.label}
-            >
-              <span className="flex items-center gap-1.5">
-                <span className="text-[var(--color-green-term)]">&gt;</span>
-                <span className="hidden sm:inline">{s.platform}</span>
-                <ExternalLink size={12} className="text-[var(--color-amber-dim)]" />
-              </span>
-            </a>
-          ))}
-        </div>
+        {/* Social icons — amber, visible, clickable */}
+        <SocialIcons className="justify-center" />
       </div>
     </section>
   );
