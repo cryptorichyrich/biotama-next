@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -68,16 +69,16 @@ export function Navbar() {
         )}
       >
         <div className="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
-          {/* Logo */}
-          <a
-            href="#"
-            onClick={handleLogoClick}
+          {/* Logo — links to root */}
+          <Link
+            href="/"
+            onClick={() => setMenuOpen(false)}
             className="group flex items-center gap-1 cursor-pointer"
           >
             <span className="text-xl font-bold tracking-tight text-[var(--color-gold)] font-[family-name:var(--font-display)]">
               BL.
             </span>
-          </a>
+          </Link>
 
           {/* Desktop nav */}
           <ul className="hidden md:flex items-center gap-1">
