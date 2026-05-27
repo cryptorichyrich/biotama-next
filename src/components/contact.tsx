@@ -1,127 +1,60 @@
-"use client";
-
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, ExternalLink } from "lucide-react";
 import { profile } from "@/data/profile";
-import { SectionHeading } from "@/components/section-heading";
+
+const SOCIAL_ICONS: Record<string, string> = {
+  LinkedIn: "in",
+  GitHub: "gh",
+  Twitter: "x",
+  Facebook: "fb",
+};
 
 export function Contact() {
-  const ref = useRef<HTMLElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
-
   return (
-    <section
-      id="contact"
-      ref={ref}
-      className="py-24 md:py-32 bg-primary text-white scroll-mt-20"
-    >
-      <div className="max-w-[1200px] mx-auto px-6">
-        <SectionHeading
-          label="Contact"
-          title="Let's work together"
-          description="Have a project in mind? Let's talk about how we can build it."
-          light
-        />
+    <section id="contact" className="py-24 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto scroll-mt-20">
+      <p className="section-label mb-4">
+        /<span className="text-[var(--color-mist)]">contact</span>
+      </p>
 
-        <div className="grid md:grid-cols-2 gap-12">
-          {/* Contact info */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.5 }}
-            className="space-y-6"
-          >
-            <div className="flex items-start gap-4">
-              <Mail size={20} className="text-accent mt-1 shrink-0" />
-              <div>
-                <p className="font-semibold">Email</p>
-                <a
-                  href={`mailto:${profile.email}`}
-                  className="text-zinc-300 hover:text-white transition-colors duration-200 cursor-pointer"
-                >
-                  {profile.email}
-                </a>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <Phone size={20} className="text-accent mt-1 shrink-0" />
-              <div>
-                <p className="font-semibold">Phone</p>
-                <a
-                  href={`tel:${profile.phone}`}
-                  className="text-zinc-300 hover:text-white transition-colors duration-200 cursor-pointer"
-                >
-                  {profile.phone}
-                </a>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <MapPin size={20} className="text-accent mt-1 shrink-0" />
-              <div>
-                <p className="font-semibold">Location</p>
-                <p className="text-zinc-300">{profile.location}</p>
-              </div>
-            </div>
-          </motion.div>
+      <h2 className="text-3xl sm:text-4xl font-display font-semibold tracking-tight mb-4">
+        Let&apos;s <span className="gradient-text">work together</span>
+      </h2>
 
-          {/* Contact form (static UI) */}
-          <motion.form
-            initial={{ opacity: 0, x: 20 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.5 }}
-            onSubmit={(e) => e.preventDefault()}
-            className="space-y-5"
-          >
-            <div>
-              <label
-                htmlFor="name"
-                className="block text-sm font-medium text-zinc-300 mb-1.5"
-              >
-                Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-colors duration-200 cursor-text"
-                placeholder="Your name"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-zinc-300 mb-1.5"
-              >
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-colors duration-200 cursor-text"
-                placeholder="your@email.com"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="message"
-                className="block text-sm font-medium text-zinc-300 mb-1.5"
-              >
-                Message
-              </label>
-              <textarea
-                id="message"
-                rows={4}
-                className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-colors duration-200 resize-none cursor-text"
-                placeholder="Tell me about your project..."
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full px-6 py-3 bg-accent hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-200 cursor-pointer"
+      <p className="text-[var(--color-mist)] text-lg max-w-2xl mb-16">
+        Have a project in mind? Let&apos;s talk about how we can build it.
+      </p>
+
+      {/* Card */}
+      <div className="max-w-lg mx-auto glass rounded-xl p-8 md:p-10 card text-center">
+        {/* Email button */}
+        <a
+          href={`mailto:${profile.email}`}
+          className="inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-gradient-to-r from-[var(--color-indigo-bright)] to-[var(--color-indigo)] text-white font-display font-semibold text-base hover:from-[var(--color-indigo-glow)] hover:to-[var(--color-indigo-bright)] transition-all duration-300 shadow-[0_4px_20px_rgba(92,92,240,0.25)] hover:shadow-[0_6px_30px_rgba(92,92,240,0.4)] cursor-pointer"
+        >
+          <Mail size={20} />
+          {profile.email}
+        </a>
+
+        {/* Divider */}
+        <div className="section-divider my-8" />
+
+        {/* Social links */}
+        <div className="flex items-center justify-center gap-4">
+          {profile.socials.map((s) => (
+            <a
+              key={s.platform}
+              href={s.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2.5 glass card rounded-lg text-[var(--color-mist)] hover:text-[var(--color-ice)] hover:border-[var(--color-indigo-bright)] transition-all duration-200 text-sm cursor-pointer"
+              aria-label={s.label}
             >
-              Send Message
-            </button>
-          </motion.form>
+              <span className="w-5 h-5 rounded-full bg-[var(--color-dark-water)] border border-[var(--color-border)] flex items-center justify-center text-[10px] font-mono font-bold text-[var(--color-mist)]">
+                {SOCIAL_ICONS[s.platform] || s.platform.slice(0, 2).toLowerCase()}
+              </span>
+              <span className="hidden sm:inline">{s.platform}</span>
+              <ExternalLink size={12} className="text-[var(--color-cool-gray)]" />
+            </a>
+          ))}
         </div>
       </div>
     </section>
