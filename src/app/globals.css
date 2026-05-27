@@ -156,43 +156,45 @@ body {
   border-color: var(--color-glass-border-hover);
 }
 
-/* ── Glass Card (Premium — Radial Glow + Shimmer Border) ── */
+/* ── Glass Card (Realistic Lens Effect — visionOS style) ── */
 .glass-card {
   position: relative;
   border-radius: 20px;
   overflow: hidden;
-  background: radial-gradient(
-    ellipse at 50% 40%,
-    rgba(255, 255, 255, 0.04) 0%,
-    rgba(201, 168, 76, 0.02) 30%,
-    transparent 70%
-  );
-  backdrop-filter: blur(28px) saturate(1.2);
-  -webkit-backdrop-filter: blur(28px) saturate(1.2);
+  /* Base glass: amber-tinted with stronger blur */
+  background:
+    /* Layer 1: soft radial glow (light source from top) */
+    radial-gradient(
+      ellipse 120% 70% at 50% 20%,
+      rgba(255, 255, 255, 0.06) 0%,
+      transparent 60%
+    ),
+    /* Layer 2: amber warmth in the center */
+    radial-gradient(
+      ellipse 90% 60% at 50% 50%,
+      rgba(201, 168, 76, 0.04) 0%,
+      transparent 70%
+    ),
+    /* Layer 3: bottom refraction (lens edge thickness) */
+    linear-gradient(
+      180deg,
+      transparent 60%,
+      rgba(201, 168, 76, 0.03) 100%
+    );
+  backdrop-filter: blur(32px) saturate(1.3);
+  -webkit-backdrop-filter: blur(32px) saturate(1.3);
+  box-shadow:
+    /* Fresnel-like edge glow (light catching the lens rim) */
+    0 -1px 1px rgba(255, 255, 255, 0.04),
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    /* Bottom glass thickness shadow */
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    /* Soft ambient glow */
+    0 0 40px rgba(201, 168, 76, 0.02);
   transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* ── Random reflection shine sweep on glass cards ── */
-.glass-card::after {
-  content: "";
-  position: absolute;
-  top: -100%;
-  left: -100%;
-  width: 300%;
-  height: 300%;
-  background: linear-gradient(
-    45deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.03) 45%,
-    rgba(201, 168, 76, 0.05) 50%,
-    rgba(255, 255, 255, 0.03) 55%,
-    transparent 70%
-  );
-  pointer-events: none;
-  animation: glass-shine 8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
-  animation-delay: calc(var(--shine-delay, 0) * 1s);
-}
-
+/* ── Lens border: multi-stop gradient that catches light ── */
 .glass-card::before {
   content: "";
   position: absolute;
@@ -201,9 +203,12 @@ body {
   padding: 1px;
   background: linear-gradient(
     135deg,
-    rgba(201, 168, 76, 0.35) 0%,
-    rgba(201, 168, 76, 0.08) 50%,
-    rgba(201, 168, 76, 0.5) 100%
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(201, 168, 76, 0.15) 20%,
+    rgba(255, 255, 255, 0.04) 40%,
+    rgba(201, 168, 76, 0.08) 60%,
+    rgba(201, 168, 76, 0.35) 80%,
+    rgba(201, 168, 76, 0.15) 100%
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
@@ -215,16 +220,53 @@ body {
 .glass-card:hover::before {
   background: linear-gradient(
     135deg,
-    rgba(201, 168, 76, 0.5) 0%,
-    rgba(201, 168, 76, 0.12) 50%,
-    rgba(201, 168, 76, 0.7) 100%
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(201, 168, 76, 0.25) 20%,
+    rgba(255, 255, 255, 0.06) 40%,
+    rgba(201, 168, 76, 0.12) 60%,
+    rgba(201, 168, 76, 0.5) 80%,
+    rgba(201, 168, 76, 0.25) 100%
   );
+}
+
+/* ── Lens reflection sweep (like light gliding across a camera lens) ── */
+.glass-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.04) 38%,
+    rgba(255, 255, 255, 0.06) 42%,
+    rgba(201, 168, 76, 0.04) 45%,
+    rgba(255, 255, 255, 0.04) 48%,
+    transparent 55%
+  );
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  pointer-events: none;
+  transition: none;
+  animation: lens-sweep 8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  animation-delay: calc(var(--shine-delay, 0) * 1s);
+}
+
+@keyframes lens-sweep {
+  0% { background-position: 200% 0; opacity: 0; }
+  5% { opacity: 1; }
+  20% { background-position: -100% 0; }
+  25% { opacity: 0; }
+  100% { opacity: 0; }
 }
 
 .glass-card:hover {
   box-shadow:
-    0 0 30px var(--color-gold-subtle),
-    0 0 60px var(--color-gold-mist);
+    0 -1px 2px rgba(255, 255, 255, 0.06),
+    0 2px 4px rgba(0, 0, 0, 0.5),
+    0 8px 16px rgba(0, 0, 0, 0.4),
+    0 0 40px var(--color-gold-subtle),
+    0 0 80px var(--color-gold-mist);
 }
 
 /* ── Glass Surface (Apple-style, very subtle) ── */
@@ -409,12 +451,7 @@ body {
   100% { transform: translateY(100vh); }
 }
 
-/* ── Glass shine reflection sweep ── */
-@keyframes glass-shine {
-  0% { transform: translateX(-100%) translateY(-100%) rotate(0deg); }
-  20% { transform: translateX(10%) translateY(10%) rotate(0deg); }
-  100% { transform: translateX(10%) translateY(10%) rotate(0deg); }
-}
+/* ── Glass shine reflection sweep replaced by lens-sweep above ── */
 
 .crt-scanline::after {
   content: "";
