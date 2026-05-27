@@ -105,20 +105,20 @@
   --color-border-hover: rgba(0, 0, 0, 0.15);
   --color-border-subtle: rgba(0, 0, 0, 0.04);
 
-  /* ── Amber CRT becomes gold accent ── */
-  --color-amber-text: #b8860b;
-  --color-amber-bright: #d4a017;
-  --color-amber-dim: #8b6914;
-  --color-amber-glow: rgba(184, 134, 11, 0.08);
-  --color-amber-glow-strong: rgba(184, 134, 11, 0.15);
+  /* ── Golden Champagne accents ── */
+  --color-amber-text: #c9a84c;
+  --color-amber-bright: #d4b85a;
+  --color-amber-dim: #a88838;
+  --color-amber-glow: rgba(201, 168, 76, 0.12);
+  --color-amber-glow-strong: rgba(201, 168, 76, 0.22);
 
   /* ── Gold ── */
-  --color-gold: #b8860b;
-  --color-gold-bright: #d4a017;
-  --color-gold-dim: #8b6914;
-  --color-gold-glow: rgba(184, 134, 11, 0.2);
-  --color-gold-subtle: rgba(184, 134, 11, 0.08);
-  --color-gold-mist: rgba(184, 134, 11, 0.04);
+  --color-gold: #c9a84c;
+  --color-gold-bright: #dbc06a;
+  --color-gold-dim: #a88838;
+  --color-gold-glow: rgba(201, 168, 76, 0.25);
+  --color-gold-subtle: rgba(201, 168, 76, 0.1);
+  --color-gold-mist: rgba(201, 168, 76, 0.05);
 
   /* ── Terminal Green ── */
   --color-green-term: #2e7d32;
@@ -405,7 +405,7 @@ body {
 }
 
 [data-theme="light"] .gradient-text {
-  background: linear-gradient(135deg, #111111 0%, #b8860b 40%, #8b6914 100%);
+  background: linear-gradient(135deg, #e8c27a 0%, #f0dcb4 50%, #faf0dc 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
