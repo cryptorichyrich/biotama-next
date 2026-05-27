@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Spectral, JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { ShineInitializer } from "@/components/ShineInitializer";
 import "./globals.css";
 
 const spectral = Spectral({
@@ -205,11 +206,7 @@ export default function RootLayout({
           <div className="crt-scanline" aria-hidden="true" />
           {children}
         </ThemeProvider>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `document.querySelectorAll('.glass-card').forEach((el,i)=>{el.style.setProperty('--shine-delay',String(Math.random()*12))})`,
-          }}
-        />
+        <ShineInitializer />
       </body>
     </html>
   );

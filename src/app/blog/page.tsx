@@ -74,13 +74,13 @@ export default function BlogPage() {
                     </div>
                   </div>
 
-                  {/* Title in amber Spectral, hover → gold */}
-                  <h2 className="text-base font-[family-name:var(--font-display)] font-semibold text-[var(--color-amber-text)] mb-2 line-clamp-2 group-hover:text-[var(--color-gold)] transition-colors duration-200">
+                  {/* Title in gold Spectral, hover → bright */}
+                  <h2 className="text-base font-[family-name:var(--font-display)] font-semibold text-[var(--color-gold)] mb-2 line-clamp-2 group-hover:text-[var(--color-gold-bright)] transition-colors duration-200">
                     {post.title}
                   </h2>
 
-                  {/* Description in amber mono */}
-                  <p className="text-sm font-[family-name:var(--font-mono)] text-[var(--color-text-white)] leading-relaxed flex-1 line-clamp-3">
+                  {/* Description in body color */}
+                  <p className="text-sm font-[family-name:var(--font-mono)] text-[var(--color-text-body)] leading-relaxed flex-1 line-clamp-3">
                     {post.description}
                   </p>
 

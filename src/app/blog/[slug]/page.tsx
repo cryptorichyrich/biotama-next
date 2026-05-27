@@ -39,8 +39,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 /**
  * Vault Terminal markdown renderer.
  * Converts simple markdown to JSX elements using the amber/gold/black design.
- * h1-h3 → Spectral (amber-text hover gold)
- * p/code/pre/ul/li/bold/inline-code all in amber mono with green accents.
+ * h1-h3 → Spectral (heading-text, hover amber)
+ * p/code/pre/ul/li/bold/inline-code all in body text with terminal accents.
  * Code blocks get .glass-inset styling.
  */
 function renderMarkdown(markdown: string) {
@@ -56,14 +56,14 @@ function renderMarkdown(markdown: string) {
       elements.push(
         <pre
           key={key++}
-          className="glass-inset overflow-x-auto my-6 p-5 text-sm font-[family-name:var(--font-mono)] leading-relaxed text-[var(--color-amber-dim)]"
+          className="glass-inset overflow-x-auto my-6 p-5 text-sm font-[family-name:var(--font-mono)] leading-relaxed text-[var(--color-text-secondary)]"
         >
           {codeBlockLang && (
             <div className="text-[10px] font-[family-name:var(--font-mono)] text-[var(--color-green-term)] mb-2 uppercase tracking-wider">
               // {codeBlockLang}
             </div>
           )}
-          <code className="text-[var(--color-amber-text)]">{codeBlockContent.replace(/\n$/, "")}</code>
+          <code className="text-[var(--color-text-body)]">{codeBlockContent.replace(/\n$/, "")}</code>
         </pre>
       );
       codeBlockContent = "";
@@ -108,7 +108,7 @@ function renderMarkdown(markdown: string) {
         if (boldMatch.index > lastBoldIdx) {
           boldParts.push(remaining.slice(lastBoldIdx, boldMatch.index));
         }
-        boldParts.push(<strong key={`b-${boldMatch.index}`} className="text-[var(--color-amber-bright)] font-semibold">{boldMatch[1]}</strong>);
+        boldParts.push(<strong key={`b-${boldMatch.index}`} className="text-[var(--color-text-heading)] font-semibold">{boldMatch[1]}</strong>);
         lastBoldIdx = boldMatch.index + boldMatch[0].length;
       }
       if (lastBoldIdx < remaining.length) {
@@ -151,10 +151,10 @@ function renderMarkdown(markdown: string) {
       continue;
     }
 
-    // Headings — Spectral amber, hover gold
+    // Headings — Spectral gold in both modes (via CSS variable)
     if (line.startsWith("### ")) {
       elements.push(
-        <h3 key={key++} className="text-xl font-bold mt-8 mb-3 text-[var(--color-amber-text)] font-[family-name:var(--font-display)] hover:text-[var(--color-gold)] transition-colors duration-200">
+        <h3 key={key++} className="text-xl font-bold mt-8 mb-3 text-[var(--color-gold)] font-[family-name:var(--font-display)] hover:text-[var(--color-gold-bright)] transition-colors duration-200">
           {renderInline(line.slice(4))}
         </h3>
       );
@@ -162,7 +162,7 @@ function renderMarkdown(markdown: string) {
     }
     if (line.startsWith("## ")) {
       elements.push(
-        <h2 key={key++} className="text-2xl font-bold mt-10 mb-4 text-[var(--color-amber-text)] font-[family-name:var(--font-display)] hover:text-[var(--color-gold)] transition-colors duration-200">
+        <h2 key={key++} className="text-2xl font-bold mt-10 mb-4 text-[var(--color-gold)] font-[family-name:var(--font-display)] hover:text-[var(--color-gold-bright)] transition-colors duration-200">
           {renderInline(line.slice(3))}
         </h2>
       );
@@ -170,7 +170,7 @@ function renderMarkdown(markdown: string) {
     }
     if (line.startsWith("# ")) {
       elements.push(
-        <h1 key={key++} className="text-3xl font-bold mt-10 mb-4 text-[var(--color-amber-text)] font-[family-name:var(--font-display)] hover:text-[var(--color-gold)] transition-colors duration-200">
+        <h1 key={key++} className="text-3xl font-bold mt-10 mb-4 text-[var(--color-gold)] font-[family-name:var(--font-display)] hover:text-[var(--color-gold-bright)] transition-colors duration-200">
           {renderInline(line.slice(2))}
         </h1>
       );
@@ -196,7 +196,7 @@ function renderMarkdown(markdown: string) {
       elements.push(
         <ul key={key++} className="list-none pl-0 mb-5 space-y-1.5 font-[family-name:var(--font-mono)] leading-relaxed">
           {items.map((item) => (
-            <li key={item.index} className="flex items-start gap-2 text-[var(--color-amber-dim)]">
+            <li key={item.index} className="flex items-start gap-2 text-[var(--color-text-body)]">
               <span className="text-[var(--color-green-term)] shrink-0 mt-1">&gt;</span>
               <span>{renderInline(item.text)}</span>
             </li>
@@ -206,9 +206,9 @@ function renderMarkdown(markdown: string) {
       continue;
     }
 
-    // Regular paragraph — amber mono
+    // Regular paragraph — body text in mono
     elements.push(
-      <p key={key++} className="text-base md:text-lg leading-relaxed mb-5 font-[family-name:var(--font-mono)] text-[var(--color-amber-text)]">
+      <p key={key++} className="text-base md:text-lg leading-relaxed mb-5 font-[family-name:var(--font-mono)] text-[var(--color-text-body)]">
         {renderInline(line)}
       </p>
     );
@@ -321,10 +321,10 @@ export default async function BlogPostPage({ params }: Props) {
                 {relatedPosts.map((rp) => (
                   <Link key={rp.slug} href={`/blog/${rp.slug}`} className="group block">
                     <div className="glass-card p-5 transition-all duration-300 cursor-pointer h-full hover:-translate-y-1">
-                      <div className="text-xs font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)] mb-2">
+                      <div className="text-xs font-[family-name:var(--font-mono)] text-[var(--color-text-tertiary)] mb-2">
                         {formatDate(rp.date)}
                       </div>
-                      <h3 className="font-semibold text-[var(--color-amber-text)] line-clamp-2 mb-2 font-[family-name:var(--font-display)] group-hover:text-[var(--color-gold)] transition-colors duration-200">
+                      <h3 className="font-semibold text-[var(--color-gold)] line-clamp-2 mb-2 font-[family-name:var(--font-display)] group-hover:text-[var(--color-gold-bright)] transition-colors duration-200">
                         {rp.title}
                       </h3>
                       <p className="text-xs font-[family-name:var(--font-mono)] text-[var(--color-text-tertiary)] line-clamp-2">{rp.description}</p>
