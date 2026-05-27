@@ -13,7 +13,7 @@ export function Contact() {
         Let&apos;s work together
       </h2>
 
-      <p className="text-[var(--color-amber-dim)] text-lg max-w-2xl mb-16 font-[family-name:var(--font-mono)]">
+      <p className="text-[var(--color-text-body)] text-lg max-w-2xl mb-16 font-[family-name:var(--font-mono)]">
         Have a project in mind? Let&apos;s talk about how we can build it.
       </p>
 

@@ -11,7 +11,7 @@ export function Skills() {
         Technologies I work with
       </h2>
 
-      <p className="text-[var(--color-amber-dim)] text-lg max-w-2xl mb-16 font-[family-name:var(--font-mono)]">
+      <p className="text-[var(--color-text-body)] text-lg max-w-2xl mb-16 font-[family-name:var(--font-mono)]">
         A few things I&rsquo;ve worked with&hellip;
       </p>
 

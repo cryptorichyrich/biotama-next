@@ -108,17 +108,17 @@
   /* ── Golden Champagne accents ── */
   --color-amber-text: #c9a84c;
   --color-amber-bright: #d4b85a;
-  --color-amber-dim: #a88838;
+  --color-amber-dim: #777777;
   --color-amber-glow: rgba(201, 168, 76, 0.12);
   --color-amber-glow-strong: rgba(201, 168, 76, 0.22);
 
   /* ── Gold ── */
-  --color-gold: #c9a84c;
-  --color-gold-bright: #dbc06a;
-  --color-gold-dim: #a88838;
-  --color-gold-glow: rgba(201, 168, 76, 0.25);
-  --color-gold-subtle: rgba(201, 168, 76, 0.1);
-  --color-gold-mist: rgba(201, 168, 76, 0.05);
+  --color-gold: #c7a04d;
+  --color-gold-bright: #ecd29c;
+  --color-gold-dim: #c7a04d;
+  --color-gold-glow: rgba(199, 160, 77, 0.25);
+  --color-gold-subtle: rgba(199, 160, 77, 0.1);
+  --color-gold-mist: rgba(199, 160, 77, 0.05);
 
   /* ── Terminal Green ── */
   --color-green-term: #2e7d32;
@@ -405,7 +405,7 @@ body {
 }
 
 [data-theme="light"] .gradient-text {
-  background: linear-gradient(135deg, #e8c27a 0%, #f0dcb4 50%, #faf0dc 100%);
+  background: linear-gradient(135deg, #c7a04d 0%, #ecd29c 50%, #c7a04d 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -553,4 +553,24 @@ body {
 /* ── Light mode section alternation ── */
 [data-theme="light"] section:nth-child(even) {
   background: #ffffff;
+}
+
+/* ── Light mode: green highlighted quotes ── */
+[data-theme="light"] .about-quote blockquote,
+[data-theme="light"] .testimonial-quote blockquote {
+  color: #2e7d32;
+  font-style: italic;
+}
+[data-theme="light"] .about-quote .quote-author,
+[data-theme="light"] .testimonial-quote .quote-author {
+  color: #2e7d32;
+}
+[data-theme="light"] .about-quote .quote-mark,
+[data-theme="light"] .testimonial-quote .quote-mark {
+  color: rgba(46, 125, 50, 0.15);
+}
+
+/* ── Light mode: experience timeline ring matches bg ── */
+[data-theme="light"] .timeline-ring {
+  --timeline-ring-color: var(--color-bg);
 }

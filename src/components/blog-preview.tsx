@@ -16,7 +16,7 @@ export function BlogPreview() {
         Thoughts on engineering
       </h2>
 
-      <p className="text-[var(--color-amber-dim)] text-lg max-w-2xl mb-16 font-[family-name:var(--font-mono)]">
+      <p className="text-[var(--color-text-body)] text-lg max-w-2xl mb-16 font-[family-name:var(--font-mono)]">
         Writing about fintech, architecture, and the craft of software.
       </p>
 

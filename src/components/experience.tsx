@@ -28,7 +28,7 @@ export function Experience() {
               <div key={exp.id} className="relative md:grid md:grid-cols-2 md:gap-8">
                 {/* Gold dot on the center line */}
                 <div className="hidden md:flex absolute left-1/2 top-6 -translate-x-1/2 z-10">
-                  <div className="w-4 h-4 rounded-full bg-[var(--color-gold)] shadow-[0_0_12px_var(--color-gold-glow),0_0_24px_var(--color-gold-subtle)] ring-4 ring-[#000000]" />
+                  <div className="w-4 h-4 rounded-full bg-[var(--color-gold)] shadow-[0_0_12px_var(--color-gold-glow),0_0_24px_var(--color-gold-subtle)] ring-4 ring-[var(--timeline-ring-color,#000000)]" />
                 </div>
 
                 {/* Card — alternates left/right */}

@@ -12,7 +12,7 @@ export function Projects() {
         What I&apos;ve built
       </h2>
 
-      <p className="text-[var(--color-amber-dim)] text-lg max-w-2xl mb-16 font-[family-name:var(--font-mono)]">
+      <p className="text-[var(--color-text-body)] text-lg max-w-2xl mb-16 font-[family-name:var(--font-mono)]">
         A selection of projects spanning fintech, e-commerce, and AI.
       </p>
 
@@ -30,8 +30,8 @@ export function Projects() {
                 {project.name}
               </h3>
 
-              {/* Description in amber mono */}
-              <p className="text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-text)] leading-relaxed flex-1 mb-5">
+              {/* Description in body text */}
+              <p className="text-sm font-[family-name:var(--font-mono)] text-[var(--color-text-body)] leading-relaxed flex-1 mb-5">
                 {project.description}
               </p>
 

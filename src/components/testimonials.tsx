@@ -31,7 +31,7 @@ export function Testimonials() {
         What people say
       </h2>
 
-      <p className="text-[var(--color-amber-dim)] text-lg max-w-2xl mb-16 font-[family-name:var(--font-mono)]">
+      <p className="text-[var(--color-text-body)] text-lg max-w-2xl mb-16 font-[family-name:var(--font-mono)]">
         Feedback from colleagues and leaders I&apos;ve worked with.
       </p>
 
@@ -47,8 +47,8 @@ export function Testimonials() {
           </div>
 
           {/* Quote content */}
-          <div key={t.id} className="transition-opacity duration-300">
-            <blockquote className="text-base md:text-lg font-[family-name:var(--font-mono)] italic text-[var(--color-amber-text)] leading-relaxed mb-8 min-h-[120px]">
+          <div key={t.id} className="transition-opacity duration-300 testimonial-quote">
+            <blockquote className="text-base md:text-lg font-[family-name:var(--font-mono)] italic text-[var(--color-text-body)] leading-relaxed mb-8 min-h-[120px]">
               &ldquo;{t.quote}&rdquo;
             </blockquote>
 
