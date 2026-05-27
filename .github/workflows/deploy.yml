@@ -25,10 +25,12 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      - name: Verify out directory
+        run: ls -la out/
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ github.workspace }}/out
+          path: out
 
   deploy:
     environment:
