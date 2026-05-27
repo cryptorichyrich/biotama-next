@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   MapPin,
@@ -7,9 +8,9 @@ import {
   Calendar,
   ExternalLink,
   ArrowRight,
+  Search,
 } from "lucide-react";
 import { profile } from "@/data/profile";
-import { applications } from "@/data/applications";
 
 const STATUS_COLORS: Record<string, string> = {
   draft: "bg-amber-500/20 text-amber-300 border-amber-500/30",
@@ -20,11 +21,39 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export default function ApplicationsPage() {
+  const [applications, setApplications] = useState<any[]>([]);
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    fetch("/jobs.json")
+      .then((r) => r.json())
+      .then((data) => setApplications(data))
+      .catch(() => setApplications([]));
+  }, []);
+
   const sortedApps = [...applications].sort(
     (a, b) =>
-      new Date(b.source.dateFound).getTime() -
-      new Date(a.source.dateFound).getTime()
+      new Date(b.source_date_found).getTime() -
+      new Date(a.source_date_found).getTime()
   );
+
+  const stats = {
+    total: applications.length,
+    draft: applications.filter((a) => a.app_status === "draft").length,
+    applied: applications.filter((a) => a.app_status === "applied").length,
+    interview: applications.filter((a) => a.app_status === "interview").length,
+    offer: applications.filter((a) => a.app_status === "offer").length,
+    rejected: applications.filter((a) => a.app_status === "rejected").length,
+  };
+
+  const filtered = search
+    ? sortedApps.filter(
+        (a) =>
+          a.position_title?.toLowerCase().includes(search.toLowerCase()) ||
+          a.company_name?.toLowerCase().includes(search.toLowerCase()) ||
+          a.company_industry?.toLowerCase().includes(search.toLowerCase())
+      )
+    : sortedApps;
 
   return (
     <>
@@ -54,22 +83,66 @@ export default function ApplicationsPage() {
               Tailored applications tracking — each with a custom resume and
               cover letter crafted for the specific role.
             </p>
-            <div className="section-divider mt-8" />
           </div>
 
+          {/* Stats Bar */}
+          {applications.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-8">
+              <span className="text-[10px] font-[family-name:var(--font-mono)] uppercase tracking-wider px-2.5 py-1 rounded-full border bg-amber-500/20 text-amber-300 border-amber-500/30">
+                {stats.draft} draft
+              </span>
+              <span className="text-[10px] font-[family-name:var(--font-mono)] uppercase tracking-wider px-2.5 py-1 rounded-full border bg-blue-500/20 text-blue-300 border-blue-500/30">
+                {stats.applied} applied
+              </span>
+              <span className="text-[10px] font-[family-name:var(--font-mono)] uppercase tracking-wider px-2.5 py-1 rounded-full border bg-purple-500/20 text-purple-300 border-purple-500/30">
+                {stats.interview} interview
+              </span>
+              <span className="text-[10px] font-[family-name:var(--font-mono)] uppercase tracking-wider px-2.5 py-1 rounded-full border bg-green-500/20 text-green-300 border-green-500/30">
+                {stats.offer} offer
+              </span>
+              <span className="text-[10px] font-[family-name:var(--font-mono)] uppercase tracking-wider px-2.5 py-1 rounded-full border bg-red-500/20 text-red-300 border-red-500/30">
+                {stats.rejected} rejected
+              </span>
+              <span className="text-[10px] font-[family-name:var(--font-mono)] uppercase tracking-wider text-[var(--color-text-muted)] ml-auto">
+                {stats.total} total
+              </span>
+            </div>
+          )}
+
+          {/* Search */}
+          {applications.length > 0 && (
+            <div className="relative mb-8">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search by title, company, or industry…"
+                className="w-full glass-card border border-white/5 focus:border-[var(--color-gold)]/30 outline-none px-9 py-3 text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-text)] placeholder:text-[var(--color-text-muted)] transition-colors duration-200"
+              />
+            </div>
+          )}
+
           {/* Applications grid */}
-          {sortedApps.length === 0 ? (
+          {applications.length === 0 ? (
+            <div className="glass-card p-12 text-center">
+              <p className="text-[var(--color-amber-dim)] font-[family-name:var(--font-mono)]">
+                <span className="text-[var(--color-green-term)]">$</span> Loading
+                applications…
+              </p>
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="glass-card p-12 text-center">
               <p className="text-[var(--color-amber-dim)] font-[family-name:var(--font-mono)]">
                 <span className="text-[var(--color-green-term)]">$</span> No
-                applications yet.
+                matches for "{search}".
               </p>
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {sortedApps.map((app) => {
+              {filtered.map((app) => {
                 const statusColor =
-                  STATUS_COLORS[app.application.status] ||
+                  STATUS_COLORS[app.app_status] ||
                   STATUS_COLORS.draft;
                 return (
                   <Link
@@ -83,44 +156,44 @@ export default function ApplicationsPage() {
                         <span
                           className={`text-[10px] font-[family-name:var(--font-mono)] uppercase tracking-wider px-2 py-0.5 rounded-full border ${statusColor}`}
                         >
-                          {app.application.status}
+                          {app.app_status}
                         </span>
                         <span className="text-xs font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)]">
-                          {app.source.dateFound}
+                          {app.source_date_found}
                         </span>
                       </div>
 
                       {/* Company name */}
                       <h3 className="text-xs font-[family-name:var(--font-mono)] text-[var(--color-green-term)] mb-1">
-                        {app.company.name}
+                        {app.company_name}
                       </h3>
 
                       {/* Position title */}
                       <h2 className="text-base font-[family-name:var(--font-display)] font-semibold text-[var(--color-amber-text)] mb-2 line-clamp-2 group-hover:text-[var(--color-gold)] transition-colors duration-200">
-                        {app.position.title}
+                        {app.position_title}
                       </h2>
 
                       {/* Meta info */}
                       <div className="space-y-1.5 mb-3 flex-1">
                         <div className="flex items-center gap-1.5 text-xs font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)]">
                           <MapPin size={12} className="text-[var(--color-green-term)] shrink-0" />
-                          {app.company.location}
+                          {app.company_location}
                         </div>
                         <div className="flex items-center gap-1.5 text-xs font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)]">
                           <Briefcase size={12} className="text-[var(--color-green-term)] shrink-0" />
-                          {app.position.type}
-                          {app.position.remote ? " · Remote" : " · On-site"}
+                          {app.position_type}
+                          {app.position_remote ? " · Remote" : " · On-site"}
                         </div>
                         <div className="flex items-center gap-1.5 text-xs font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)]">
                           <Calendar size={12} className="text-[var(--color-green-term)] shrink-0" />
-                          Found: {app.source.dateFound}
+                          Found: {app.source_date_found}
                         </div>
                       </div>
 
                       {/* Industry tag */}
                       <div className="flex items-center gap-1.5 flex-wrap mb-2">
                         <span className="glass-legend text-[10px] font-[family-name:var(--font-mono)] text-[var(--color-green-term)]">
-                          {app.company.industry}
+                          {app.company_industry}
                         </span>
                       </div>
 
