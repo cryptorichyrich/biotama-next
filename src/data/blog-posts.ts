@@ -438,6 +438,412 @@ The hardest shift: your primary output is no longer code. It's documents, diagra
 
 Nobody tells you that architecture is mostly about constraints. Budget, timeline, team skills, existing systems, regulatory requirements — these constrain your design space far more than technology choices do. A great architecture isn't the one that uses the coolest tech — it's the one that delivers the most value within the constraints you actually have.`,
   },
+  {
+    slug: "bun-vs-nodejs-backend-engineer",
+    title: "Bun vs Node.js: What I Care About as a Backend Engineer",
+    description: "Benchmarks do not decide my runtime. Production reliability, ecosystem maturity, and debugging tooling do. Here is where Bun and Node.js stand for backend services.",
+    date: "2026-05-23",
+    tags: ["nodejs", "bun", "backend"],
+    content: `Every few months, a new Bun release triggers a fresh wave of benchmark posts. HTTP throughput, startup time, install speed. Numbers go up, people get excited, someone declares Node.js dead.
+
+I have been running Node.js in production for years across payment services, API gateways, and real-time transaction processing. I also run Bun in specific contexts. The benchmark charts miss the things that determine whether a runtime survives past the prototype phase.
+
+## What Benchmarks Do Not Tell You
+
+Request-per-second numbers from a hello-world handler tell you how fast a runtime can echo a string. They do not tell you what happens when your PostgreSQL connection pool hits its limit, when a downstream provider takes 30 seconds to respond, or when a memory leak shows up at 2 AM and you need to diagnose it from a heap dump.
+
+In production, your bottleneck is almost never the runtime. It is the database query, the external API call, the serialization of a 2MB JSON payload. A 20% throughput difference between runtimes vanishes when your service spends 90% of its time waiting on I/O.
+
+## Where Node.js Wins for Production Services
+
+Maturity is not a marketing bullet point. It is the reason I can open npm, find a battle-tested library for any integration I need, and trust that it handles edge cases I have not thought of yet. The Node.js ecosystem has a decade of production failure baked into its libraries.
+
+Three things keep me on Node.js for critical services:
+
+**Observability tooling.** When a payment service starts leaking memory, I reach for \`--inspect\`, Chrome DevTools, and \`heapdump\`. These tools work. They have worked for years. Bun's debugging story is improving but not at parity.
+
+**Native addon compatibility.** Payment integrations, cryptography modules, database drivers. Several of these depend on N-API or node-gyp. Bun handles most of them now, but "most" is not good enough when a production dependency fails to build and you are on a deadline.
+
+**Docker ecosystem.** Every base image, every CI template, every orchestration guide assumes Node.js. That matters less than it used to, but when you are debugging a container issue at midnight, you do not want to be the edge case.
+
+## Where Bun Makes Sense
+
+I do use Bun. It has a clear place in my workflow:
+
+**Local development.** \`bun install\` is fast. \`bun test\` starts in milliseconds. For a monorepo with hundreds of test files, the speed difference is not a benchmark flex, it is a quality-of-life improvement that compounds over a workday.
+
+**Utility scripts.** File system operations, build tooling, one-off data migrations. Bun executes TypeScript natively, which eliminates the \`ts-node\` or \`tsx\` dependency. For scripts that run on developer machines, this is a real win.
+
+**New greenfield services.** If I am starting a new microservice that does not depend on native addons, Bun is worth evaluating. The built-in test runner, bundler, and WebSocket support reduce boilerplate.
+
+## The Decision Framework
+
+When I pick a runtime for a production service, I ask three questions:
+
+1. Does every dependency in my lockfile resolve and build without workarounds?
+2. Can I debug a memory leak, a hung event loop, and a CPU spike with the tooling available?
+3. Has this runtime been battle-tested in conditions similar to what I am building?
+
+If the answer to all three is yes, Bun is on the table. If any answer is no, I use Node.js.
+
+The trade-off is straightforward. Bun trades ecosystem maturity for speed and developer experience. For scripts, local tooling, and new services with simple dependency graphs, that trade makes sense. For payment pipelines that process transactions at 3 AM and need to work without surprises, Node.js earns its place.
+
+Architecture is about trade-offs, not silver bullets. Pick the runtime that lets you sleep at night, not the one with the highest benchmark score.`,
+  },
+  {
+    slug: "cqrs-in-practice-real-constraints",
+    title: "CQRS in Practice: When Textbook Patterns Meet Real Constraints",
+    description: "CQRS looks elegant in architecture diagrams. In production, it introduces complexity you didn't plan for. Here's what I learned applying it under real constraints.",
+    date: "2026-05-25",
+    tags: ["architecture", "cqrs", "design-patterns"],
+    content: `I first sketched a CQRS architecture on a whiteboard in 2022. Two separate models, clean event streams, a read store that never worried about write contention. It looked beautiful. Six months later, I was debugging sync issues between command and query databases at 2 AM, wondering where the elegance went.
+
+CQRS, Command Query Responsibility Segregation, is one of those patterns that sells itself on a diagram and challenges you in production. The concept is sound: separate your write model from your read model so each can scale and evolve independently. The textbook version involves event sourcing, message buses, eventual consistency, and eventually a system that handles complex domain logic with grace.
+
+The real version involves dealing with stale reads, debugging out-of-order events, and explaining to your team why the data they just wrote isn't visible yet.
+
+## Where CQRS Earns Its Keep
+
+I applied CQRS in a transaction monitoring system for a fintech platform. The write side handled payment commands: create transaction, update status, flag suspicious activity. Each command went through validation, persisted to the primary database, and published an event.
+
+The read side served a different purpose. The dashboard needed to aggregate transaction volumes by merchant, time window, and risk category. The reporting pipeline needed historical trends. The compliance team needed filtered views of flagged transactions.
+
+Running these queries against the write model would have required complex joins across normalized tables, with locks competing against incoming writes. The read model flattened everything into denormalized views optimized for specific query patterns. A single transaction event could update five different read projections, each tuned for a different access pattern.
+
+## Where It Gets Messy
+
+The problems started with consistency.
+
+A merchant submits a payment. The frontend redirects them to a confirmation page. The confirmation page queries the read model. The event hasn't been processed yet. The merchant sees "no transactions found." Support gets a ticket.
+
+This is the eventual consistency tax. The textbook says "design for it." The production reality is that users expect read-after-write consistency, and no amount of architectural purity changes that expectation.
+
+I solved this with a hybrid approach: for the specific flow where the user initiates an action and needs immediate feedback, the frontend queries the write model directly. The read model serves everything else: dashboards, reports, analytics.
+
+## When I Skip CQRS
+
+After that project, I developed a heuristic: I skip CQRS when the read and write patterns are similar enough that a single model serves both without performance issues. Most CRUD applications fall into this category. I also skip it when the team is small.
+
+## What I Do Instead of Full CQRS
+
+For projects that need read optimization but can't justify the full CQRS investment, I use materialized views or database-level computed columns for common read patterns. Application-level caching for hot queries. No event bus, no separate projections, no eventual consistency.
+
+Architecture is about trade-offs, not silver bullets. CQRS solved a real problem for me in transaction monitoring. It also created problems I didn't anticipate. The pattern is a tool, not a goal. Use it when the domain complexity warrants it, and reach for simpler alternatives first.`,
+  },
+  {
+    slug: "css-grid-dashboard-layout-fix",
+    title: "One CSS Grid Line Fixed Our Entire Dashboard Layout",
+    description: "Six media query breakpoints, five layout bugs, and one CSS Grid line later, our dashboard just worked. Why auto-fit beats fixed breakpoints.",
+    date: "2026-05-25",
+    tags: ["css", "frontend", "react"],
+    content: `Our fintech dashboard had six widget cards. A balance overview, transaction history, pending settlements, currency breakdown, recent activity feed, and a notification panel. Six widgets, six media query breakpoints, and five recurring layout bugs.
+
+Every time we added a widget or changed card dimensions, the grid broke somewhere. Cards overlapped on tablets. Orphaned widgets sat alone on ultrawide monitors. We maintained a separate flex layout for mobile that drifted out of sync with the desktop version. The CSS for this one dashboard section spanned 80 lines, most of it media queries patching edge cases.
+
+Then I replaced all of it with one declaration.
+
+\`\`\`css
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+\`\`\`
+
+No media queries. No breakpoints. No separate mobile layout. The grid handles every screen width from a phone to an ultrawide monitor.
+
+## How auto-fit + minmax works
+
+\`repeat(auto-fit, minmax(320px, 1fr))\` does two things at once. \`minmax(320px, 1fr)\` says each column must be at least 320 pixels wide and can grow to fill available space. \`auto-fit\` tells the browser to fit as many columns as the container width allows.
+
+## What we deleted
+
+The old CSS had breakpoints at 480px, 768px, 1024px, 1280px, 1440px, and 1920px. Each redefined the grid column count. Adding a seventh widget meant touching every breakpoint, retesting on every device, and finding the new edge case.
+
+The new approach eliminates the concept of breakpoints for layout. Column count becomes a function of available space, not a hardcoded integer per viewport range.
+
+## The broader lesson
+
+Frontend layout bugs trace back to hardcoded viewport assumptions. A breakpoint at 768px assumes you know the device. A breakpoint at 1024px assumes you know the browser chrome width. \`auto-fit\` trades those assumptions for a constraint-based system: the column is at least this wide, the grid uses as many columns as fit, and the browser handles the math.
+
+Architecture is about trade-offs, not silver bullets. For card grids, I traded 80 lines of media queries for one line of CSS Grid. Five layout bugs disappeared and never came back.`,
+  },
+  {
+    slug: "delegated-boilerplate-ai-agent",
+    title: "Why I Delegated My Boilerplate to an AI Agent",
+    description: "How shifting repetitive code generation to an autonomous agent compressed my feature delivery from days to hours and freed me to focus on architecture.",
+    date: "2026-05-25",
+    tags: ["ai", "automation", "developer-tools"],
+    content: `Two years ago I spent forty percent of my day writing code I could recite from memory. CRUD endpoints. Form validation. Migration files. Test scaffolding. Configuration objects. The same patterns, different domain, eight hours of typing what a machine could produce in seconds.
+
+I built Hermes because I got tired of being a typist.
+
+The first version did one thing: generate boilerplate from templates I defined. I'd describe a new API endpoint, and Hermes produced the route handler, the input validation schema, the database query, the error responses, and the test file. All of it. In under ten seconds.
+
+That saved me two hours per feature. Good start. But the interesting shift happened when I started trusting the agent with judgment calls, not just pattern filling.
+
+## From Templates to Autonomous Execution
+
+Now Hermes runs on a cron schedule. Three times a day, it checks my backlog, picks a task, writes the code, generates the tests, opens a pull request, and sends me a summary. I review. I approve or request changes. The entire loop from idea to running in production compresses from a day to an hour.
+
+The trade-off here is control. I give up line-by-line involvement in return for throughput.
+
+## Quality Went Up, Not Down
+
+What I've found after running this system for months is that my code quality improved. Hermes does not skip validation because it's tired. It does not copy a pattern from Stack Overflow and forget to change the error message. It follows the conventions I defined. No shortcuts, no drift.
+
+Three patterns account for most of what Hermes generates in my projects: API scaffolding, blog content, and DevOps configuration.
+
+## When Delegation Makes Sense
+
+The people who benefit most from this setup are not junior developers looking for a shortcut. They are senior engineers whose time costs more than the compute that runs the agent.
+
+Architecture is about trade-offs, not silver bullets. I traded fine-grained control over boilerplate for time spent on problems that require human judgment. That trade works for me.`,
+  },
+  {
+    slug: "event-driven-without-event-sourcing",
+    title: "Event-Driven Architecture Without Event Sourcing Complexity",
+    description: "Event-driven doesn't require event sourcing. You can decouple services with lightweight event patterns — no Kafka cluster or distributed systems PhD needed.",
+    date: "2026-05-26",
+    tags: ["architecture", "event-driven", "design-patterns"],
+    content: `Most teams hear "event-driven" and picture Kafka clusters, event sourcing, CQRS, and a three-month ramp-up. That picture costs more than it delivers for most projects.
+
+I built Srabutan's order pipeline on pure event-driven patterns without a single event store. No event sourcing. No Kafka. Just RabbitMQ, a few strategic exchanges, and the outbox pattern. Two years later, I have not regretted that choice once.
+
+## Two Families, One Confusion
+
+Event-driven architecture splits into two families that people keep confusing: event notification (something happened, go check it out) and event-carried state transfer (something happened, here is all the data).
+
+Event sourcing belongs to neither family. It is a persistence pattern where the event log serves as the source of truth. You can build event-driven systems without it.
+
+## The Patterns I Use Instead
+
+**Outbox Pattern + Message Broker.** You write to your database and publish an event in the same transaction. A separate worker reads the outbox table and publishes to the broker. One atomic transaction. No distributed coordination.
+
+**Change Data Capture.** Sometimes you cannot modify the source system to emit events. CDC captures database changes at the WAL level and turns them into event streams.
+
+**Plain Pub/Sub With Competing Consumers.** Not every event needs a stream. Work distribution often needs nothing more than a fanout exchange for broadcasting or a direct exchange for load balancing.
+
+## The Real Cost of Over-Engineering
+
+A team I consulted for spent two months setting up Kafka, a schema registry, Avro serialization, and event sourcing — all to power a notification service that sent three emails per day.
+
+Start with the outbox pattern and a message broker. Add event sourcing when the business demands it, not when a conference talk convinces you it is mandatory.`,
+  },
+  {
+    slug: "hello-world",
+    title: "Hello World",
+    description: "Welcome to my blog. I write about IT, engineering, business, marketing, and daily life as a system architect.",
+    date: "2025-07-11",
+    tags: ["intro", "personal"],
+    content: `Welcome to my corner of the internet. This is where I share what I have learned building systems for the fintech industry, thoughts on technology and business, and occasional slices of daily life.
+
+As a system architect and fintech engineer, I've spent years designing scalable, secure, and efficient systems that handle millions of transactions. My work sits at the intersection of technology, business logic, and user experience, requiring a deep understanding of all three domains.
+
+In this blog, I'll explore topics ranging from system design patterns and architectural decisions to the practical challenges of building fintech solutions. I'll share lessons learned from successful projects, mistakes made along the way, and insights about the ever-evolving technology landscape.
+
+Beyond the technical aspects, I believe engineering is fundamentally about solving real problems for real people. So expect discussions about the business side of technology, the importance of understanding your users, and how to balance technical excellence with practical delivery. Welcome to the journey.`,
+  },
+  {
+    slug: "idempotent-payment-endpoints-production",
+    title: "Idempotent Payment Endpoints: Lessons from Production",
+    description: "Duplicate payments from retry logic cost real money and trust. Idempotency keys prevent them, and most payment APIs get the implementation wrong.",
+    date: "2026-05-24",
+    tags: ["fintech", "payments", "api-design"],
+    content: `A customer clicks "Pay." The request times out. Their browser retries. Your server processes the same charge twice. The customer sees two deductions. Your support team gets a ticket. Your reconciliation report shows a discrepancy. All because the endpoint lacked idempotency.
+
+I have debugged this scenario in production payment systems. The fix is not disabling retries. Retries are a fact of distributed systems: network timeouts, load balancer failovers, client-side connection drops all trigger them. The fix is designing endpoints that handle duplicate requests without creating duplicate side effects. That mechanism is the idempotency key.
+
+## What Idempotency Means in Payments
+
+An operation is idempotent if executing it once produces the same result as executing it multiple times. In payment APIs, idempotency works by attaching a unique key to each request. The server remembers: "I processed a request with this key, here is the original response."
+
+## The Implementation Pattern
+
+Three parts of this implementation matter: the cache check (look up the idempotency key before processing), the lock (prevent concurrent requests with the same key), and the TTL (keys expire after 24-48 hours).
+
+## Storage Options
+
+Redis is ideal for high-throughput services: \`SET idempotency:{key} {response} EX 172800\`. A database table with a \`request_hash\` column works for lower traffic. The request hash catches the bug of a client reusing an idempotency key with a different request body.
+
+## When to Require Idempotency Keys
+
+Any endpoint that creates a side effect involving money gets idempotency keys: charge, refund, transfer, and subscription creation endpoints.
+
+Architecture is about trade-offs, not silver bullets. The idempotency key pattern trades a small amount of infrastructure complexity for a strong guarantee that retries do not become duplicate transactions.`,
+  },
+  {
+    slug: "autonomous-coding-agents-job-description",
+    title: "Coding Agents Won't Replace You. They'll Change Your Job.",
+    description: "AI coding agents shift the bottleneck from typing to thinking. The job moves up the stack into architecture, orchestration, and review.",
+    date: "2026-05-27",
+    tags: ["ai", "agent-engineering", "career"],
+    content: `Every few months someone asks me if I'm worried AI will take my job. I give the same answer: I stopped writing boilerplate months ago. My agent does it.
+
+The fear misses what's happening. Autonomous coding agents aren't eliminating developer work. They're changing what "developer work" means.
+
+## The Scope Explosion Nobody Talks About
+
+The dynamic I see daily: I used to write a feature end-to-end. Scaffold the files, wire the database, handle errors, write tests. A solid day of typing.
+
+Now I describe the architecture to Hermes and it generates the scaffolding, the CRUD endpoints, the test skeletons. What took four hours takes twenty minutes. You'd think that means I do less work.
+
+It means I build more.
+
+Features I would have deferred for months, I now ship in a week. A blog pipeline that runs itself on cron. A multi-agent delegation system that farms sub-tasks. I ship things I wouldn't have attempted alone, because the cost of experimentation dropped to near zero.
+
+The bottleneck shifted from typing to thinking. But the thinking load didn't shrink. It multiplied.
+
+## What the Job Becomes
+
+First, I review more code than I write. Hermes generates the implementation. I verify correctness, check edge cases, tighten error handling. The skill that matters is taste: knowing what good architecture looks like at a glance.
+
+Second, I orchestrate instead of executing. A single prompt can spawn a chain of autonomous work. I coordinate outcomes across agents the way a tech lead coordinates across junior engineers.
+
+Third, I think at the system level. Templates, database queries, route handlers. The agent handles those. I spend my attention on data flow across services, failure modes, deployment topology. Architecture is the product now. Syntax is the commodity.
+
+## The New Skills That Matter
+
+The developer who thrives in this world is not the fastest typist. It's the one who can write precise prompts, read and evaluate generated code at a glance, design interfaces between agents, and know when to delegate.
+
+I chose delegation. My job didn't shrink. It got more interesting.`,
+  },
+  {
+    slug: "react-server-components-client-side",
+    title: "React Server Components Made Me Rethink Client-Side",
+    description: "RSC doesn't just move rendering to the server. It destroys the 'client vs. server' mental model and replaces it with something sharper.",
+    date: "2026-05-26",
+    tags: ["react", "frontend", "architecture"],
+    content: `I built React apps for seven years with a clean mental model: server renders HTML, client hydrates it into something interactive. "Client-side" meant an empty shell that fetched data via API calls. Two buckets. Two worlds. React Server Components did not blur that line. They erased it.
+
+The shift started with Next.js 13 and the App Router. I opened a project, saw \`'use client'\` directives peppered through the component tree, and felt genuine confusion. Every React component I had written up to that point ran in the browser. The server existed to deliver the initial bundle and some JSON. Now I had to mark components that belonged on the client. The default pushed execution to the server. You opted in to interactivity.
+
+A React Server Component runs on the server. It produces a serialized React tree — a format the client runtime can stream and reconcile without destroying existing state. When it ships its output to the browser, the client never receives the component's code. Zero JavaScript for that part of the tree.
+
+What changed after building with this pattern: I stopped thinking about pages as monolithic rendering decisions. A product detail page can render the header and footer on the server with zero client cost, while keeping the add-to-cart button interactive.
+
+The trade-off is how much added complexity your team absorbs. Server Components cannot use hooks, state, or event handlers. They cannot call browser APIs. You now maintain two component categories with different rules.
+
+Is the trade-off worth it? For data-heavy applications where bundle size matters, the answer is yes. I watched a dashboard project drop its initial JavaScript payload by 40% after migrating data-fetching components to RSC.`,
+  },
+  {
+    slug: "reconciliation-engine-currency-mismatch",
+    title: "Building a Reconciliation Engine for Currency Mismatch",
+    description: "Multi-currency transactions break naive reconciliation. I built an engine with threshold-based matching that handles FX rate gaps and rounding without drowning in false positives.",
+    date: "2026-05-25",
+    tags: ["fintech", "reconciliation", "architecture"],
+    content: `A payment gateway settles in USD. Your ledger records the transaction in IDR at the mid-market rate. The provider's settlement arrives 48 hours later at a different rate. The amounts do not match. Your reconciliation report flags a discrepancy. Someone on the finance team spends two hours tracing a $0.47 gap that no one caused and no one can fix.
+
+I have watched this scenario repeat across payment systems. The root cause is the assumption that reconciliation means matching exact amounts. When multiple currencies and FX rates enter the picture, exact matching breaks. You need a reconciliation engine designed for imprecision.
+
+## Why Currency Mismatch Happens
+
+Three forces create mismatches: rate timing (authorization vs settlement rate), provider markups (FX spreads), and rounding differences (different precision levels).
+
+## Designing the Reconciliation Engine
+
+The engine has four layers:
+
+**Normalization.** Convert both sides to a common currency using a reference rate from a neutral provider.
+
+**Threshold-based matching.** Define acceptable variance thresholds per currency pair and transaction size. Use both percentage (for large amounts) and absolute (for rounding artifacts).
+
+**Rate attribution.** Record the implied rate for every matched transaction with variance.
+
+**Exception classification.** Not all exceptions carry the same weight. FX_VARIANCE routes to a dashboard for bulk approval. SUSPICIOUS triggers an alert.
+
+## Lessons from Production
+
+Thresholds need calibration (FX markets shift). Audit every decision (regulators will ask). Separate FX variance from genuine errors (finance teams should not investigate 30-cent gaps with the same urgency as missing $5,000 settlements).`,
+  },
+  {
+    slug: "server-components-data-fetching",
+    title: "Server Components Rewired My Data Fetching",
+    description: "Switching from useEffect to async server components rewired my React data fetching. What changed and where client-side patterns still win.",
+    date: "2026-05-24",
+    tags: ["react", "nextjs", "frontend"],
+    content: `For three years, my React data fetching looked the same. Component mounts, useEffect fires, loading spinner renders, fetch resolves, state updates, component re-renders. Every page, every dashboard card, every list view followed this pattern. I wrapped it in custom hooks, abstracted it with SWR and React Query, but the mental model stayed fixed: the client asks, the server answers, the component reacts.
+
+Server Components broke that model.
+
+## The New Model: Components Fetch Where They Live
+
+Server Components let a component run on the server with direct access to your data layer, then send only the rendered HTML to the client. No useEffect. No loading state for initial data. No client-side JavaScript for data the server can fetch and render.
+
+The mental model shifts from "fetch then render" to "render fetches."
+
+## Where This Wins
+
+SEO-critical pages (product pages, blog posts). Data-heavy dashboards (each section is its own async component fetching in parallel). Reduced client bundle size (components that only display data ship zero JS).
+
+## Where Client-Side Fetching Still Wins
+
+Interactive components (search with instant results, drag-and-drop). Real-time data (live transaction feed). User-driven fetch chains (fetch B depends on fetch A triggered by a click).
+
+## The Mental Model That Clicked
+
+My transaction dashboard uses server components for the data-heavy sections and client components for the interactive parts. The server renders the full page with data. The client hydrates the interactive bits.
+
+This is the same principle as progressive enhancement, applied at the component level. Render the content on the server. Add interactivity on the client.`,
+  },
+  {
+    slug: "transactional-outbox-pattern-fintech",
+    title: "Why I Use Transactional Outbox in Fintech APIs",
+    description: "Payment events that vanish between your database and message broker cost real money. The outbox pattern closes that gap without distributed transactions.",
+    date: "2026-05-23",
+    tags: ["fintech", "architecture", "event-driven"],
+    content: `A payment completes. The database commits. The service tries to publish an event to your message broker. The broker is down. The event is gone. The customer sees a successful transaction, but the downstream service that sends confirmation emails, updates ledgers, and triggers reconciliation has no idea it happened.
+
+I have seen this exact scenario in production. The fix is the transactional outbox pattern, and if you build systems that move money, you should understand it.
+
+## The Outbox Pattern: Write Once, Relay Later
+
+The solution: within the same database transaction that updates your business entities, also write the event to an \`outbox\` table. A separate relay process reads the outbox table and publishes events to the message broker.
+
+Both writes, the business entity and the outbox entry, live in the same database. One transaction. One commit. If the transaction rolls back, the outbox entry rolls back too. No phantom events.
+
+## The Relay: Polling vs Tail
+
+Polling works fine for most payment systems (a few seconds of delay is acceptable for downstream consumers). CDC (change data capture via Debezium) is needed for sub-second event delivery.
+
+## What About Ordering?
+
+Events must be published in the order they were created. The outbox table handles this: order by \`created_at\` and publish sequentially per aggregate.
+
+## When the Outbox Pattern Is Overkill
+
+If you are building a CRUD app where an occasional missed event means a delayed notification, a simple retry queue suffices. But if event loss means financial records go out of sync or reconciliation requires manual intervention, the outbox pattern is infrastructure.
+
+Architecture is about trade-offs, not silver bullets. The outbox pattern trades a small amount of operational overhead for a strong guarantee that your events never go missing.`,
+  },
+  {
+    slug: "use-effect-chains-zustand-store-cleanup",
+    title: "I Replaced Three useEffect Chains With One Zustand Store and Lost 200 Lines",
+    description: "Three dependent useEffect chains tangled across a dashboard component. One Zustand store with derived state fixed it. Here is how the refactor went.",
+    date: "2026-05-27",
+    tags: ["react", "zustand", "state-management", "frontend"],
+    content: `I inherited a dashboard component with three \`useEffect\` hooks wired together like a house of cards. The first fetched user data. The second watched the first result and computed permissions. The third watched permissions and kicked off a secondary API call. Remove one effect and the whole thing collapsed.
+
+The component was 340 lines. Two hundred of them were effect boilerplate, loading spinners, and state-sync plumbing.
+
+## The Problem with Chained Effects
+
+Effects that depend on other effects create implicit ordering. React guarantees effects fire in definition order, but that contract breaks under concurrent features. Add a suspense boundary or a deferred value and your cascade becomes a race.
+
+## The Fix: One Store, Derived State
+
+I pulled the data, permissions, and derived API call into a single Zustand store. Zustand's \`subscribeWithSelector\` middleware let me react to specific slices without triggering full re-renders.
+
+No effects. No \`useEffect\` watching \`useEffect\` watching \`useEffect\`. The store owns the entire data flow in one synchronous-looking async function. The component calls \`fetchUser\` on mount and reads whatever slice it needs.
+
+## What I Lost
+
+Two hundred lines. Three loading states folded into one. Five state variables collapsed into three. The component dropped to 140 lines and became a pure render layer.
+
+## The Pattern I Reach For Now
+
+For any data flow where one fetch depends on another fetch, I skip \`useEffect\` entirely. I put the orchestration in a Zustand store action and let the component subscribe to the result. The store action is a function. I can test it, reuse it across components, and sequence async steps without worrying about React's lifecycle ordering.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {

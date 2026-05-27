@@ -20,9 +20,9 @@ export const experiences: Experience[] = [
     highlights: [
       "Architected AI-powered matching system for freelance marketplace",
       "Designed scalable microservices: portfolio management, real-time collaboration, secure payments",
-      "Led full-stack development with GitHub Actions, Docker, DigitalOcean",
+      "Led full-stack development with GitHub Actions, Docker, Railway",
     ],
-    tech: ["React", "Vue", "JavaScript", "Tailwind", "Docker", "Python", "DigitalOcean"],
+    tech: ["React", "Vue", "JavaScript", "Tailwind", "Docker", "Python", "Railway"],
   },
   {
     id: "citt-services",
