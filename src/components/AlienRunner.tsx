@@ -88,8 +88,8 @@ export default function AlienRunner() {
     gameRef.current = state;
 
     const GROUND_Y = H - 40;
-    const GRAVITY = 0.5;
-    const JUMP_FORCE = -9;
+    const GRAVITY = -0.5;
+    const JUMP_FORCE = 9;
     const OBSTACLE_MIN_GAP = 120;
     const OBSTACLE_SPEED = 1.0;
 
