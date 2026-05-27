@@ -22,9 +22,9 @@ export interface Profile {
 
 export const profile: Profile = {
   name: "Bio Lumbantoruan",
-  role: "System Architect · Fintech Engineer",
+  role: "System Architect",
   tagline:
-    "Fintech systems architect. 10 years, zero outages.",
+    "\u201cThere are no right answers in architecture \u2014 only tradeoffs.\u201d \u2014 Mark Richards",
   email: "fxwisdom1@gmail.com",
   phone: "+62 813 9825 3186",
   location: "Jakarta, Indonesia",
