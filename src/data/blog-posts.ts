@@ -944,7 +944,94 @@ Third, automated recovery became possible. The client library could handle retry
 ## The Implementation Cost
 
 Adding a proper error taxonomy to an existing API takes about one sprint of disciplined refactoring. The changes are contained to middleware and error handling layers. Route handlers stay the same. The payoff starts the day after deployment, when the first integration engineer says "oh, the error response tells me exactly what to fix."`,
+  },  {
+    slug: "prompt-engineering-code-generation",
+    title: "Prompt Engineering for Code Generation: What Works vs. What Sounds Smart",
+    description:
+      "After generating thousands of lines of production code with AI, here are the prompting techniques that consistently deliver and the popular advice I stopped following.",
+    date: "2026-05-28",
+    tags: ["ai", "prompting", "code-generation"],
+    content: `I have written hundreds of prompts that generated thousands of lines of production code. Some produced clean, correct implementations on the first attempt. Others generated plausible-looking nonsense that took longer to fix than writing from scratch. The difference was not the model. It was how I structured the prompt.
+
+Here is what I learned about prompt engineering for code generation, stripped of the internet wisdom that sounds good and fails in practice.
+
+---
+
+## What Does Not Work
+
+The most popular prompt engineering advice is also the least useful for code generation. "Role prompts" fall first. Telling an LLM "you are an expert Python developer with 20 years of experience" does not change the output in measurable ways. It adds tokens, consumes context, and may nudge tone. It does not improve correctness.
+
+Chain-of-thought prompting has a similar gap. For reasoning tasks like math problems, asking the model to "think step by step" improves accuracy. For code generation, the model already processes the problem through its internal reasoning path. Explicit chains-of-thought add tokens without improving the result, and frequently generate convincing but incorrect intermediate steps.
+
+"One-shot everything" advice tells you to provide an example in the prompt. This works when the example matches the problem domain exactly. It backfires when the example constrains the model to a pattern that does not generalize. A generic CRUD example given before a request for a pagination endpoint biases the model toward replicating the example structure, even when a different approach produces better results.
+
+## What Does Work
+
+### 1. Specify the contract, not the implementation
+
+The single most effective technique: describe what the code should accept, what it should return, and what edge cases matter. Leave the implementation details to the model.
+
+\`\`\`
+Write a TypeScript function that:
+- Accepts an array of transactions and a currency code
+- Returns the sum of amounts for matching transactions
+- Handles empty arrays (returns 0)
+- Handles missing or null amount fields (skips them)
+- Returns a number, never NaN or undefined
+\`\`\`
+
+This produces better results than "write a function to sum transaction amounts" because it constrains the output space without dictating how to iterate, what variable names to use, or which language features to apply. The model fills in the implementation details from its training. I supply the boundaries.
+
+### 2. Negative constraints
+
+Models handle "do not use X" more reliably than "use Y." Explicit negative constraints reduce hallucination and style drift.
+
+"I want a payment retry function. Do not use recursive calls. Do not mutate the input array. Do not use setTimeout or setInterval."
+
+The model generates imperative loops, avoids functional mutations, and reaches for a proper async retry pattern. Each constraint eliminated a failure mode the model would otherwise choose about 20% of the time.
+
+### 3. Type-first specifications for TypeScript
+
+For TypeScript code, I write the types first and the description second. The type definition is a formal specification that the model cannot misinterpret the way it can misinterpret natural language.
+
+\`\`\`
+type RetryConfig = {
+  maxAttempts: number;
+  backoffMs: number;
+  retryableErrors: Array<"timeout" | "rate_limit" | "server_error">;
+};
+
+// Implement a retry wrapper for an async function
+// Use the config above
+// Return the first successful result or throw after exhausting retries
+\`\`\`
+
+The types constrain the output more effectively than three paragraphs of prose. The model produces code that matches the type signature by construction.
+
+### 4. Show the failure modes you have seen
+
+This is the technique that separates useful prompts from novice prompts. After the specification, add a line about common mistakes:
+
+"Previous implementations sometimes returned NaN when all transactions had null amounts. Make sure the function handles that edge case."
+
+The model adjusts its output to include the guard rail you specified. This works because the model has seen those failure patterns in its training data and can avoid them when prompted. Without the hint, the model defaults to the most common path, which is also the path that failed in your specific context.
+
+### 5. Verify, do not trust
+
+The most important technique is not a prompt technique at all. It is a verification habit. Each generated block goes through the same pipeline: type check, unit test, edge case review. I do not skip this step for short functions. I have been burned by a two-line utility that looked correct and failed on a null input.
+
+The model generates the first draft. The verification step turns it into production code.
+
+---
+
+## The Real Bottleneck
+
+Prompt engineering for code generation has diminishing returns. The difference between a mediocre prompt and a good prompt is about 30% improvement in first-pass correctness. The difference between a good prompt and verification discipline is an order of magnitude.
+
+I stopped chasing prompt optimization and started treating each generated block as a draft that needs review. The prompt saves typing time. The review saves debugging time. Both matter, but the verification habit delivers outsized returns, and it is not the one that gets blog post clicks.
+`,
   },
+
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
