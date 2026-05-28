@@ -1032,6 +1032,96 @@ I stopped chasing prompt optimization and started treating each generated block 
 `,
   },
 
+  {
+    slug: "saga-pattern-microservices",
+    title: "Saga Pattern in Practice: Distributing Transactions Across Three Microservices",
+    description:
+      "A hands-on breakdown of the Saga pattern with choreography and orchestration approaches, based on building a three-service payment flow that must not lose money.",
+    date: "2026-05-28",
+    tags: ["Fintech", "Architecture", "Backend"],
+    content: `# Saga Pattern in Practice: Distributing Transactions Across Three Microservices
+
+![Saga Pattern](/images/blog/saga-pattern-microservices.jpg)
+
+Three microservices. One payment flow. Zero room for data loss. This was the problem I faced building a transaction pipeline that moved money through a gateway service, a ledger service, and a notification service. If any step failed, the system needed to undo partial work without leaving the books in an inconsistent state.
+
+The Saga pattern solved it. Here is how I implemented both choreography and orchestration approaches in production, and why you probably want the latter for financial workflows.
+
+## The Three-Service Problem
+
+The flow worked like this:
+
+1. **Gateway Service** charges the customer's card.
+2. **Ledger Service** records the debit and credit entries.
+3. **Notification Service** sends a receipt and updates the merchant dashboard.
+
+If step 1 succeeds and step 2 fails, the customer is charged but the books show nothing. If steps 1 and 2 succeed but step 3 fails, the money is accounted for but the merchant never knows the payment arrived. Each failure scenario leaves a different kind of mess, and each requires a different cleanup strategy.
+
+## Choreography: When Events Drive the Rollback
+
+My first attempt used choreographed sagas. Each service published events on success and listened for failure events from downstream services. The Gateway Service emitted \`charge.completed\`. The Ledger Service subscribed to that, recorded the entry, and emitted \`ledger.updated\`. The Notification Service subscribed to \`ledger.updated\` and sent the receipt.
+
+If the Notification Service failed, it published \`notification.failed\`. The Ledger Service listened for that event and issued a compensating transaction to reverse the entry. The Gateway Service listened for \`ledger.compensation.completed\` and issued a refund.
+
+This worked until it did not. The problems emerged under load:
+
+**Event ordering became unreliable.** A compensation event arrived before the original transaction was fully processed in a different partition. The Ledger Service tried to reverse an entry it had not yet recorded.
+
+**Failure cascades were hard to trace.** When the message broker slowed down, events piled up, and the system entered a state where compensations were racing against confirmations. Debugging required correlating events across four message queues and three databases.
+
+**Adding a new service meant auditing every event handler.** The choreography approach couples services through shared event contracts. Every team needs to understand every event type, and a schema change ripples through the entire chain.
+
+## Orchestration: One Coordinator, Clear Boundaries
+
+The second iteration used a central orchestrator, a dedicated Saga Coordinator service that managed the workflow as a state machine.
+
+\`\`\`typescript
+interface SagaStep {
+  name: string;
+  execute: (ctx: SagaContext) => Promise<SagaResult>;
+  compensate: (ctx: SagaContext) => Promise<void>;
+  retryPolicy: RetryPolicy;
+}
+
+interface SagaContext {
+  sagaId: string;
+  state: Record<string, unknown>;
+  completedSteps: string[];
+}
+\`\`\`
+
+The coordinator defined the saga as an ordered list of steps. Each step had an \`execute\` function and a \`compensate\` function. If step 3 failed, the coordinator walked backwards through \`completedSteps\`, calling \`compensate\` on each one. The compensation for the Gateway Service issued a refund. The compensation for the Ledger Service reversed the journal entry.
+
+This approach fixed the three problems from choreography:
+
+**Event ordering became deterministic.** The coordinator knew which step came next and never started a compensation until the original step was confirmed complete or had exhausted its retries. No more race conditions between events.
+
+**Failure mode was visible in a single place.** The coordinator wrote its state to a database after each step transition. When something broke, I queried one table to see exactly which step failed, which compensations ran, and whether any compensations themselves failed.
+
+**Adding services was additive.** A new step meant adding one entry to the saga definition. Existing steps did not need to know about it, and existing event handlers did not need updating.
+
+## When to Use Saga Instead of Distributed Transactions
+
+Two-phase commit (2PC) is the alternative, and it has a bad reputation for good reason. It locks resources, reduces throughput, and requires all participants to be available simultaneously. In practice, 2PC works well within a single database or a tightly coupled cluster. Across microservices with independent data stores, it creates availability problems that sagas avoid.
+
+Sagas make a different trade-off. They accept eventual consistency in exchange for higher availability and better throughput. The system is consistent at rest after compensations complete, but briefly inconsistent during a failure scenario. For financial systems, this means you need idempotency on every compensation handler. If the coordinator crashes mid-compensation and retries, you cannot double-refund the customer.
+
+## Production Lessons
+
+Three things made the biggest difference in reliability:
+
+**Idempotency keys on every step.** The Gateway Service's refund endpoint required an idempotency key derived from the \`sagaId + stepName\`. If the coordinator retried a compensation, the gateway returned the existing refund result instead of charging again.
+
+**Retry with backoff before compensation.** Not every failure needs a saga rollback. A database deadlock or a transient network timeout resolves on retry. I configured three retries with exponential backoff before the coordinator declared a step failed and started compensations. This cut unnecessary rollbacks by roughly 60%.
+
+**Compensation handlers must be idempotent and reliable.** If a compensation fails, say the refund API is down, the coordinator needs to retry. I stored failed compensations in a dead-letter queue with a separate recovery process. A manual override on the coordinator's admin endpoint let operations staff mark a compensation as resolved after fixing the downstream issue.
+
+## The Bottom Line
+
+Choreographed sagas work for simple, linear workflows where you accept the coupling cost. For anything involving money, I use orchestrated sagas with a dedicated coordinator, explicit state management, and idempotent compensation handlers. The extra infrastructure, one more service and a state database, pays for itself the first time a production incident requires you to trace exactly what happened across three services.
+
+The Saga pattern is not theoretical. It is the difference between a system that loses money on failures and one that handles them gracefully. Choose orchestration for financial flows. Make every compensation handler idempotent. And never assume a distributed transaction will stay consistent on its own.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
