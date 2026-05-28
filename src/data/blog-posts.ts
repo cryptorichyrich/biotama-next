@@ -867,7 +867,7 @@ What I have found works better across multiple projects is a structured error ta
 
 ## Layer One: Error Codes, Not Status Codes
 
-Every error gets a unique, stable, machine-readable code. These codes never change — not their names, not their meanings. A new version of the API adds new codes but never reuses or modifies existing ones.
+Every error gets a unique, stable, machine-readable code. These codes never change, not their names, not their meanings. A new version of the API adds new codes but never reuses or modifies existing ones.
 
 \`\`\`json
 {
@@ -884,9 +884,9 @@ Every error gets a unique, stable, machine-readable code. These codes never chan
 The client code switches on the code, not the HTTP status. The status code is metadata for HTTP middleware and proxies. The error code is the contract.
 
 A few rules I enforce:
-- Error codes are SCREAMING_SNAKE_CASE and describe the problem, not the location.
-- Each code maps to exactly one error scenario. A code like VALIDATION_ERROR is too broad — you need MISSING_REQUIRED_FIELD and INVALID_FIELD_FORMAT as separate codes.
-- Codes are documented alongside endpoints. A well-designed API reference lists every possible error code for each endpoint.
+- Error codes use SCREAMING_SNAKE_CASE and describe the problem, not the location.
+- Each code maps to exactly one error scenario. A code like VALIDATION_ERROR is too broad. You need MISSING_REQUIRED_FIELD and INVALID_FIELD_FORMAT as separate codes.
+- I document every error code alongside its endpoints. A well-designed API reference lists every possible error code for each endpoint.
 
 ## Layer Two: Machine-Readable Context
 
@@ -943,7 +943,7 @@ Third, automated recovery became possible. The client library could handle retry
 
 ## The Implementation Cost
 
-Adding a proper error taxonomy to an existing API takes about one sprint of disciplined refactoring. The changes are contained to middleware and error handling layers — route handlers stay the same. The payoff starts the day after deployment, when the first integration engineer says "oh, the error response tells me exactly what to fix."`,
+Adding a proper error taxonomy to an existing API takes about one sprint of disciplined refactoring. The changes are contained to middleware and error handling layers. Route handlers stay the same. The payoff starts the day after deployment, when the first integration engineer says "oh, the error response tells me exactly what to fix."`,
   },
 ];
 
