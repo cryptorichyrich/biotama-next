@@ -1045,7 +1045,7 @@ I stopped chasing prompt optimization and started treating each generated block 
 
 Three microservices. One payment flow. Zero room for data loss. This was the problem I faced building a transaction pipeline that moved money through a gateway service, a ledger service, and a notification service. If any step failed, the system needed to undo partial work without leaving the books in an inconsistent state.
 
-The Saga pattern solved it. Here is how I implemented both choreography and orchestration approaches in production, and why you probably want the latter for financial workflows.
+The Saga pattern solved it. Here is how I implemented both choreography and orchestration approaches in production, and why you will want the latter for financial workflows.
 
 ## The Three-Service Problem
 
@@ -1120,7 +1120,7 @@ Three things made the biggest difference in reliability:
 
 Choreographed sagas work for simple, linear workflows where you accept the coupling cost. For anything involving money, I use orchestrated sagas with a dedicated coordinator, explicit state management, and idempotent compensation handlers. The extra infrastructure, one more service and a state database, pays for itself the first time a production incident requires you to trace exactly what happened across three services.
 
-The Saga pattern is not theoretical. It is the difference between a system that loses money on failures and one that handles them gracefully. Choose orchestration for financial flows. Make every compensation handler idempotent. And never assume a distributed transaction will stay consistent on its own.`,
+The Saga pattern is not theoretical. It is the difference between a system that loses money on failures and one that recovers cleanly. Choose orchestration for financial flows. Make every compensation handler idempotent. And never assume a distributed transaction will stay consistent on its own.`,
   },
 ];
 
