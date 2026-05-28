@@ -844,6 +844,107 @@ Two hundred lines. Three loading states folded into one. Five state variables co
 
 For any data flow where one fetch depends on another fetch, I skip \`useEffect\` entirely. I put the orchestration in a Zustand store action and let the component subscribe to the result. The store action is a function. I can test it, reuse it across components, and sequence async steps without worrying about React's lifecycle ordering.`,
   },
+  {
+    slug: "rest-api-error-taxonomy",
+    title: "Why Your REST API Needs a Proper Error Taxonomy",
+    description:
+      "Standard HTTP status codes are not enough. A structured error taxonomy with error codes, severity levels, and machine-readable payloads transforms debugging from guesswork into systematic root cause analysis.",
+    date: "2026-05-28",
+    tags: ["api-design", "backend", "architecture", "rest"],
+    content: `# Why Your REST API Needs a Proper Error Taxonomy
+
+A colleague once asked me why our payment API returned a 400 Bad Request for a transaction with insufficient balance. "That is a validation error, right?" he said. Technically, yes. Practically, that response sent his team hunting through three different services for thirty minutes before finding the actual problem.
+
+Status codes alone cannot carry that nuance. 400 means bad request. 422 means unprocessable entity. 409 means conflict. But those distinctions only help if you know exactly what caused each scenario. For a developer integrating against an API, a status code is a category, not a diagnosis.
+
+## The Taxonomy Problem
+
+Most APIs use status codes as their only error signal. When something goes wrong, the client gets a 400 or 500 plus a human-readable message. For a simple CRUD app, that might be enough. For any system where multiple teams consume the API, it creates a debugging tax that compounds with every integration.
+
+The pattern I see most often in production: a generic error object with a message field and nothing else. The message might say "Validation failed: field X is required." But the client code needs to parse that string to differentiate between a missing field and an invalid value. String parsing as an error handling strategy is fragile and version-dependent.
+
+What I have found works better across multiple projects is a structured error taxonomy with three layers.
+
+## Layer One: Error Codes, Not Status Codes
+
+Every error gets a unique, stable, machine-readable code. These codes never change — not their names, not their meanings. A new version of the API adds new codes but never reuses or modifies existing ones.
+
+\`\`\`json
+{
+  "error": {
+    "code": "INSUFFICIENT_BALANCE",
+    "http_status": 400,
+    "message": "Account balance 50.00 is below the transaction minimum of 100.00.",
+    "field": "amount",
+    "severity": "error"
+  }
+}
+\`\`\`
+
+The client code switches on the code, not the HTTP status. The status code is metadata for HTTP middleware and proxies. The error code is the contract.
+
+A few rules I enforce:
+- Error codes are SCREAMING_SNAKE_CASE and describe the problem, not the location.
+- Each code maps to exactly one error scenario. A code like VALIDATION_ERROR is too broad — you need MISSING_REQUIRED_FIELD and INVALID_FIELD_FORMAT as separate codes.
+- Codes are documented alongside endpoints. A well-designed API reference lists every possible error code for each endpoint.
+
+## Layer Two: Machine-Readable Context
+
+The error code tells you what happened. The context tells you why. Every error response includes enough information for the client to act on it without human interpretation.
+
+The key fields:
+- **field**: the specific input field or parameter that caused the error, if applicable.
+- **value**: the value that triggered the error.
+- **constraint**: what the value violated (min, max, pattern, required, unique).
+- **trace_id**: a correlation ID that links the error to server-side logs.
+
+A missing required field returns \`{ code: "MISSING_REQUIRED_FIELD", field: "email", constraint: "required" }\`. The frontend can highlight the email field, show a message, and move on — no string parsing needed.
+
+For the payment API scenario I started with, insufficient balance returns:
+
+\`\`\`json
+{
+  "error": {
+    "code": "INSUFFICIENT_BALANCE",
+    "http_status": 400,
+    "message": "Insufficient balance.",
+    "details": {
+      "field": "amount",
+      "value": "150.00",
+      "max_allowed": "100.00",
+      "account_id": "acc_abc123"
+    },
+    "trace_id": "txn_9f3a2b1c"
+  }
+}
+\`\`\`
+
+The frontend shows the max allowed amount directly. The client library catches INSUFFICIENT_BALANCE and offers a balance top-up screen. The support team searches by trace_id and sees the full server-side log.
+
+## Layer Three: Severity and Actionability
+
+Not all errors are equal. A 503 Service Unavailable during a database migration is less urgent than a 401 Unauthorized on an authenticated endpoint. Every error response includes a severity field with three values:
+
+- **error**: the request failed and should not be retried without modification.
+- **warn**: the request succeeded but needs attention (deprecated field used, rate limit approaching).
+- **retry**: the request failed but might succeed if retried after a delay.
+
+This distinction matters for monitoring and alerting. A spike in \`retry\` severity errors from the database pool tells your team to check connection availability. A spike in \`error\` severity errors from a specific endpoint tells them to check business logic. Different severities route to different playbooks.
+
+## What This Solves in Practice
+
+After switching to this taxonomy on a payment API serving multiple client applications, three things improved.
+
+First, integration time dropped. New client teams spent less time asking "what does this error mean?" because the error response already contained the answer structured for their code. The error reference documentation became a lookup table rather than a troubleshooting guide.
+
+Second, debugging cycles shortened. With trace_id in every response, the support team could jump directly from a customer report to the relevant log entry. No more "when did this happen and on which server?" conversations.
+
+Third, automated recovery became possible. The client library could handle retry-eligible errors transparently, display actionable messages for validation errors, and alert for authorization errors. Error handling went from a switch-on-status-code mess to a clean code-first dispatch.
+
+## The Implementation Cost
+
+Adding a proper error taxonomy to an existing API takes about one sprint of disciplined refactoring. The changes are contained to middleware and error handling layers — route handlers stay the same. The payoff starts the day after deployment, when the first integration engineer says "oh, the error response tells me exactly what to fix."`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
