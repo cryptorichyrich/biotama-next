@@ -1122,6 +1122,58 @@ Choreographed sagas work for simple, linear workflows where you accept the coupl
 
 The Saga pattern is not theoretical. It is the difference between a system that loses money on failures and one that recovers cleanly. Choose orchestration for financial flows. Make every compensation handler idempotent. And never assume a distributed transaction will stay consistent on its own.`,
   },
+  {
+    slug: "astro-content-collections-blog-pipeline",
+    title: "Astro Content Collections Made My Blog Pipeline 10x Easier",
+    description:
+      "Why Astro's content collections were the best content architecture decision I made, even after migrating to Next.js.",
+    date: "2026-05-28",
+    tags: ["Astro", "Architecture", "Content"],
+    content: `![Blog pipeline architecture](/images/blog/astro-content-collections.jpg)
+
+# Astro Content Collections Made My Blog Pipeline 10x Easier
+
+I migrated this blog from Astro to Next.js. But I missed Astro's content collections more than I expected. Enough that I rebuilt the same pattern inside a TypeScript data file.
+
+## The Content Collection Contract
+
+Astro's content collections enforce a schema on every blog post. Define the shape once — slug, title, date, tags, description — and every post must comply. No missing fields, no inconsistent formatting, no "I forgot the date" commits. The framework validates the contract at build time.
+
+This sounds minor. It is not. Before content collections, I managed blog posts as loose markdown files with YAML frontmatter. Every file was a gamble. One post had \`tags: ["React", "TypeScript"]\`. Another had \`tags: [react, typescript]\`. A third omitted tags entirely. Frontmatter parsing failed silently, and I only noticed when the blog page rendered a null tag array as "undefined".
+
+## The Pattern I Kept
+
+When I moved to Next.js, I could have used markdown files again with gray-matter parsing. Instead, I stored posts as a TypeScript array of typed objects. The same contract Astro enforced, now enforced by the TypeScript compiler.
+
+\`\`\`typescript
+export const blogPosts: BlogPost[] = [
+  {
+    slug: "my-post",
+    title: "My Post",
+    description: "120 characters that show in Google results",
+    date: "2026-05-28",
+    tags: ["Tag1", "Tag2"],
+    content: \`# My Post\n\nBody here.\`,
+  },
+];
+\`\`\`
+
+No parsing step. No missing fields. The compiler catches everything before the build starts.
+
+## What I Gained
+
+The content collection pattern forced me to think about content as data with a shape, not as freeform documents. That shift changed how I structured the entire pipeline:
+
+- **Featured images** became another field tied to the slug, not a separate file naming convention I had to remember
+- **Tags** stayed consistent because the array type enforced quotation marks
+- **Content** used template literals, so I never juggled file imports or path resolution
+
+The pipeline went from "write file, validate manually, check rendering, fix frontmatter, repeat" to "write object, push commit, done."
+
+## The Lesson
+
+Astro's content collections taught me that the best content management system is the one that rejects invalid data at compile time, not runtime. I replicated that pattern in Next.js without any content management framework. Just TypeScript, an interface, and a single file.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
