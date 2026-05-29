@@ -1277,11 +1277,11 @@ This is a DI container in 10 lines. No decorators, no annotations, no runtime re
 
 DI frameworks claim to improve testability. In practice, they improve testability only for code that was already testable. A class that accepts dependencies through its constructor is testable regardless of whether those dependencies are injected by a framework or by a test file that constructs the class directly.
 
-The difference: framework-injected dependencies hide their wiring. When a test fails because a mock was set up incorrectly, the framework's error messages often point to the container configuration, not the test. Manual wiring produces a stack trace that points to the exact constructor call that failed. That saves debugging time every single day.
+The difference: framework-injected dependencies hide their wiring. When a test fails because a mock was set up incorrectly, the framework's error messages often point to the container configuration, not the test. Manual wiring produces a stack trace that points to the exact constructor call that failed. That difference saves debugging time daily.
 
 ## What I Actually Use
 
-For projects under 20 services, plain constructors and a composition root function. For larger systems, the 10-line registry pattern above. For systems that genuinely need runtime configuration reloading or plugin architectures, I reach for a simple factory registry, never a full DI framework.
+For projects under 20 services, plain constructors and a composition root function. For larger systems, the 10-line registry pattern above. For systems that need runtime configuration reloading or plugin architectures, I reach for a simple factory registry, never a full DI framework.
 
 The hard part of dependency management is not wiring. It is deciding what should be a dependency. That decision cannot be automated by a framework, and replacing it with decorators only delays the thinking you need to do anyway.`,
   },
