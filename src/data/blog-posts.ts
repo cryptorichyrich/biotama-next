@@ -1286,6 +1286,75 @@ For projects under 20 services, plain constructors and a composition root functi
 The hard part of dependency management is not wiring. It is deciding what should be a dependency. That decision cannot be automated by a framework, and replacing it with decorators only delays the thinking you need to do anyway.`,
   },
   {
+    slug: "stop-use-effect-data-fetching",
+    title: "Stop Using useEffect for Data Fetching",
+    description:
+      "After seven years of React applications, I stopped using useEffect for data fetching. Here is what I use instead and why the ecosystem moved on.",
+    date: "2026-05-29",
+    tags: ["react", "frontend", "best-practices"],
+    content: `![Stop using useEffect for data fetching](/images/blog/stop-use-effect-data-fetching.jpg)
+
+# Stop Using useEffect for Data Fetching
+
+I wrote my last useEffect-based data fetch in 2023. I did not know it at the time. Six months later, I went back to the component and replaced it with React Query. The pattern I had used for six years looked like a workaround in hindsight.
+
+## The Pattern I Used for Years
+
+A component mounts. useEffect runs with an empty dependency array. The fetch call fires. The loading state toggles. The data lands in a useState. The component re-renders.
+
+\`\`\`tsx
+useEffect(() => {
+  setIsLoading(true);
+  fetch("/api/transactions")
+    .then((res) => res.json())
+    .then(setData)
+    .finally(() => setIsLoading(false));
+}, []);
+\`\`\`
+
+This code is in production right now in thousands of applications. It works. But it has problems that compound as your app grows.
+
+## The Problems You Discover Later
+
+First, the cleanup gap. The component unmounts while the fetch is in progress. The state update fires on an unmounted component. React warns you. You add an abort controller or a mounted flag. That is more boilerplate for something the framework should handle.
+
+Second, the cache hole. Fetch the same data on two different pages. Both mount, both fire the same request. The browser handles one. The server doubles its load. No cache sharing without adding external infrastructure.
+
+Third, the race condition. The user navigates from page A to page B. Page A fetches transactions. Page B fetches transactions with a different filter. The page B response arrives first. Then page A's response overwrites it. The user sees wrong data.
+
+Each of these has a manual fix. Abort controllers for cleanup. Context providers for caching. Request IDs for race conditions. The fixes work. They also add complexity you should not have to manage.
+
+## What Replaced It
+
+Suspense-based data fetching solved all three problems at the framework level.
+
+With React Query, TanStack Query, or SWR, the same data fetch becomes a declarative hook:
+
+\`\`\`tsx
+function useTransactions() {
+  return useQuery({
+    queryKey: ["transactions"],
+    queryFn: () => fetch("/api/transactions").then((r) => r.json()),
+  });
+}
+\`\`\`
+
+The hook handles cleanup automatically. It cancels stale requests on unmount. It caches results by query key, so two components fetching the same data share one network call. It deduplicates in-flight requests, so rapid re-mounts do not fire duplicate fetches.
+
+Server Components go further. The async component runs on the server, fetches data directly from the database, and sends the rendered result to the client. Zero JavaScript for the data-fetching layer. No loading spinners for initial data. No useEffect at all.
+
+## What I Ship Today
+
+For server-rendered pages in Next.js, I use Server Components with async data fetching. The component awaits the database call directly. The client receives rendered HTML.
+
+For interactive client components that need fresh data, I use TanStack Query with a short stale time. The hook manages caching, background refetching, and optimistic updates.
+
+For form mutations and side effects, I use server actions or TanStack Query mutations. useEffect handles exactly one thing in my current codebase: synchronizing with a browser API (resize observer, websocket connection).
+
+The ecosystem moved on from useEffect for data fetching. I moved with it. The code got simpler, the bugs got rarer, and I stopped writing abort controllers by hand.`,
+
+  },
+  {
     slug: "hermes-cron-blog-pipeline-autopilot",
     title: "How I Use Hermes Cron Jobs to Run My Blog Pipeline on Autopilot",
     description:
