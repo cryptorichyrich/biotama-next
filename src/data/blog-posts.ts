@@ -1174,6 +1174,117 @@ The pipeline went from "write file, validate manually, check rendering, fix fron
 
 Astro's content collections taught me that the best content management system is the one that rejects invalid data at compile time, not runtime. I replicated that pattern in Next.js without any content management framework. Just TypeScript, an interface, and a single file.`,
   },
+  {
+    slug: "dependency-injection-python",
+    title: "Dependency Injection in Python Without Frameworks",
+    description:
+      "Why I stopped using DI frameworks in Python and started writing simpler, more testable code with plain constructors and manual wiring.",
+    date: "2026-05-29",
+    tags: ["python", "architecture", "design-patterns"],
+    content: `![Dependency injection concept](/images/blog/dependency-injection-python.jpg)
+
+# Dependency Injection in Python Without Frameworks
+
+I spent two years using a Python DI framework in production. I removed it last quarter. The code got simpler, the tests got faster, and my team stopped needing to trace through five layers of decorators to understand where objects came from.
+
+## The Problem With DI Frameworks
+
+DI frameworks solve a problem most Python applications do not have. They solve object graph construction for systems with hundreds of classes, deep inheritance trees, and multiple interchangeable implementations. Spring Boot applications need this because Java's type system and lack of first-class functions make manual wiring painful. Python has none of those constraints.
+
+What DI frameworks introduce in Python is invisible coupling. You define your wiring in configuration files, decorators, or module-level registries. When something breaks, the traceback points to the framework's internals, not your code. I watched junior engineers spend hours debugging why a dependency resolved to the wrong implementation, only to find a decorator ordering issue in a config file three imports away.
+
+Python's import system already does most of what DI frameworks offer. Modules are singletons. You can swap implementations at the module level. You can patch in tests with unittest.mock. The framework adds ceremony without adding capability.
+
+## The Plain Constructor Pattern
+
+My rule now: if a class needs dependencies, pass them to \`__init__\`. No decorators. No annotations that trigger auto-wiring. No container lookups.
+
+\`\`\`python
+class PaymentProcessor:
+    def __init__(
+        self,
+        gateway: PaymentGateway,
+        ledger: LedgerService,
+        notifier: NotificationService,
+    ):
+        self._gateway = gateway
+        self._ledger = ledger
+        self._notifier = notifier
+
+    def process(self, payment: Payment) -> Result:
+        charge = self._gateway.charge(payment)
+        self._ledger.record(payment, charge)
+        self._notifier.send(payment.user_id, "Payment processed")
+        return charge
+\`\`\`
+
+This class does not know or care where its dependencies come from. It accepts concrete interfaces as parameters. That is the entire contract. Tests pass mocks. Production code passes real implementations. Wiring happens at a single composition root, typically a function or a factory module.
+
+\`\`\`python
+# composition_root.py
+def create_payment_processor(config: AppConfig) -> PaymentProcessor:
+    gateway = StripeGateway(config.stripe_key)
+    ledger = PostgresLedger(config.database_url)
+    notifier = EmailNotifier(config.smtp_host, config.from_address)
+    return PaymentProcessor(gateway=gateway, ledger=ledger, notifier=notifier)
+\`\`\`
+
+This function is the entire dependency graph. It is explicit. It is debuggable. When the database URL changes, I update one string in one place, not a YAML file, a decorator argument, and a provider class.
+
+## What About Interfaces and Abstractions?
+
+Python does not need explicit interfaces. Protocols and duck typing handle this. If your class expects an object with a \`charge()\` method, any object with a \`charge()\` method works. You do not need a \`PaymentGatewayInterface\` base class and a \`@implements\` decorator.
+
+\`\`\`python
+from typing import Protocol
+
+class PaymentGateway(Protocol):
+    def charge(self, payment: Payment) -> ChargeResult: ...
+
+class StripeGateway:
+    def charge(self, payment: Payment) -> ChargeResult:
+        # implementation
+        pass
+
+class TestGateway:
+    def charge(self, payment: Payment) -> ChargeResult:
+        return ChargeResult(success=True, id="test-123")
+\`\`\`
+
+Protocols give you static type checking without runtime inheritance. Your IDE autocompletes against the protocol. Mypy catches mismatches. And you never import the protocol at runtime in production because it is a typing-only construct.
+
+## When Manual Wiring Becomes Painful
+
+There is a threshold where manual wiring stops scaling. I hit it around 40+ services with interdependencies and multiple environments (local, staging, production) that each need different implementations. At that point, a simple dict-based registry works better than a DI framework.
+
+\`\`\`python
+# registry.py
+_registry: dict[str, Callable[[], Any]] = {}
+
+def register(name: str, factory: Callable[[], Any]) -> None:
+    _registry[name] = factory
+
+def resolve(name: str) -> Any:
+    return _registry[name]()
+
+def reset() -> None:
+    _registry.clear()
+\`\`\`
+
+This is a DI container in 10 lines. No decorators, no annotations, no runtime reflection. Register factories explicitly in your composition root. Tests call \`reset()\` and register mock factories. It is transparent enough that any engineer can read it in under a minute.
+
+## The Testability Argument
+
+DI frameworks claim to improve testability. In practice, they improve testability only for code that was already testable. A class that accepts dependencies through its constructor is testable regardless of whether those dependencies are injected by a framework or by a test file that constructs the class directly.
+
+The difference: framework-injected dependencies hide their wiring. When a test fails because a mock was set up incorrectly, the framework's error messages often point to the container configuration, not the test. Manual wiring produces a stack trace that points to the exact constructor call that failed. That saves debugging time every single day.
+
+## What I Actually Use
+
+For projects under 20 services, plain constructors and a composition root function. For larger systems, the 10-line registry pattern above. For systems that genuinely need runtime configuration reloading or plugin architectures, I reach for a simple factory registry, never a full DI framework.
+
+The hard part of dependency management is not wiring. It is deciding what should be a dependency. That decision cannot be automated by a framework, and replacing it with decorators only delays the thinking you need to do anyway.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
