@@ -1415,6 +1415,45 @@ The effort to set this up was about two hours of skill configuration and cron sc
 
 This is the kind of automation that generative AI enables when you stop thinking of it as a chatbot and start thinking of it as a programmable worker. Give it a schedule, a backlog, a set of skills, and the right guardrails, and it runs without you.`,
   },
+  {
+    slug: "flutter-hot-reload-spoiled-me",
+    title: "Flutter's Hot Reload Spoiled Me — Now I Expect It Everywhere",
+    description:
+      "Flutter's sub-second hot reload ruined other development environments for me. Here is why that expectation is reasonable and what it taught me about developer experience.",
+    date: "2026-05-29",
+    tags: ["flutter", "mobile", "developer-experience", "frontend"],
+    content: `![Flutter hot reload](/images/blog/flutter-hot-reload-spoiled-me.jpg)
+
+# Flutter's Hot Reload Spoiled Me — Now I Expect It Everywhere
+
+I changed a widget property. I hit save. Less than a second later, the emulator showed the updated UI. I did not rebuild the app. I did not navigate back to the screen. The state stayed intact, the scroll position stayed where I left it, and the new design appeared. That was my first week with Flutter. Eighteen months later, I still get irritated when any other framework makes me wait.
+
+## The Moment It Clicked
+
+The first time I used hot reload, I assumed it would not work for real. All demos look fast. But Flutter's hot reload is genuinely different from the live reload offered by most web frameworks. Live reload refreshes the entire page. Hot reload injects updated source code into the running Dart VM, rebuilds the widget tree, and composites the new frame. The app stays running the whole time.
+
+The technical difference matters because it changes how you work. Instead of edit, compile, deploy, navigate to the right screen, wait, squint at the result, I edit, save, and see the change. The iteration loop compresses from 15 seconds to under one. Loop that twenty times per hour and the productivity gap becomes a chasm.
+
+## The Framework I Compare Everything To
+
+I moved back to web development after those eighteen months. React with Vite. Not slow by any measure. But the comparison was unfair and persistent. I would tweak a CSS value, wait for the HMR to propagate, and feel the drag. The app did not crash. It worked. But the loop took three seconds instead of sub-second, state reset on some changes, and the browser occasionally needed a full refresh.
+
+I started paying attention to what made Flutter's hot reload feel different. Three things stood out:
+
+**State preservation.** Flutter keeps the widget state across hot reloads. The scroll position, the text input cursor, the animation frame, all of it stays. Most web HMR tools lose state on every update because the module replacement tears down the component tree.
+
+**Compilation speed.** Dart's ahead-of-time and just-in-time compilation split lets Flutter compile changes incrementally. The compiler only recompiles the modified files and their dependents. Web bundlers re-process the entire dependency graph on every change, even with caching.
+
+**No layout thrash.** Flutter's widget tree rebuilds in a single frame without triggering browser reflow. The new frame composites instantly. No cumulative layout shift, no flash of unstyled content, no white screen while the bundler finishes.
+
+## What This Taught Me About DX
+
+The experience taught me something about developer tooling that I now apply to every project I build. Sub-second feedback loops are not a luxury. They are a productivity amplifier that changes what you attempt.
+
+When iteration takes 15 seconds, you batch changes. You guess three things, check them all at once, and hope one works. When iteration takes under a second, you experiment. You try a value, see the result, try a different value, see the result. The cost of exploration drops to zero, and the quality of the output improves because you explored the design space instead of guessing and moving on.
+
+I now aim for sub-second iteration in every project I set up. It is not always possible. Docker rebuilds, database migrations, and API response times resist compression. But for the code path I spend most of my time in, the feedback loop should be short enough that I never think about it. That standard came from Flutter, and I have not lowered it.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
