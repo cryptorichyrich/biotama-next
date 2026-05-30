@@ -1454,6 +1454,148 @@ When iteration takes 15 seconds, you batch changes. You guess three things, chec
 
 I now aim for sub-second iteration in every project I set up. It is not always possible. Docker rebuilds, database migrations, and API response times resist compression. But for the code path I spend most of my time in, the feedback loop should be short enough that I never think about it. That standard came from Flutter, and I have not lowered it.`,
   },
+  {
+    slug: "websocket-reconnection-scale",
+    title: "WebSocket Reconnection at Scale: The Strategy Tutorials Skip",
+    description:
+      "How naive reconnection logic took down my production system, and the backoff, jitter, and state machine patterns that fixed it for 12,000 concurrent connections.",
+    date: "2026-05-30",
+    tags: ["WebSocket", "Architecture", "Backend", "Scaling"],
+    content: `I deployed a real-time trading dashboard and watched 12,000 WebSocket clients reconnect at the same moment when the load balancer cycled. CPU spiked from 30% to max in four seconds and stayed pinned for two minutes. The reconnection logic I had copied from a tutorial caused the outage.
+
+Most WebSocket guides cover the happy path. Open a connection, send messages, receive messages. The reconnection section is a footnote: add exponential backoff. That advice holds for a chat app with 50 users. It breaks at production scale.
+
+## Why Naive Reconnection Kills Your Server
+
+The standard approach looks like this:
+
+\`\`\`typescript
+socket.onclose = () => {
+  setTimeout(() => connect(), 1000);
+};
+\`\`\`
+
+This works for one client. With 12,000 clients connected to the same server, a server restart triggers 12,000 reconnection attempts within the same second. Each attempt requires a TLS handshake, an HTTP upgrade, and connection state initialization. The server cannot process them fast enough. Connections time out. Clients retry again. The cycle compounds.
+
+This is the thundering herd problem. I have watched it take down a production system twice.
+
+## Exponential Backoff Is Necessary but Not Sufficient
+
+The fix most teams reach for is exponential backoff. Wait 1 second, then 2, then 4, then 8, capping at 30 seconds. This spreads the load over time, but exponential backoff has a subtle failure mode at scale.
+
+When a server goes down, all clients detect the failure at the same time. They start their backoff at the same base interval. The first wave of reconnections still arrives in a burst. You have reduced the peak from 12,000 to maybe 3,000, but 3,000 simultaneous handshakes will still overwhelm most application servers.
+
+## Jitter: The Missing Piece
+
+The solution is bounded jitter. Add a random component to each backoff interval so clients do not synchronize:
+
+\`\`\`typescript
+function getBackoff(attempt: number): number {
+  const base = Math.min(1000 * Math.pow(2, attempt), 30000);
+  const jitter = base * Math.random();
+  return base + jitter;
+}
+\`\`\`
+
+With jitter, 12,000 clients spread their reconnection attempts across the entire backoff window instead of clustering at power-of-two boundaries. The peak drops from thousands to dozens per second. The server handles that load without breaking a sweat.
+
+In production, I use full jitter as described in the AWS architecture blog's analysis of this problem. Instead of adding a random offset to the base, pick a random value between zero and the backoff ceiling:
+
+\`\`\`typescript
+function getBackoff(attempt: number): number {
+  const ceiling = Math.min(1000 * Math.pow(2, attempt), 30000);
+  return Math.random() * ceiling;
+}
+\`\`\`
+
+Full jitter produces the most even distribution of reconnection attempts across time. It looks counterintuitive because some clients reconnect near zero delay, but the distribution is smoother than additive or decorrelated jitter at scale.
+
+## The Connection State Machine
+
+Reconnection logic needs a proper state machine. Most implementations I see in code reviews use a boolean: connected or not. That creates race conditions. A client tries to reconnect while a connection is already in progress. Two sockets open. Messages arrive on both. State diverges.
+
+The minimum viable states:
+
+- \`DISCONNECTED\` — no connection, safe to start one
+- \`CONNECTING\` — handshake in progress, do not start another
+- \`CONNECTED\` — active and receiving messages
+- \`RECONNECTING\` — connection lost, backoff timer running
+
+\`\`\`typescript
+enum ConnectionState {
+  DISCONNECTED,
+  CONNECTING,
+  CONNECTED,
+  RECONNECTING,
+}
+\`\`\`
+
+Transitions must be atomic. If the state is CONNECTING or RECONNECTING, a new connection attempt is a no-op, not a second socket. If the state is CONNECTED and the socket closes, transition to RECONNECTING and start backoff. Only from DISCONNECTED should a clean connection attempt proceed.
+
+This prevents duplicate connections and the message duplication bugs that follow.
+
+## Heartbeats and Dead Connection Detection
+
+TCP keepalive is not enough. A WebSocket connection can appear open while an intermediary proxy, load balancer, or NAT mapping has dropped it. The operating system may not detect a dead connection for minutes.
+
+Application-level heartbeats solve this. The client sends a ping every 30 seconds. The server responds with a pong. If the client does not receive a pong within 10 seconds, it considers the connection dead and triggers reconnection.
+
+\`\`\`typescript
+const HEARTBEAT_INTERVAL = 30000;
+const HEARTBEAT_TIMEOUT = 10000;
+
+function startHeartbeat(socket: WebSocket): void {
+  const interval = setInterval(() => {
+    if (socket.readyState !== WebSocket.OPEN) {
+      clearInterval(interval);
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      socket.close();
+      // triggers reconnection via onclose handler
+    }, HEARTBEAT_TIMEOUT);
+
+    socket.send("ping");
+    socket.once("pong", () => clearTimeout(timeout));
+  }, HEARTBEAT_INTERVAL);
+}
+\`\`\`
+
+The timeout matters as much as the heartbeat. Without it, a dead connection sits in the CONNECTED state while the client assumes everything is fine. Messages queue in the local buffer and vanish.
+
+I set the heartbeat interval to 30 seconds and the timeout to 10 seconds. Shorter intervals catch failures faster but generate more traffic. For a financial dashboard where stale data costs money, 30 seconds is the upper bound I am comfortable with. For a notification system, 60 seconds works.
+
+## Server-Side: Graceful Shutdown
+
+Reconnection is a shared responsibility. The client handles backoff and jitter. The server handles shutdown.
+
+When a server needs to restart, it should send a Close frame with a specific code before terminating connections. I use 4001 for "server shutting down." This tells the client to begin reconnection with zero or minimal delay instead of waiting for a TCP timeout. The client can interpret the close code: a 4001 means the server intended to close this, so reconnect soon. An abnormal close means something broke, so use full backoff.
+
+Better approach: drain connections before shutting down. Stop accepting new connections on the draining instance. Send existing clients a reconnect frame pointing to another instance. Close after a grace period. This rotates servers without triggering a thundering herd.
+
+In one of my backend services, the load balancer health check endpoint returns 503 during the shutdown sequence. The load balancer removes the instance from the pool. New connections route to healthy instances. Existing connections drain over 15 seconds. The server shuts down. Zero thundering herd.
+
+## Testing Reconnection
+
+I have never seen a team that tests reconnection logic well. Most test the happy path once and move on.
+
+Test these scenarios:
+
+- Server sends a close frame with a reconnect code. Client reconnects with zero or minimal delay.
+- Network drops without a close frame (kill the process, do not close the socket). Client detects the dead connection via heartbeat timeout and reconnects with backoff.
+- Two connection attempts fire at the same time. The state machine rejects the second one.
+- Server comes back but drops the connection again within 5 seconds. Backoff increases instead of resetting.
+- Backoff reaches the ceiling. Client stays at max interval and does not give up.
+
+A simple integration test: start a WebSocket server, connect 100 clients, kill the server, restart it, verify all 100 clients reconnect within the backoff window without duplicate connections.
+
+## The Full Picture
+
+Reconnection is a distributed systems problem, not a frontend convenience. Your client and server co-design a connection protocol. The client handles timing through backoff, jitter, and a state machine. The server handles signaling through close codes, connection draining, and health checks. Heartbeats bridge the gap, catching dead connections that TCP cannot detect fast enough.
+
+When I stopped treating WebSocket reconnection as a one-liner and started treating it as a protocol, my production incidents from connection management dropped to zero. The code is more complex. The state machine adds a few dozen lines. The heartbeat adds a timer and a timeout. The alternative is explaining to a stakeholder why their dashboard went blank when you restarted a single server.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
