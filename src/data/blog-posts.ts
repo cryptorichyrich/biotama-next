@@ -1691,6 +1691,53 @@ My blog pipeline uses three agents because research, writing, and editing need d
 
 Architecture is about trade-offs, not silver bullets. Multi-agent orchestration solves real problems at the cost of coordination complexity. Use it when the problem demands specialization.`,
   },
+  {
+    slug: "progressive-kyc-verify-instantly",
+    title: "Progressive KYC: Verify Good Users Without the 48-Hour Wait",
+    description:
+      "A three-tier progressive KYC pipeline that gives legitimate users instant access while escalating only risky accounts. Built after watching fintech onboarding lose 30% of signups to manual review delays.",
+    date: "2026-05-30",
+    tags: ["fintech", "backend", "architecture"],
+    content: `# Progressive KYC: Verify Good Users Without the 48-Hour Wait
+
+![Progressive KYC verification pipeline diagram](/images/blog/progressive-kyc-verify-instantly.jpg)
+
+Most fintech KYC flows assume every user is hiding something. That assumption costs you 30% of signups before a single transaction clears.
+
+The standard pipeline works like a binary switch: submit documents, enter the queue, wait for a human reviewer. A returning customer with a verified bank account and clean history gets the same treatment as someone uploading a photoshopped ID from a flagged IP address. Legitimate users bounce. Fraudsters find other vectors anyway.
+
+## The problem with binary verification
+
+I built KYC pipelines for payment platforms processing thousands of daily signups. One pattern kept surfacing: about 85% of users pass automated checks without issues. Their documents match their provided details. Their device fingerprints look normal. Their email domains have history. Yet these users still sat in a queue behind accounts flagged for manual review, sometimes for two days.
+
+Our systems could handle instant verification. The verification policy, not the pipeline, created the delay. The team treated all users as threats until proven otherwise.
+
+## Three tiers, not two states
+
+The fix is a progressive verification pipeline with three tiers instead of the binary approve or deny model.
+
+**Tier 1: Instant automated clearance.** Document OCR extracts name, DOB, and ID number. Cross-reference against the registration form data. Run the selfie against the ID photo with facial matching. Check the device fingerprint and IP reputation. If all clear, and the transaction volume stays below a threshold, the user gets instant access with a provisional status. No human touches this step. The entire chain runs in under three seconds.
+
+**Tier 2: Risk-based escalation.** Something flagged but minor. Maybe the OCR confidence score hit 89% instead of the required 95%. Maybe the user's IP geolocation differs from their stated address by a neighboring country. The system routes these cases into a prioritized review queue with context attached. The reviewer sees what triggered the escalation, not a vague "documents need review" flag. A good reviewer clears these in under 5 minutes because the system already did the hard part.
+
+**Tier 3: Full manual review.** Document mismatch, high-risk jurisdiction, unusual device configuration, or transactions exceeding provisional limits. These accounts get the full treatment: dedicated reviewer, document re-verification, possible video call. Tier 3 should represent under 5% of your signup volume. If it sits higher, your automated checks need tuning, not more reviewers.
+
+## The architecture that makes this work
+
+The pipeline runs as an async event-driven system. A user submits KYC documents through your API. The system drops a message into a priority queue. A worker picks it up, runs Tier 1 checks, and either emits an \`approved_provisional\` event or escalates to Tier 2.
+
+Provisional approval unlocks core features: send money, receive payments, view transaction history. A daily volume cap keeps fraud exposure contained. Set the cap high enough that legitimate users never hit it and low enough that bad actors cannot drain the system.
+
+Webhook callbacks notify the user's device when tier status changes. The frontend shows a real-time status component: "Verifying your identity" becomes "Identity confirmed, full access pending" becomes "Full access granted." Users see progress instead of a black hole.
+
+## What I learned from building this
+
+The hardest part is not the OCR integration or the document matching. Those are solved problems with solid APIs. The hard part is designing the provisional access model. You must decide what features to unlock at each tier, what limits to set, and what triggers force an immediate downgrade.
+
+I made the mistake of being too conservative on the first iteration. Provisional users could view their balance but nothing else. The feedback was brutal. Users felt more frustrated than if they had just waited for full verification. The second iteration gave provisional users most features with volume caps. Completion rates jumped 40%. Users started transacting within minutes of signup instead of days.
+
+Architecture is about trade-offs, not silver bullets. The trade-off here is fraud exposure versus conversion. A progressive KYC pipeline lets you balance both. Catch bad actors fast while giving legitimate users what they came for: access to your product, now.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
