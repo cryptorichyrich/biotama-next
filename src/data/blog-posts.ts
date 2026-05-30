@@ -1596,6 +1596,101 @@ Reconnection is a distributed systems problem, not a frontend convenience. Your 
 
 When I stopped treating WebSocket reconnection as a one-liner and started treating it as a protocol, my production incidents from connection management dropped to zero. The code is more complex. The state machine adds a few dozen lines. The heartbeat adds a timer and a timeout. The alternative is explaining to a stakeholder why their dashboard went blank when you restarted a single server.`,
   },
+  {
+    slug: "multi-agent-orchestration",
+    title: "Multi-Agent Orchestration: Why Coordination Is the Hard Problem",
+    description:
+      "Multi-agent LLM systems fail at coordination, not prompting. Three orchestration patterns and state management strategies I use in production agent workflows.",
+    date: "2026-05-30",
+    tags: ["ai", "agent-engineering", "architecture"],
+    content: `![Multi-agent orchestration network](/images/blog/multi-agent-orchestration.png)
+
+# Multi-Agent Orchestration: Why Coordination Is the Hard Problem
+
+The first time I needed two agents to collaborate on a task, I passed context between them through a shared JSON file. It worked for a demo. It fell apart in production. The agents overwrote each other's state and produced contradictory outputs.
+
+Single-agent architectures dominate the AI engineering conversation. Send a prompt, receive a response. Add tool use and the agent fetches data, writes files, runs commands. This covers most tasks. But some problems demand multiple specialized agents working together: a research agent gathers information, a writing agent produces prose, a review agent validates the output. Each agent has a narrow scope and clear responsibilities. Building any single agent is straightforward. Making them coordinate without stepping on each other is where projects break.
+
+## Three Orchestration Patterns
+
+After building multi-agent systems for my own workflows, I use three coordination patterns. Each trades complexity for capability.
+
+**Sequential Pipeline.** Agent A finishes and passes output to Agent B, who passes to Agent C. No concurrency, no shared state. Each agent receives a clean input and produces a clean output.
+
+I use this for content workflows. A research agent pulls sources, a writing agent drafts, an editing agent polishes. The contract between agents is a typed interface: the research agent returns a structured object with sources and key points, the writing agent expects that exact shape.
+
+Latency is the constraint. Three sequential LLM calls at 5 seconds each means 15 seconds minimum. For batch jobs like my blog pipeline, that works. For interactive use, it does not.
+
+**Supervisor-Worker.** A coordinator agent receives the task, breaks it into subtasks, and delegates each to a specialized worker. Workers return results. The supervisor synthesizes them.
+
+This pattern handles unpredictable task complexity. The supervisor decides how many workers to spawn, what each one does, and whether results need another pass. I use a variation for code generation: one agent plans the architecture, another writes implementation, a third reviews for security issues.
+
+The key design decision is worker autonomy. Workers can have their own tool access and memory, or they can be pure text-in-text-out functions. Giving workers tools increases capability but creates side effects the supervisor cannot predict. In one incident, two workers both tried to write to the same file. I now restrict tool access: workers produce text, the supervisor handles side effects.
+
+**Event-Driven Mesh.** Agents communicate through an event bus. Each agent subscribes to event types and publishes results as events. No central coordinator. Agents react to what they observe.
+
+This handles the most complex scenarios: agents that negotiate, iterate, or respond to external triggers. It also introduces the most surface area for bugs. Event ordering, idempotency, and deadlock prevention become your problem.
+
+I reserve this for systems that need real-time multi-agent interaction. For most workflows, the complexity exceeds the benefit.
+
+## State Management
+
+Multi-agent systems share a problem with distributed systems: concurrent state access. When two agents read and write the same data, you need a strategy.
+
+The cleanest approach: avoid shared state. Pass immutable messages between agents. Each agent owns its state and communicates through structured outputs. This is the sequential pipeline model. It works because nothing accesses the same resource at the same time.
+
+When agents need shared context, use a single-source-of-truth store. One agent writes, others read. In my setup, a context manager holds the shared state and agents request access through function calls. The manager serializes writes and resolves conflicts by timestamp or priority.
+
+Two agents writing to the same resource without a coordination layer will corrupt data. I learned this when two agents edited the same file and one agent's changes vanished. The fix was a write lock: agents request exclusive access, do their work, then release.
+
+## Error Propagation
+
+Agent B fails in a three-agent pipeline. Agent A already completed its work. The system needs a recovery strategy.
+
+I use checkpoints. After each agent completes, the orchestrator saves the intermediate state. A downstream agent failure triggers a retry from the last checkpoint without re-running the entire pipeline. This costs storage but saves token spend and latency on retries.
+
+For supervisor-worker patterns, the supervisor handles retries. A failed worker can be retried with the same input, given a different prompt, or reassigned to another worker. The supervisor has the context to make this decision. Individual workers do not.
+
+## A Minimal Orchestrator
+
+Here is a two-agent pipeline orchestrator I use:
+
+\`\`\`typescript
+interface AgentResult {
+  success: boolean;
+  data: unknown;
+  error?: string;
+}
+
+async function runPipeline<TInput, TIntermediate, TOutput>(
+  input: TInput,
+  agentA: (input: TInput) => Promise<AgentResult>,
+  agentB: (intermediate: unknown) => Promise<AgentResult>,
+  validateIntermediate: (data: unknown) => data is TIntermediate
+): Promise<AgentResult> {
+  const resultA = await agentA(input);
+  if (!resultA.success) {
+    return { success: false, data: null, error: \`Agent A: \${resultA.error}\` };
+  }
+
+  if (!validateIntermediate(resultA.data)) {
+    return { success: false, data: null, error: "Agent A output failed validation" };
+  }
+
+  return agentB(resultA.data);
+}
+\`\`\`
+
+The \`validateIntermediate\` function is the contract between agents. It catches type mismatches before the second agent receives garbage input and produces garbage output. I add a validation step between every agent handoff. These validation schemas serve as living documentation: they describe what each agent expects and produces.
+
+## When to Go Multi-Agent
+
+Most tasks do not need multiple agents. A single well-prompted agent with good tools covers 90% of use cases. Multi-agent orchestration adds value when the task has distinct phases that need different system prompts or tool sets, when output quality depends on specialized expertise a single prompt cannot capture, when independent subtasks benefit from parallel processing, or when error recovery requires retrying specific phases without re-running everything.
+
+My blog pipeline uses three agents because research, writing, and editing need different context windows and different temperature settings. A single agent can do all three, but quality drops when it tries to research at temperature 0.2 and write at temperature 0.7 in the same conversation.
+
+Architecture is about trade-offs, not silver bullets. Multi-agent orchestration solves real problems at the cost of coordination complexity. Use it when the problem demands specialization.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
