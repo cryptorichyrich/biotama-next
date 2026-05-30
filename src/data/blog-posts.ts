@@ -1738,6 +1738,45 @@ I made the mistake of being too conservative on the first iteration. Provisional
 
 Architecture is about trade-offs, not silver bullets. The trade-off here is fraud exposure versus conversion. A progressive KYC pipeline lets you balance both. Catch bad actors fast while giving legitimate users what they came for: access to your product, now.`,
   },
+  {
+    slug: "timescaledb-over-influxdb",
+    title: "I Chose TimescaleDB Over InfluxDB and Never Looked Back",
+    description:
+      "When I needed time-series data at scale, I skipped InfluxDB and installed a PostgreSQL extension. Query times dropped 10x and the ops burden vanished.",
+    date: "2026-05-30",
+    tags: ["database", "postgresql", "performance"],
+    content: `# I Chose TimescaleDB Over InfluxDB and Never Looked Back
+
+![PostgreSQL TimescaleDB time-series hypertable visualization](/images/blog/timescaledb-over-influxdb.jpg)
+
+Adding InfluxDB to our stack felt like the obvious move when the payments table crossed 100 million rows. Every architecture diagram for time-series data pointed to a dedicated TSDB. I spent two weeks provisioning it. I regretted it ten minutes after things hit production.
+
+## Two databases, one headache
+
+The first problem surfaced during deployment. Our application, a payment reconciliation system that ingests transaction events from multiple gateways, ran on PostgreSQL alone. Adding InfluxDB meant a second connection pool, a second authentication layer, a second monitoring dashboard, and a second set of backup scripts. Our two-person infrastructure team had to internalize InfluxDB's query language to debug production issues. Every engineer touching the data pipeline needed context about which database held which slice of data.
+
+This is not a theoretical complaint. I watched a midnight incident drag on for forty minutes because the engineer on call knew PostgreSQL cold but needed fifteen minutes to recall InfluxDB's continuous query syntax. The data sat there. The access path defeated him.
+
+## Hypertables: PostgreSQL doing what the team already knows
+
+TimescaleDB installs as a PostgreSQL extension. You run \`CREATE EXTENSION timescaledb;\` and you are done. No separate service, no new query language, no new authentication. The same \`psql\` client, the same connection string, the same role-based access the team uses daily.
+
+The real value is \`create_hypertable()\`. Point it at a timestamp column and a chunk interval. TimescaleDB handles the partitioning. Each chunk lives as a separate physical table, but your queries stay identical. A \`WHERE created_at BETWEEN\` clause gets the query planner to scan only relevant chunks. The optimizer uses partition pruning; the developer writes standard SQL.
+
+Our dashboard queries for transaction volume by hour dropped from 3.8 seconds to 0.4 seconds on a 140-million-row table. No query rewrite. No new syntax to learn. We added a \`time_bucket()\` function for aggregation windows. That is the extent of the TimescaleDB-specific syntax we use.
+
+## The operational cost nobody mentions
+
+A separate InfluxDB instance costs money. Even a modest deployment demands its own compute, its own monitoring, its own backup strategy. TimescaleDB runs inside your existing PostgreSQL instance. The community edition covers hypertables, compression, and continuous aggregates. Those three features handle 90% of time-series workloads.
+
+Compression cut our storage from 180 GB to 35 GB. Continuous aggregates precompute hourly and daily rollups so dashboard queries skip raw data. Both features use SQL. Both ship with sensible defaults. Neither required reading documentation past the first example.
+
+## When InfluxDB still wins
+
+TimescaleDB is not a universal answer. If your team does not use PostgreSQL, or if your time-series workload is pure metrics with zero relational context, InfluxDB's write throughput beats TimescaleDB's append patterns. But if PostgreSQL runs your application, adding a separate TSDB solves one problem by creating three others.
+
+I stayed with PostgreSQL because operational simplicity beats architectural purity in practice. My infrastructure team runs one database technology, debugs one query planner, and backs up one data store. The performance gains are measurable: queries ten times faster. Running one database instead of two simplifies on-call rotations, backup scripts, and schema migrations. That trade-off required no benchmark to validate.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
