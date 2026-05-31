@@ -2007,6 +2007,35 @@ After that incident, I built the classification, monitoring, and resolution work
 
 The DLQ did its job. I just had to design it to do the job.`,
   },
+  {
+    slug: "frontend-tooling-fatigue-minimal-stack",
+    title: "The Frontend Tooling Fatigue Is Real — Here's My Minimal Stack",
+    description:
+      "After a decade of frontend work, I settled on five tools that ship and stay stable. No filler, no chasing trends.",
+    date: "2026-05-31",
+    tags: ["frontend", "tooling", "react", "typescript", "opinion"],
+    content: `# The Frontend Tooling Fatigue Is Real — Here's My Minimal Stack
+
+Every six months someone ships a new build tool, a new state manager, or a new meta-framework promising to fix what the last one broke. I stopped chasing. After building frontends for fintech dashboards, internal tools, and customer products over the past decade, I settled on a stack that ships and stays stable.
+
+![Minimal developer workspace](/images/blog/frontend-tooling-fatigue-minimal-stack.jpg)
+
+I learned this lesson the hard way. Early in my career, I built a dashboard using every tool Medium recommended — Redux, styled-components, a custom Webpack config, a state normalizer library I can't name anymore. Six months later, I was the only person who understood the build pipeline. Handoff to another team took three weeks. The next project shipped with half the dependencies. Handoff took two days. The product worked identically.
+
+Here's the stack. Five tools. No filler.
+
+**React with TypeScript, strict mode always.** React earned its place through ecosystem depth and hiring pool size, not architectural purity. For products meant to outlive a quarter, that matters more than elegance. TypeScript strict mode catches entire categories of runtime errors at compile time. In payment UIs where bugs cost money, I've watched it prevent disasters.
+
+**Tailwind CSS.** I resisted it for years. The productivity gain from staying in one file instead of switching between markup and stylesheets compounds daily. Bundle size concerns vanish with purging. Designers can modify values without touching CSS files. That alone saved weeks on a recent project.
+
+**Zustand for state.** Not Redux, not MobX, not seventeen Context providers. Most apps have three to five global states — auth, theme, current workspace, maybe a draft form. Zustand handles them cleanly and stays fast. When a store grows past 50 lines, the problem is usually that data should be derived, not stored.
+
+**Next.js for apps, Astro for content.** Next.js App Router handles complex routing, server components, and API routes for applications. Astro ships zero JavaScript by default — exactly right for blogs and documentation.
+
+That's it. No separate form library. No dedicated fetching wrapper beyond \`fetch()\`. No TanStack Query unless caching genuinely demands it. Every dependency is a liability. Treat it accordingly.
+
+The fatigue comes from believing you need to evaluate everything. You don't. Pick tools that solve problems you have, not problems a blog post told you to anticipate. Ship something. Evaluate whether each tool earned its place. Then close the browser tab and build.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
