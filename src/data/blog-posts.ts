@@ -1777,6 +1777,71 @@ TimescaleDB is not a universal answer. If your team does not use PostgreSQL, or 
 
 I stayed with PostgreSQL because operational simplicity beats architectural purity in practice. My infrastructure team runs one database technology, debugs one query planner, and backs up one data store. The performance gains are measurable: queries ten times faster. Running one database instead of two simplifies on-call rotations, backup scripts, and schema migrations. That trade-off required no benchmark to validate.`,
   },
+  {
+    slug: "cqrs-in-practice",
+    title: "CQRS in Practice: When the Textbook Meets Production",
+    description:
+      "What I learned applying CQRS to a payment processing service. Where it helped, where it got messy, and why you shouldn't start with it.",
+    date: "2026-05-31",
+    tags: ["Architecture", "Design Patterns", "Backend"],
+    content: `# CQRS in Practice: When the Textbook Meets Production
+
+I spent two weeks designing a CQRS architecture for a payment processing service. The diagrams were beautiful: separate command and query models, event-driven synchronization, clean bounded contexts. Then production happened, and I had to rethink half of it.
+
+## What CQRS Promises
+
+CQRS (Command Query Responsibility Segregation) splits your data model into two: one for writes (commands) and one for reads (queries). Write models stay focused on business rules and validation. Read models stay optimized for whatever query patterns your UI and reporting need. Each side evolves independently.
+
+For high-throughput systems with asymmetric read/write loads, this separation makes sense. Payment processing fits this profile. We process hundreds of transactions per minute but serve thousands of dashboard queries per second during peak hours.
+
+In a traditional shared model, one schema tries to serve both the OLTP workload (fast writes with strict consistency) and the OLAP workload (complex aggregations for dashboards and reports). The indexes that speed up dashboard queries slow down your inserts. The normalization that keeps your writes consistent makes your reads expensive. This tension exists because one schema serves two masters.
+
+## Where It Helped
+
+The read model separation delivered immediate value. Our transaction dashboard had been running complex joins across six tables to assemble a single view. A merchant dashboard query joined \`transactions\`, \`merchants\`, \`payment_methods\`, \`settlement_batches\`, \`fees\`, and \`statuses\` just to show the last 50 transactions with computed totals. After splitting, the read model became a denormalized projection tuned for those queries. Response times dropped from 800ms to under 50ms.
+
+Command validation improved too. With a dedicated write model, each mutation went through a single pipeline: validate business rules, persist to the write store, publish domain events. No more scattered validation logic across service layers. When a new compliance rule came in requiring additional KYC checks for transactions above a threshold, I knew the single place to add it.
+
+The event-driven sync between write and read models gave us something unexpected: a built-in audit trail. Each state change produced an event: \`TransactionInitiated\`, \`PaymentAuthorized\`, \`SettlementCompleted\`, \`ChargebackReceived\`. If the read model fell behind or got corrupted, replaying events from the write store rebuilt it. Regulators asking for transaction histories got clean, sequential event logs without extra work on our part.
+
+## Where It Got Messy
+
+Eventual consistency catches you first. The textbook says "accept it" and shows a diagram with a few milliseconds of lag. In practice, users submit a payment, then load the dashboard. If the read model hasn't caught up, the transaction isn't there. They submit it again. Duplicate charge.
+
+I solved this with a hybrid approach: after a command succeeds, the API returns the write model's state for the immediate response, while the read model catches up in the background. This works, but it means your API layer knows about both models, which undermines the separation CQRS promises.
+
+Synchronization complexity was the second problem. The event pipeline between write and read models needs to handle failures, retries, ordering, and idempotency. I built a small outbox pattern to ensure events were tracked, but maintaining that infrastructure has a real cost. The pipeline means dead letter queues, replay mechanisms, monitoring for lag, alerting when projections fall behind.
+
+The projection logic itself became a source of bugs. A denormalized read model needs to handle each event type and update its state. When you add a new field to the dashboard, you need to update the projection, rebuild the read model, and handle the migration of existing data. Miss one event handler and your read model drifts from reality.
+
+Debugging compound the problem. When a bug shows up in the read model, you trace it back through events, through the projection logic, through the write model that produced the event. Three places to investigate instead of one. The cognitive overhead is real at 2 AM when the on-call pager goes off.
+
+I spent four hours tracking down why a merchant's total settlement amount was off by one transaction. The write model was correct. The event was published. The projection handler had an ordering bug where a \`SettlementCompleted\` event processed before the corresponding \`PaymentAuthorized\` event because they arrived on different partitions. After that, I added sequence validation to each projection handler.
+
+## Where CQRS Is Overkill
+
+I would not use CQRS for a CRUD application. If your read and write patterns are similar, if your queries are simple enough for a single well-indexed table, if your team is small and shipping speed matters more than architectural purity, a shared model works fine.
+
+CQRS adds operational complexity: two data stores to monitor, two schemas to migrate, an event pipeline to maintain, and eventual consistency to explain to product managers. This cost needs to justify itself with a concrete benefit. If your read queries are fast enough on a shared model, the separation is waste.
+
+I wouldn't start with CQRS on a new project. Begin with a shared model. Add the separation when you have evidence that reads and writes need different optimization paths. Starting with CQRS before you need it burns the same kind of effort as starting with microservices before you need them.
+
+A good heuristic: if your read queries involve fewer than three table joins and return in under 100ms on a shared model, you don't need CQRS. If your write throughput is under 100 TPS and you don't have complex validation rules that benefit from a dedicated aggregate, you don't need CQRS.
+
+## What I'd Do Differently
+
+Start simpler. Use a single model until read performance becomes a measured problem. Then split the queries that need it, not everything. You don't need to go all-in on CQRS to get the benefits. A read replica or a materialized view might solve 80% of your problems with 20% of the effort.
+
+Use a proven event streaming solution instead of building your own. I built the outbox pattern from scratch because I wanted control over the event lifecycle. In hindsight, Debezium or a managed change data capture service would have saved weeks. Rolling your own event infrastructure means you're maintaining two problems instead of solving one.
+
+Invest in observability early. If you can't measure the lag between your write and read models, you can't debug production issues. Build dashboards for event processing latency before you build the next feature. Track the age of the last processed event. Alert when projections fall more than a few seconds behind.
+
+## The Takeaway
+
+CQRS solves a real problem: optimizing read and write paths independently in systems with asymmetric loads. The payment service is better for having it. The dashboard performance improvement alone justified the architecture decision, and the event-driven audit trail became an asset during compliance audits.
+
+But the gap between the clean architecture diagram and the running production system is wide. Eventual consistency, synchronization failures, and debugging complexity are the price of admission. Architecture is about trade-offs, not silver bullets. CQRS trades simplicity for scalability in specific dimensions. Make sure those dimensions matter for your system before you commit.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
