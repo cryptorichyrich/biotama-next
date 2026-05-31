@@ -1919,6 +1919,94 @@ Trust your own instincts over the agent's confidence. Every tool in this space p
 
 Architecture is about trade-offs, not silver bullets. AI pair programming is a trade-off too. It trades some control for speed, some depth for breadth, and some certainty for velocity. Whether that trade makes sense depends on what you're building and who you're building it for. For me, the trade has been worth it.`,
   },
+  {
+    slug: "dead-letter-queues-design-requirement",
+    title: "Dead Letter Queues Are a Design Requirement, Not a Failure",
+    description: "Why treating DLQs as incidents instead of designed buffers costs you money. Classification, retry strategy, and the reconciliation feedback loop that financial systems need.",
+    date: "2026-05-31",
+    tags: ["fintech", "architecture", "backend"],
+    content: `A payment notification fails to deliver. The webhook returns a 503. The message broker moves it to a dead letter queue. Most teams treat this as an incident. The system is working as designed.
+
+Dead letter queues carry a stigma. The name says "dead." Engineers see messages piling up and panic. Monitoring dashboards flag DLQ depth as a red metric. On-call gets paged. The response is to clear the queue, fix the immediate cause, and move on.
+
+This approach misses the point. A DLQ is not a graveyard. It is a controlled buffer for messages that need human attention, different processing logic, or a retry under different conditions. Designing your DLQ strategy should happen before you write your first message consumer, not after the first incident.
+
+## When Messages Deserve to Die (Temporarily)
+
+Messages end up in a DLQ for specific, predictable reasons. Understanding each reason changes how you design the retry and resolution flow.
+
+**Poison messages.** A message with corrupt data, an unknown schema version, or values that violate business rules. Retrying this message produces the same failure. It needs inspection and manual correction.
+
+**Transient failures with exhaustion.** A downstream service went down, the consumer retried with exponential backoff, and the retry budget ran out. The message is valid. The timing was wrong. These deserve automatic reprocessing once the downstream service recovers.
+
+**Schema evolution gaps.** The producer deployed a new message format before the consumer updated. The consumer cannot parse the payload. This is a deployment coordination problem, not a data problem.
+
+**Resource exhaustion.** The consumer hit a connection pool limit, a rate limit, or a disk space threshold. The message is fine. The environment was not. These resolve when resources free up.
+
+Each requires a different resolution strategy. Treating DLQ as a single bucket for "bad messages" means you cannot automate any of the resolution paths.
+
+## Designing for Classification
+
+The first design decision: separate your DLQs by failure type, or at minimum, tag messages with the failure reason and retry count.
+
+In one of my payment systems, I used three separate queues. One for poison messages (no automatic retry). One for transient failures (retry with backoff). One for schema mismatches (park until consumer is updated). The operations team could see at a glance what category of issue needed attention. Two of the three queues had automated resolution that did not require human intervention.
+
+The metadata attached to each DLQ message matters as much as the queue itself. At minimum, include: the original timestamp, the failure reason, the retry count, the last error message, and a correlation ID that traces back to the original transaction. Without this, resolving a DLQ message means digging through logs to reconstruct what happened.
+
+## The Retry Strategy Is the DLQ Strategy
+
+Your retry configuration determines which messages land in the DLQ and how fast they get there. Getting this wrong means either flooding the DLQ with messages that would have succeeded on retry, or burning through retries so fast that transient failures become permanent.
+
+Three parameters matter.
+
+**Maximum retry count.** For payment processing, I cap retries at 5. For notification delivery, I allow up to 10. The difference reflects the cost of failure. A missed payment settlement is expensive. A delayed notification is acceptable.
+
+**Backoff strategy.** Exponential backoff with jitter. The jitter prevents thundering herd problems when a downstream service recovers and all queued consumers retry at the same time. Without jitter, recovery from an outage can trigger a second outage.
+
+**Retry budget per time window.** Even with backoff, a sustained stream of failures can accumulate. A per-window budget caps total retry attempts in a given period. When the budget is exhausted, new failures go straight to the DLQ without consuming retry slots. This protects the system from spending resources on messages that are failing for a systemic reason.
+
+## Monitoring the Right Metrics
+
+Most teams monitor DLQ depth. Depth tells you something is wrong. It does not tell you what or how urgent. Three metrics give you actionable signal.
+
+**DLQ arrival rate.** How fast messages enter the DLQ. A sudden spike indicates a new failure mode. A gradual increase suggests a degrading dependency. The trend matters more than the absolute number.
+
+**DLQ age.** How long the oldest message has been waiting. In a financial system, a message sitting in the DLQ for more than a few minutes means a transaction is stuck. Age-based alerting catches problems that depth-based alerting misses. A single stale message has low depth but high urgency.
+
+**Resolution rate.** How fast messages leave the DLQ compared to how fast they arrive. If arrival exceeds resolution, you have a growing backlog and an operations problem.
+
+For payment systems, I set alert thresholds based on the financial impact of delay. A settlement message in the DLQ for more than 5 minutes triggers a high-priority alert. A notification message for 30 minutes triggers a low-priority one. The classification comes from the queue the message landed in.
+
+## The Reconciliation Connection
+
+In financial systems, DLQs have a special relationship with reconciliation. A message in the DLQ means a state transition did not happen. The payment was authorized but not captured. The refund was requested but not processed. The ledger entry was written but the notification was not sent.
+
+Reconciliation catches these gaps. Your reconciliation engine compares expected state against actual state on a schedule. When it finds a discrepancy, it generates a reconciliation item that traces back to a DLQ message.
+
+This creates a feedback loop. Reconciliation identifies the gap, the DLQ holds the message, and the resolution of the DLQ message closes the reconciliation item. Designing these systems to work together means reconciliation items include a reference to the DLQ message ID, and DLQ resolution updates the reconciliation status.
+
+I learned this the hard way. Reconciliation flagged 200 uncaptured payments and the operations team had to match each one to a DLQ message by timestamp and amount. Two hours of manual work that a correlation ID would have eliminated.
+
+## Building the Resolution Workflow
+
+The resolution workflow for DLQ messages should be codified, not ad-hoc. I build three resolution paths.
+
+**Automatic reprocessing.** Messages tagged as transient failures get retried on a schedule. The consumer checks whether the downstream service is healthy via a health check endpoint before attempting reprocessing. Success acknowledges the message. Failure increments the retry counter.
+
+**Manual replay with modification.** Poison messages get inspected by a human, the payload gets corrected, and the message is replayed. This requires a UI or CLI that lets operators view the message, edit the relevant fields, and submit it back to the original queue. Building this tooling early saves hours of operational overhead.
+
+**Discard with audit.** Some messages are unrecoverable. A test message from a sandbox environment. A duplicate that was processed through another path. A message for a deactivated merchant. These need a discard action that records the reason for the audit log before removing the message.
+
+Each resolution path produces an audit event. In a regulated financial system, you need to prove that no message was silently dropped. The audit trail for DLQ resolution should include who resolved it, how, when, and what the outcome was.
+
+## What Changed After the First Incident
+
+The first time a DLQ filled up in production, I had none of this. A payment partner's API went down for 45 minutes. Hundreds of settlement messages piled up. The on-call engineer saw a red metric, panicked, and purged the queue to clear the alert. Those messages were gone. The reconciliation engine caught the missing settlements two days later, but by then the resolution required manual intervention with the payment partner.
+
+After that incident, I built the classification, monitoring, and resolution workflow described above. The next time the same partner went down, messages accumulated in the transient failure DLQ. The monitoring showed the trend. When the partner recovered, automatic reprocessing cleared the backlog in minutes. No manual intervention. No reconciliation gap.
+
+The DLQ did its job. I just had to design it to do the job.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
