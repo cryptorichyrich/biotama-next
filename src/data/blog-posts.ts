@@ -1842,6 +1842,83 @@ CQRS solves a real problem: optimizing read and write paths independently in sys
 
 But the gap between the clean architecture diagram and the running production system is wide. Eventual consistency, synchronization failures, and debugging complexity are the price of admission. Architecture is about trade-offs, not silver bullets. CQRS trades simplicity for scalability in specific dimensions. Make sure those dimensions matter for your system before you commit.`,
   },
+  {
+    slug: "ai-pair-programming-hermes-kilocode",
+    title: "AI Pair Programming With Hermes and KiloCode: My Actual Daily Workflow",
+    description:
+      "The real, unvarnished workflow of coding with two AI agents in 2026. No hype, no empty productivity claims — just what works day to day.",
+    date: "2026-05-31",
+    tags: ["AI", "Hermes", "KiloCode", "developer-tools"],
+    content: `# AI Pair Programming With Hermes and KiloCode: My Actual Daily Workflow
+
+The AI pair programming narrative splits into two camps. Camp one insists AI agents write flawless code on the first try and render human developers obsolete by next quarter. Camp two dismisses everything as fancy autocomplete that occasionally guesses the right variable name. Neither version matches what happens on my machine.
+
+I've been coding alongside two AI agents for months. Hermes handles architecture, research, scaffolding, and complex multi-file tasks. KiloCode handles inline edits, tab completions, and context-aware refactors inside my editor. Together they form something more useful than either narrative allows.
+
+![AI Pair Programming With Hermes and KiloCode](/images/blog/ai-pair-programming-hermes-kilocode.jpg)
+
+## The Division of Labor
+
+Hermes and KiloCode occupy different layers of the development stack. This isn't an accident. It's a deliberate separation that emerged after weeks of trial and error.
+
+**Hermes** operates at the project level. It has filesystem access, runs terminal commands, and understands the full codebase. I hand it tasks like "add a transaction reconciliation endpoint with idempotency keys" or "audit the auth flow for security gaps." It reads the relevant files, designs the solution, writes the code, and runs the tests. Hermes works autonomously across multiple files.
+
+**KiloCode** operates at the editor level. It reads the current file and nearby context, then suggests changes inline. I use it for quick refactors, fixing type errors, generating unit tests for a single function, or completing repetitive patterns. KiloCode works within the editor, one file at a time.
+
+The boundary between them matters. Hermes handles decisions that span modules. KiloCode handles decisions that span functions.
+
+## A Real Day in the Workflow
+
+Here's what a typical development session looks like, stripped of hype.
+
+**Morning: Plan with Hermes.** I describe the feature or bug fix in a sentence or two. Hermes reads the relevant parts of the codebase and proposes an approach. If the approach looks solid, I let it execute. If something feels off, I redirect. The key exchange happens in about two minutes.
+
+**Midday: Code with KiloCode.** Once the architecture is set and the scaffolding exists, I open the editor. KiloCode runs in the background, suggesting completions and offering inline edits. The workflow feels like pair programming with a fast junior developer who knows the codebase. I type the intent. KiloCode fills the boilerplate. I review and approve or reject.
+
+**Afternoon: Review and refine with Hermes.** After the bulk of the implementation exists, I ask Hermes to review the diff, run the test suite, and flag anything suspicious. It catches things I miss. The types of errors it finds are mundane but real: a missing edge case, a race condition in a rarely-triggered path, a test that passes by accident.
+
+## What Actually Works
+
+The workflow I settled on isn't what I expected when I started. Several patterns emerged that surprised me.
+
+**Long-running autonomous tasks beat constant back-and-forth.** I used to prompt Hermes one step at a time. That was slow and frustrating. Now I give it a full task description and let it work for 2 to 5 minutes without interruption. The output quality is higher because it maintains context across the full implementation.
+
+**Context windows reward specificity.** Both tools work better when I describe the outcome, not the method. "Add a reconciliation endpoint that matches payments to invoices using transaction references" produces better code than "create a POST route in the payments router that calls the invoice service." The agent finds a better approach than the one I had in mind about half the time.
+
+**KiloCode's inline edits save more time than its completions.** Tab completion is nice. But the real productivity gain comes from selecting a block of code and asking KiloCode to refactor it in place. Extracting a function, converting a callback chain to async/await, adding error handling to a 50-line block — these take seconds instead of minutes.
+
+**Hermes catches architectural problems early.** The biggest surprise was how often Hermes flags a design issue before I write a single line. "This approach will create a circular dependency between the payment and notification services" is the kind of feedback that used to surface during code review, days later. Now it surfaces in the planning phase.
+
+## Where It Breaks Down
+
+Honesty requires admitting the failures.
+
+**Novel problems with no training data.** When I'm working on genuinely new problems — domain-specific business logic, unusual API integrations, proprietary protocols — both tools produce mediocre output. They default to patterns from adjacent domains that don't quite fit.
+
+**Complex state management.** Multi-step workflows with interdependent state, optimistic updates, and rollback logic confuse both agents. They produce code that looks correct in isolation but breaks under concurrency.
+
+**When I disagree with the suggested approach.** Both tools are assertive. They present solutions with confidence. Sometimes the confidence is unwarranted. I've learned to trust my own judgment first and treat the agent's output as a suggestion, not a prescription.
+
+## The Honest Productivity Math
+
+This isn't a "10x developer" story. Those claims are marketing, not engineering.
+
+The real number is closer to 2x, with fewer context switches. I spend less time on boilerplate, less time searching documentation, less time debugging trivial issues. The mental energy I save goes toward architecture decisions, edge case analysis, and code review — the parts of the job that compound.
+
+The workflow didn't replace my judgment. It extended my attention. I can hold more of the system in my head because the agents handle the details I used to track manually.
+
+## What I'd Tell Another Developer
+
+Start with one agent. Learn its boundaries. Add the second only when you have a clear division of labor in mind.
+
+Hermes and KiloCode solve different problems. Using both without a deliberate workflow creates noise, not leverage. The agents end up fighting for your attention instead of amplifying it.
+
+Give autonomous tasks time to complete. Constant supervision defeats the purpose. A five-minute task without interruption produces better output than five one-minute tasks with constant redirection.
+
+Trust your own instincts over the agent's confidence. Every tool in this space produces plausible-looking output. Plausible isn't correct. Review everything. The review is faster than writing from scratch, but skipping it is the fastest route to a production incident.
+
+Architecture is about trade-offs, not silver bullets. AI pair programming is a trade-off too. It trades some control for speed, some depth for breadth, and some certainty for velocity. Whether that trade makes sense depends on what you're building and who you're building it for. For me, the trade has been worth it.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
