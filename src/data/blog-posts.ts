@@ -2200,6 +2200,98 @@ What I have found after building with these tools for a year is that the bottlen
 
 ![AI Pair Programming Workflow](/images/blog/ai-pair-programming-workflow.jpg)`,
   },
+  {
+    slug: "optimistic-concurrency-control-order-system",
+    title: "Optimistic Concurrency Control for High-Throughput Orders",
+    description:
+      "How version-column OCC prevents double-spending and inventory oversell in distributed order processing without the performance penalty of pessimistic locks.",
+    date: "2026-06-01",
+    tags: ["Database", "Architecture", "Backend"],
+    content: `# Optimistic Concurrency Control for High-Throughput Orders
+
+A customer clicks "Buy" and your system processes two identical requests within 50 milliseconds. Double-tap on mobile, retry logic gone rogue, CDN edge case. Without concurrency control, you ship two products and charge once. With pessimistic locking, you bottleneck every order through a single database row. There is a third option.
+
+## Why Pessimistic Locks Fail Under Load
+
+Pessimistic concurrency control locks the row before reading it. \`SELECT ... FOR UPDATE\` holds that lock until the transaction commits. In a low-throughput system with short transactions, this works. In an order system handling hundreds of requests per second during a flash sale, transactions queue behind the lock holder. Throughput collapses.
+
+The math is simple. If each transaction takes 50ms and you serialize them with row locks, your theoretical maximum drops to 20 orders per second, per SKU. A popular product during a sale can attract thousands of concurrent attempts. Your database becomes the bottleneck. Customers see timeouts instead of confirmation pages.
+
+## How Optimistic Concurrency Control Works
+
+Optimistic concurrency control assumes conflicts are rare and detects them instead of preventing them. Each row carries a version number. When you read a record, you capture the current version. When you update, you include the version in the WHERE clause and increment it.
+
+\`\`\`sql
+UPDATE orders
+SET status = 'confirmed', version = version + 1
+WHERE id = $1 AND version = $2
+\`\`\`
+
+If another transaction updated the row between your read and your write, the version no longer matches. The UPDATE affects zero rows. You detect the conflict and retry, or fail with a clear error response.
+
+The trade-off: the system rejects conflicting transactions instead of blocking them. This means you need application-level retry logic. Non-conflicting transactions proceed at full speed. No lock contention, no queueing, no throughput collapse.
+
+## Implementation Pattern for Order Systems
+
+In a real order system, the conflict window spans multiple operations: check inventory, reserve stock, create the order, deduct balance. Wrapping all of this in a single database transaction with version checks requires deliberate design.
+
+The pattern I use:
+
+1. **Read with version.** Load the inventory record, capturing its version number and available quantity.
+2. **Validate in application.** Check that quantity meets the order quantity. This validation happens outside the database. The version check at write time catches races.
+3. **Write with version predicate.** Execute the decrement with \`WHERE version = $captured_version\`. Zero rows updated means someone else changed the record.
+4. **Retry or fail.** For idempotent operations like inventory deduction, retry up to 3 times with exponential backoff. For non-idempotent operations like order creation, fail and return a conflict to the client.
+
+\`\`\`python
+async def reserve_inventory(sku: str, quantity: int, max_retries: int = 3) -> bool:
+    for attempt in range(max_retries):
+        record = await db.fetch_one(
+            "SELECT available, version FROM inventory WHERE sku = $1",
+            sku
+        )
+        if not record or record["available"] < quantity:
+            return False
+
+        result = await db.execute(
+            """
+            UPDATE inventory
+            SET available = available - $1, version = version + 1
+            WHERE sku = $2 AND version = $3
+            """,
+            quantity, sku, record["version"]
+        )
+
+        if result == "UPDATE 1":
+            return True
+
+        backoff = 2 ** attempt * 0.01  # 10ms, 20ms, 40ms
+        await asyncio.sleep(backoff)
+
+    return False
+\`\`\`
+
+## When Optimistic Wins
+
+Optimistic concurrency control works best when conflicts are rare relative to total throughput. In an order system, two users buying the last unit of inventory produces a conflict. Thousands of users buying different SKUs do not. With the optimistic approach, you pay zero overhead on the 99.9% of transactions that never conflict.
+
+What I have found after building order systems at scale: most concurrency problems come from bad architecture, not bad locking. If two requests for the same order arrive because your API gateway lacks idempotency keys, fix the gateway. Concurrency control is the last line of defense, not the first.
+
+## The Retry Trap
+
+One mistake I encounter: infinite retry loops. When inventory hits zero, every retry returns zero rows updated. The version never changes because no successful update increments it. Your system burns CPU retrying a doomed operation.
+
+Always couple version-checked updates with a retry limit and a clear failure mode. Return \`409 Conflict\` to the client. Push the request to an async fulfillment queue.
+
+For the async path, I prefer a FIFO queue with exactly-once semantics. The queue enforces ordering for a given resource. Concurrent requests become sequential without database-level locking.
+
+## The Bottom Line
+
+Optimistic concurrency control demands deliberate retry design, clear failure semantics, and a realistic assessment of your conflict rate. For high-throughput order systems where most operations target different resources, it delivers throughput that pessimistic locking cannot match.
+
+Start with version columns on every mutable table. Add retry logic with limits. Monitor your conflict rate. If it climbs above 5%, you have a design problem, not a locking problem. Concurrency control reveals architectural flaws. That alone makes it worth implementing early.
+
+![Optimistic Concurrency Control](/images/blog/optimistic-concurrency-control-order-system.jpg)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
