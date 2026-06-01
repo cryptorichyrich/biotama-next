@@ -2133,6 +2133,73 @@ After the fix, the service handled 3x the original peak without a single checkou
 
 Architecture is about trade-offs, not silver bullets. Connection pooling looks simple on the surface. The configuration you choose shapes how your system behaves under pressure. Set your numbers based on measured data. Monitor the four metrics above. Size your pool for the traffic you'll have, not the traffic you have now.`,
   },
+  {
+    slug: "ai-pair-programming-workflow",
+    title: "How I Ship 3x Faster with AI Pair Programming — Not Hype, Actual Workflow",
+    description:
+      "The concrete workflow I use with AI coding agents to generate, review, and ship production code — no benchmark theater, real time savings, and what the AI still can't do.",
+    date: "2026-06-01",
+    tags: ["AI", "Developer Tools", "Productivity"],
+    content: `# How I Ship 3x Faster with AI Pair Programming — Not Hype, Actual Workflow
+
+The AI coding assistant discourse has split into two camps: evangelists promising 10x productivity and skeptics dismissing it all as autocomplete on steroids. After a year of integrating AI agents into my daily workflow, the reality sits somewhere else. AI pair programming delivers about 3x throughput for specific tasks — and near-zero for others. This is the workflow that gets me there.
+
+## The 3x Claim, Grounded
+
+I measure time from ticket to merged PR, not keystrokes or lines of code. A typical CRUD endpoint with tests, validation, and error handling used to take about 90 minutes. With AI pair programming, that dropped to around 30 minutes. The savings come from three activities: scaffolding, test generation, and boilerplate elimination.
+
+The tasks where AI does not help: debugging race conditions in distributed systems, designing API contracts that survive six months without breaking changes, and making architectural decisions about data modeling. These still require hours of thinking, whiteboarding, and sometimes sleeping on it. The AI cannot do the thinking. It accelerates the typing that follows.
+
+## The Actual Workflow
+
+My setup is Hermes running as a background agent alongside KiloCode in VS Code. Four phases:
+
+**Phase 1: Specification.** I write a spec comment describing what needs to happen — inputs, outputs, edge cases, and constraints. This is where I do the thinking. The comment takes five minutes and forces me to define the problem before writing code.
+
+\`\`\`
+// Feature: Refund endpoint for partial order cancellation
+// Input: orderId, refundItems[], reason, idempotencyKey
+// Output: RefundResponse with amount, status, and reference
+// Constraints: must check payment status, must validate refund <= captured amount,
+//              must be idempotent, must log for audit
+\`\`\`
+
+**Phase 2: Generation.** Hermes generates the implementation — types, validation, the service layer, tests, error handling. About 90 seconds. The output is structured, typed, and follows project conventions because Hermes carries context of the entire codebase through knowledge graphs.
+
+**Phase 3: Review.** I read every line. I treat AI output the same way I treat a junior developer's PR. About 80% of the time, the code is correct and needs minor adjustments. The other 20% requires significant rework: the AI misunderstood a business rule, chose a suboptimal algorithm, or missed an edge case I did not specify in enough detail.
+
+**Phase 4: Refinement.** I iterate. Sometimes that means updating the spec comment with what I learned during review and regenerating. Sometimes it means fixing the one function that is not quite right. The iteration cycles are fast — two to three rounds at most.
+
+## What Makes This Work
+
+Three things separate an effective AI workflow from a frustrating one:
+
+**Context matters more than model size.** A smaller model with full codebase context outperforms a larger model working from a single file. Hermes's knowledge graph tracks dependencies, call hierarchies, and test coverage. When I ask for a refund endpoint, it knows about the payment service, the audit logger, and the existing validation patterns.
+
+**Specification quality determines output quality.** The difference between useful generation and garbage is the clarity of the spec. "Add refund endpoint" produces generic code. Specifying exact constraints and edge cases produces production-ready code. The AI follows instructions to the letter but has no judgment. Give it good instructions.
+
+**Review discipline is non-negotiable.** The fastest way to introduce subtle bugs is to merge AI-generated code without reading it. The second fastest way is to skim it. I have caught the AI hallucinating API methods, mishandling null cases, and generating tests that pass but do not verify the right behavior. Trust the AI like you would trust a smart intern — verify everything.
+
+## Where the Real Time Lives
+
+The productivity gains compound across the development cycle. The initial implementation is faster, but the downstream effects matter more:
+
+The AI writes comprehensive tests from the start. It does not skip edge cases out of laziness or deadline pressure. Fewer bugs reach QA, fewer regressions appear later.
+
+Documentation stays current. I have Hermes generate doc comments alongside the code. They stay accurate because they come from the implementation, not from a separate writing session that gets forgotten.
+
+Refactoring becomes fearless. When I change a data model or API contract, the AI updates every affected file. What used to be a two-hour grep-and-replace session becomes a five-minute verification.
+
+## What This Does Not Replace
+
+AI pair programming does not replace system design, code review, or architectural judgment. It does not replace understanding your users, your business domain, or your deployment environment. It replaces the mechanical part of software engineering: typing out well-understood implementations, generating test cases for known patterns, and converting specifications into code.
+
+The senior engineer who learns to delegate the mechanical work to AI while focusing on the thinking work will ship faster and build better. The senior engineer who dismisses AI tools will fall behind. The junior engineer who relies on AI without developing judgment will write code that looks correct and fails in production.
+
+What I have found after building with these tools for a year is that the bottleneck was never my typing speed. It was the gap between thinking and executing. AI pair programming shrinks that gap. Not by thinking for me. By executing faster once the thinking is done.
+
+![AI Pair Programming Workflow](/images/blog/ai-pair-programming-workflow.jpg)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
