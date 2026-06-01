@@ -2036,6 +2036,103 @@ That's it. No separate form library. No dedicated fetching wrapper beyond \`fetc
 
 The fatigue comes from believing you need to evaluate everything. You don't. Pick tools that solve problems you have, not problems a blog post told you to anticipate. Ship something. Evaluate whether each tool earned its place. Then close the browser tab and build.`,
   },
+  {
+    slug: "database-connection-pooling",
+    title: "Database Connection Pooling Is Not Set-It-and-Forget-It",
+    description:
+      "A payment service went dark for 90 seconds. The cause wasn't CPU, memory, or the database. It was pool exhaustion. Here's how to size, tune, and monitor connection pools in production.",
+    date: "2026-06-01",
+    tags: ["Database", "PostgreSQL", "Performance", "Backend"],
+    content: `# Database Connection Pooling Is Not Set-It-and-Forget-It
+
+A payment service I built went dark for 90 seconds during a traffic spike. CPU was idle. Memory was fine. The database was healthy. The application couldn't get a connection.
+
+All 10 connections in the pool were serving active queries. New requests queued, timed out, and returned 503s to the upstream gateway. By the time I traced the root cause, the spike had passed. The logs told a different story: pool exhaustion, then a cascade of timeouts.
+
+Connection pooling is one of those infrastructure decisions many developers configure once and forget. Pick a number between 10 and 20 for the pool size, set the timeout to something reasonable, and move on. That works until traffic demands more than you allocated. In production, this matters because a misconfigured pool is a silent bottleneck that only reveals itself under pressure.
+
+![Database connection pool visualization](/images/blog/database-connection-pooling.jpg)
+
+## How Your Pool Works
+
+A connection pool maintains a set of open database connections that your application reuses. Without pooling, every query pays the cost of a new TCP handshake, TLS negotiation, and authentication. With PostgreSQL over a network, that setup costs 50 to 100 milliseconds per connection. Under load at 200 queries per second, creating a fresh connection for each query would consume 10 to 20 seconds of wall time. The pool eliminates that overhead.
+
+The pool manages three states: active connections serving queries, idle connections waiting for work, and pending requests blocked because all connections are busy. The size and behavior of each state depends on three parameters that deserve more attention than they get.
+
+## The Three Knobs That Matter
+
+**Maximum pool size.** The upper bound on concurrent database connections. Set it too low and requests queue under load. Set it too high and the database spends more time context-switching between connections than executing queries. PostgreSQL's sweet spot sits between \`cpu_cores * 2\` and \`cpu_cores * 4\` for most OLTP workloads, but this varies with query complexity and row counts.
+
+**Connection timeout.** How long a request waits for an available connection before failing. I use 5 to 10 seconds for user-facing services, and 2 to 3 seconds for health checks and internal RPCs. The temptation is to set this high to avoid errors, but a long timeout means requests pile up in your application, consuming memory and threads while they wait. Failing fast gives the caller a chance to retry or degrade.
+
+**Idle timeout.** How long a connection sits unused before the pool closes it. Short idle timeouts free database resources during low traffic periods. Long idle timeouts keep connections warm for bursty traffic. I set this to 300 seconds for services with predictable traffic and 60 seconds for batch jobs that run in bursts.
+
+## How to Size Your Pool
+
+The formula I use: \`pool_size = (average_query_time_seconds × peak_requests_per_second) + safety_margin\`.
+
+If your average query takes 20ms and peak traffic hits 500 requests per second, you need at least \`(0.02 × 500) + 5 = 15\` connections, where 5 is a safety margin for slow queries and unexpected spikes.
+
+Measure your actual query times in production, not in development. A query against a local database with 100 rows behaves nothing like the same query against 50 million rows with concurrent writes. I learned this the hard way: development benchmarks showed 5ms average query times. Production was 22ms. The pool was sized for a world that didn't exist.
+
+## A Concrete Example in Python
+
+Using SQLAlchemy with asyncpg for a FastAPI service, here's the pool configuration I use:
+
+\`\`\`python
+from sqlalchemy.ext.asyncio import create_async_engine
+
+engine = create_async_engine(
+    "postgresql+asyncpg://user:pass@db-host:5432/payments",
+    pool_size=15,          # matches our formula
+    max_overflow=5,        # allows 5 extra connections under burst
+    pool_timeout=8,        # seconds to wait for a connection
+    pool_recycle=1800,     # recycle connections every 30 minutes
+    pool_pre_ping=True,    # test connection before use
+)
+\`\`\`
+
+The \`max_overflow\` parameter lets the pool exceed its normal size during bursts. These overflow connections close when they return to the pool. \`pool_pre_ping\` tests each connection with a lightweight query before handing it to your code, catching stale connections from network blips or database restarts.
+
+For Node.js with pg-pool:
+
+\`\`\`javascript
+const pool = new Pool({
+  host: 'db-host',
+  port: 5432,
+  database: 'payments',
+  user: 'app_user',
+  password: process.env.DB_PASSWORD,
+  max: 20,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 8000,
+});
+\`\`\`
+
+Same principles, different syntax. The key is setting these values based on measured data from your production workload, not copying defaults from a tutorial.
+
+## Four Metrics Worth Tracking
+
+After that incident, I added four metrics to every service dashboard:
+
+**Pool utilization** — percentage of connections in active use. When this crosses 80% during normal traffic, the pool needs resizing before the next spike.
+
+**Wait time** — how long requests spend waiting for a connection. Anything above zero under normal load means the pool is undersized. Spikes during traffic bursts are acceptable. Sustained waits are not.
+
+**Connection lifetime** — how long individual connections stay open. Connections open for days accumulate prepared statement caches, temporary table leaks, and state from aborted transactions. Recycling connections every 30 minutes prevents this buildup.
+
+**Checkout failures** — requests that timed out waiting for a connection. This is the metric that should trigger alerts, not CPU or memory. By the time checkout failures appear, users are seeing errors.
+
+## The Fix That Worked
+
+The service that went dark had a pool size of 10. Average query time was 15ms. Peak traffic was 800 requests per second. By the formula, I needed at least 21 connections. I had less than half.
+
+The fix wasn't just increasing the pool size. I split read and write connections into separate pools. Read queries made up 85% of traffic and could use a larger pool without contending with write locks. Write queries got a smaller, dedicated pool that never starved under read pressure.
+
+After the fix, the service handled 3x the original peak without a single checkout failure. Two months later, a marketing campaign doubled normal traffic. I caught the rising pool utilization on the dashboard and resized before users noticed.
+
+Architecture is about trade-offs, not silver bullets. Connection pooling looks simple on the surface. The configuration you choose shapes how your system behaves under pressure. Set your numbers based on measured data. Monitor the four metrics above. Size your pool for the traffic you'll have, not the traffic you have now.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
