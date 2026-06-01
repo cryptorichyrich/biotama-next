@@ -2292,6 +2292,56 @@ Start with version columns on every mutable table. Add retry logic with limits. 
 
 ![Optimistic Concurrency Control](/images/blog/optimistic-concurrency-control-order-system.jpg)`,
   },
+  {
+    slug: "container-queries-responsive-design",
+    title: "Container Queries Finally Fixed Responsive Design",
+    description:
+      "CSS container queries let components adapt to their own size, not the viewport. The shift from viewport-based thinking changes everything about responsive design.",
+    date: "2026-06-01",
+    tags: ["CSS", "Frontend", "Responsive Design"],
+    content: `# Container Queries Finally Fixed Responsive Design
+
+Media queries broke my brain for years. The entire responsive design paradigm was built on one assumption: the only thing that matters is how wide the browser window is. A component living in a 400px sidebar gets the same media query breakpoint as one in the main content area. That made no sense in 2015 and it makes even less now, with component-driven architectures dominating the frontend landscape.
+
+Container queries changed everything.
+
+Instead of querying the viewport width, you query the container width. The difference sounds subtle on paper. In practice, it transforms how you reason about layout.
+
+## The Problem Media Queries Created
+
+I spent years writing defensive CSS that accounted for where a component might live. A card component needed to look good at 300px in a sidebar, at 600px in a two-column grid, and at full width in a single-column mobile layout. That meant stacking media queries based on the parent's expected breakpoints — fragile, context-dependent code that broke the moment a designer moved the card somewhere new.
+
+The alternative was JavaScript resize observers. Every component reading its own width and toggling class names. Functional, but heavy. Wrong philosophy, too — layout belongs in CSS.
+
+## How Container Queries Work
+
+\`\`\`css
+.sidebar {
+  container-type: inline-size;
+}
+
+@container (min-width: 400px) {
+  .card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+\`\`\`
+
+That's it. The \`.card\` adapts to its container, not the viewport. Drop it in a 300px sidebar and it renders single-column. Drop the same card in an 800px main area and it goes two-column. Same component, zero context-dependent code.
+
+## What This Actually Changes
+
+Container queries make components portable in a way media queries never could. Build a card once. Place it anywhere — sidebar, modal, full page, nested grid — and it adapts. No defensive stylesheets that second-guess where a component will live. No fragile \`@media\` queries tied to specific page layouts that break six months later when someone redesigns the sidebar.
+
+The mental model shift is bigger than the syntax. Responsive design used to mean designing for device sizes. Now it means designing for the available space, wherever that space happens to be. That's what we wanted all along.
+
+I rebuilt a dashboard component library a few months back that had accumulated 47 media query breakpoints across 14 component files. After migrating to container queries, every component carried its own breakpoints. Stylesheets dropped by nearly 40%. The designer could drag components around Figma without me recalculating which page-level breakpoint each one needed.
+
+CSS Grid taught us to think in two dimensions. Container queries taught us to think locally. Together, they're the closest thing to a layout revolution since flexbox landed. If you're still reaching for \`@media (max-width: 768px)\` on every component, you're solving the wrong problem.
+
+![CSS Container Queries](/images/blog/css-container-queries-responsive-design.jpg)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
