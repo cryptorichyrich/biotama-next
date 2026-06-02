@@ -2490,6 +2490,45 @@ These are tool-use benchmarks. They measure agency, not intelligence. For anyone
 
 Stop refreshing the benchmark rankings. Start measuring what the model can do when you give it tools and get out of the way. The results might surprise you.`,
   },
+  {
+    slug: "typescript-strict-mode-non-negotiable",
+    title: "TypeScript Strict Mode Is Non-Negotiable",
+    description:
+      "Why enabling strict mode on every TypeScript project saves more time than it costs, and the production bugs it prevents that never show up in your metrics.",
+    date: "2026-06-02",
+    tags: ["typescript", "frontend", "engineering"],
+    content: `# TypeScript Strict Mode Is Non-Negotiable
+
+I inherited a project where \`strict: false\` was the default. Three months in, I traced a production bug that strict mode would have caught during development. A null reference propagated through two function calls before detonating inside a payment calculation. The fix took ten minutes. The investigation took two days.
+
+That experience sealed it. I enable strict mode on every project I start, and I refuse to greenfield a codebase without it.
+
+## What Strict Mode Gives You
+
+Most developers think strict mode exists to catch typos. The real value is enforcement of intent across a codebase with multiple contributors.
+
+\`strictNullChecks\` is the most impactful flag. Without it, TypeScript treats \`null\` and \`undefined\` as valid values for every type. You think you are getting a \`User\` object, but you are getting \`User | null | undefined\`, and the compiler stays silent. In a payments system, accessing \`.balance\` on \`undefined\` does not throw a helpful error. It throws \`Cannot read properties of undefined\` at runtime, in production, at 2 AM.
+
+\`noImplicitAny\` is the second pillar. It forces you to define what flows through your functions instead of letting TypeScript infer \`any\` behind the scenes. Implicit \`any\` is a black hole: type information goes in, nothing useful comes out. Once \`any\` enters a function signature, type safety for every downstream consumer vanishes.
+
+\`strictFunctionTypes\`, \`strictBindCallApply\`, \`strictPropertyInitialization\` produce smaller wins that compound fast. They catch incorrect callback signatures, missing \`this\` bindings, and uninitialized class properties. None of these create spectacular bugs. They create the kind of subtle wrong-behavior that passes code review and fails in edge cases.
+
+## The Complaint About Velocity
+
+The argument against strict mode follows a familiar pattern: "It slows us down." Read between the lines and you hear: "I have to think about types before writing code."
+
+Yes, enabling strict mode on an existing codebase produces a wall of red squiggles. You fix them incrementally. Start with \`strictNullChecks\`, resolve violations in critical paths first, and work outward. I migrated two codebases this way. Neither took more than a week of focused effort.
+
+The ongoing cost approaches zero. Writing strict-compliant TypeScript from scratch adds about five percent to initial development time. That investment pays for itself the first time the compiler catches a null reference that would have shipped to production.
+
+## The Real Trade-Off
+
+Strict mode is a commitment to your future self and every developer who maintains the code after you. It says type safety matters more than typing speed. That correctness matters more than convenience.
+
+I have never met a developer who enabled strict mode, worked with it for a month, and wanted to go back. The complaints come from two camps: people who have not tried it, and people staring at a migration backlog they keep deprioritizing.
+
+If you are starting a new project, enable strict mode on day one. If you are maintaining an existing one, start the migration this sprint. The bugs you prevent will not show up in your incident reports. That is the point. The compiler caught them first.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
