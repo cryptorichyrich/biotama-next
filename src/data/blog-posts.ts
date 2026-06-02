@@ -2342,6 +2342,100 @@ CSS Grid taught us to think in two dimensions. Container queries taught us to th
 
 ![CSS Container Queries](/images/blog/css-container-queries-responsive-design.jpg)`,
   },
+  {
+    slug: "graph-databases-fraud-detection-neo4j",
+    title: "Graph Databases Catch the Fraud Patterns SQL Keeps Missing",
+    description:
+      "Relational databases excel at storing transactions but fail at detecting fraud rings. Here's how Neo4j models money laundering patterns that SQL queries struggle to surface.",
+    date: "2026-06-02",
+    tags: ["fintech", "architecture", "databases", "fraud-detection"],
+    content: `# Graph Databases Catch the Fraud Patterns SQL Keeps Missing
+
+I spent three years building transaction monitoring for fintech platforms. The first version used PostgreSQL with recursive CTEs. It worked until it didn't.
+
+A fraud ring opened 40 accounts across six banks, moved money in small circular transfers, and stayed under every threshold alert. The SQL queries flagged zero transactions. The ring operated for four months before a manual audit caught it. That failure changed how I think about fraud detection.
+
+## Why SQL Misses Fraud Rings
+
+SQL databases model data as rows in tables. Relationships live in foreign keys and JOIN operations. Finding a path three hops deep — account A sent money to B, who sent to C, who sent back to A — requires a recursive CTE or a chain of self-JOINs. Three hops works. Push it to six or eight and the query planner collapses.
+
+Fraud rings exploit this blind spot. Money launderers structure transactions to create layers of indirection. They know banks monitor direct transfers, so they build chains: A → B → C → D → E → A. Each hop looks innocent in isolation. The pattern only emerges when you see the full graph.
+
+The mismatch runs deep: SQL optimizes for rows and columns. Fraud detection requires understanding topology, the shape of the network, not the individual edges.
+
+## Modeling Money Laundering in a Graph
+
+Graph databases treat relationships as first-class citizens. In Neo4j, an account is a node. A transfer is a directed edge with properties: amount, timestamp, currency. This model changes what queries you can write.
+
+Here are three money laundering patterns I have implemented in production.
+
+**Circular Flows.** The classic: money returns to the originator after passing through intermediaries. In Cypher:
+
+\`\`\`cypher
+MATCH path = (a:Account)-[:TRANSFERRED_TO*3..8]->(a)
+WHERE all(tx IN relationships(path) WHERE tx.amount > 1000)
+AND datetime(tx[-1].timestamp) - datetime(tx[0].timestamp) < duration('P7D')
+RETURN a.id, path
+\`\`\`
+
+This finds accounts where money leaves and returns within seven days through three to eight intermediate hops. The same query in SQL requires a recursive CTE with a depth limit, subqueries for amount thresholds, and window functions for timing. It runs for minutes. The Cypher query finishes in under a second on graphs with millions of edges.
+
+**Structuring (Smurfing).** A source account fragments a large sum into dozens of small transfers, each below reporting thresholds:
+
+\`\`\`cypher
+MATCH (source:Account {id: $accountId})-[tx:TRANSFERRED_TO]->(target:Account)
+WHERE tx.amount < 10000
+WITH source, count(tx) AS tx_count, sum(tx.amount) AS total
+WHERE tx_count > 10 AND total > 50000
+RETURN source.id, tx_count, total
+\`\`\`
+
+SQL handles this pattern in isolation. The graph advantage appears when you combine structuring with circular flows. Those 15 small transfers reconverge through intermediaries — a multi-hop traversal SQL cannot express in one query.
+
+**Layering Detection.** Money launderers build depth on purpose. A legitimate business has shallow transaction graphs: payments to suppliers, receipts from customers, one or two hops at most. A laundering operation creates depth, sometimes ten or more hops before funds reach their destination. Graph centrality metrics expose these anomalies:
+
+\`\`\`cypher
+MATCH (a:Account)
+WHERE a.betweenness > 0.01
+RETURN a.id, a.betweenness
+ORDER BY a.betweenness DESC
+LIMIT 20
+\`\`\`
+
+Shell companies in laundering rings show high betweenness centrality. Legitimate businesses do not. These accounts sit on many shortest paths through the network — a structural signature relational queries cannot detect.
+
+## The Architecture: Two Databases, One System
+
+I see teams treating a graph database as a PostgreSQL replacement. That path leads to pain. PostgreSQL handles your transactional workload: user accounts, balances, payment processing. Neo4j handles the analytical workload: fraud detection, network analysis, risk scoring.
+
+The architecture I have built three times now:
+
+1. **PostgreSQL remains the system of record.** Every transaction writes to PostgreSQL first. ACID guarantees, audit trails, and your existing compliance infrastructure depend on it. You cannot compromise here.
+
+2. **A CDC pipeline feeds Neo4j.** Debezium streams PostgreSQL WAL changes into Kafka. A consumer transforms these into graph mutations — creating Account nodes, TRANSFERRED_TO edges, updating properties. Neo4j trails PostgreSQL by under 500ms: close enough for fraud detection, not close enough for balance checks.
+
+3. **Fraud scoring runs as a batch on Neo4j.** Every 15 minutes, a job executes detection queries. Suspicious patterns generate alerts that write back to PostgreSQL through your normal API. The fraud team reviews alerts in your existing dashboard.
+
+This approach gives you transactional integrity from PostgreSQL and graph analysis from Neo4j. No dual-write headaches. No consistency nightmares.
+
+## What Graph Databases Won't Solve
+
+Graph databases excel at relationship-heavy queries. They choke on aggregations. Do not run your monthly revenue reports through Neo4j. Do not replace your time-series database with graph-based timestamp queries. Use the right tool for each workload.
+
+The operational overhead is real. Neo4j needs its own infrastructure, backups, monitoring, and expertise. Running a graph database alongside PostgreSQL means maintaining two stateful systems. For a startup with one engineer, that is too much complexity. For a fintech processing millions of transactions, the fraud detection ROI justifies the investment.
+
+Schema design in graphs demands a different mental model. In SQL, you normalize to avoid duplication. In Neo4j, you denormalize properties onto nodes because traversals cost little and JOINs cost plenty. Engineers comfortable with relational modeling often create graph schemas that look like normalized tables — which defeats the purpose.
+
+## The Bottom Line
+
+I have stopped chasing complex fraud with SQL alone. Relational databases store transactions. Graph databases reveal the networks hidden inside those transactions. The two systems complement each other.
+
+If your fraud detection still runs on PostgreSQL alone, you are missing patterns your competitors are catching. Start small: export a week of transaction data, load it into a local Neo4j instance, and run the circular flow query. You will find something your existing rules missed.
+
+Graph databases solve a problem relational engines were never designed to handle: understanding topology at scale.
+
+![Graph Databases for Fraud Detection](/images/blog/graph-databases-fraud-detection-neo4j.jpg)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
