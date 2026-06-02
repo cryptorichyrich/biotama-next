@@ -2436,6 +2436,60 @@ Graph databases solve a problem relational engines were never designed to handle
 
 ![Graph Databases for Fraud Detection](/images/blog/graph-databases-fraud-detection-neo4j.jpg)`,
   },
+  {
+    slug: "llm-tool-use-underrated",
+    title: "Tool Use: The Most Underrated LLM Capability",
+    description:
+      "Benchmark leaderboards dominate AI discourse. But the capability that ships real software — structured tool use — receives almost none of the attention it deserves.",
+    date: "2026-06-02",
+    tags: ["AI", "Hermes", "Engineering"],
+    content: `# Tool Use: The Most Underrated LLM Capability
+
+The AI industry has a benchmark problem. Each week, a new model claims victory on MMLU, HumanEval, or some freshly minted reasoning test. The leaderboard shuffles. Twitter erupts. Engineers debate which model "thinks better."
+
+I stopped caring about these numbers months ago. Not because reasoning doesn't matter. Because I found a capability that predicts real-world usefulness far better than any benchmark: tool use.
+
+![Tool Use: The Most Underrated LLM Capability](/images/blog/llm-tool-use-underrated.jpg)
+
+## What Tool Use Does
+
+Tool use — sometimes called function calling — lets an LLM interact with external systems. Instead of generating text you hope to copy-paste somewhere useful, the model issues structured commands. It reads files. It runs terminal commands. It searches codebases. It patches source files. It writes to disk.
+
+This is not a minor feature bolted onto a chatbot. It is the bridge between language understanding and real-world action. Without it, an LLM is a clever parrot. With it, the model becomes an agent — observe, decide, execute.
+
+## Why Nobody Talks About It
+
+Tool use doesn't make headlines because it isn't glamorous. A model scoring 92% on a reasoning benchmark generates excitement. A model that calls \`read_file\` correctly 99% of the time does not. Tool use benchmarks are harder to design, harder to standardize, and harder to hype.
+
+But here's what I found building Hermes: the gap between a model scoring 90% and 95% on reasoning is marginal in practice. The gap between a model that can use 5 tools and one that can use 50 is transformative.
+
+## Hermes as Proof
+
+Hermes uses tools across my entire workflow. It reads TypeScript files to understand interfaces. It searches for patterns with regex. It patches code with surgical precision. It runs builds, commits to git, and deploys to production — all through structured tool calls, not through copy-paste.
+
+The compound effect matters most. One tool call is a convenience. A chain of ten — read the code, understand the bug, search for related patterns, write the fix, run the tests, commit the change — becomes an autonomous workflow. Without structured tool calls, each step requires human intervention. With them, the model chains ten calls into a single autonomous operation.
+
+I've watched Hermes diagnose a failing CI pipeline by reading the error log, tracing the stack trace to the source file, identifying a mismatched TypeScript type, patching it, and pushing the fix. I didn't touch the keyboard. That's not a reasoning breakthrough. That's tool use.
+
+## The Capability Hierarchy
+
+Ranking LLM capabilities by practical impact, my list looks like:
+
+1. **Tool use** — can the model act on the world?
+2. **Context handling** — can the model maintain coherence across a long task?
+3. **Instruction following** — did the model follow the instruction?
+4. **Reasoning** — can the model think through multi-step problems?
+
+Reasoning comes fourth because without tool use, reasoning stays trapped in the chat window. Without context handling, reasoning degrades halfway through. Without instruction following, reasoning wanders off script.
+
+## Benchmarks We Actually Need
+
+The industry needs benchmarks that measure what models accomplish, not what they answer. Give the model a broken codebase. Can it find the bug and fix it? Give it a deployment pipeline that's failing. Can it diagnose and repair it? Give it a set of requirements. Can it build something that compiles and passes tests?
+
+These are tool-use benchmarks. They measure agency, not intelligence. For anyone building software with AI, agency matters more than any leaderboard position.
+
+Stop refreshing the benchmark rankings. Start measuring what the model can do when you give it tools and get out of the way. The results might surprise you.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
