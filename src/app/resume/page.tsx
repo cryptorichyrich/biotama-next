@@ -67,25 +67,42 @@ export default function ResumePage() {
       {/* Resume Content */}
       <div className="resume-content p-[15mm] print:p-0">
         {/* ── HEADER ── */}
-        <header className="pb-4 mb-5" style={{ borderBottom: "1px solid #e5e5e5" }}>
-          <h1 className="text-2xl font-extrabold tracking-tight" style={{ color: "#222222" }}>
-            {profile.name}
-          </h1>
-          <p className="mt-1 text-sm font-semibold uppercase tracking-widest" style={{ color: "#666666" }}>
-            System Architect
-          </p>
-          <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1" style={{ fontSize: "12px", color: "#666666" }}>
-            <span>{profile.phone}</span>
-            <span>{profile.email}</span>
-            <span>{profile.location}</span>
+        <header className="pb-4 mb-5 flex items-center gap-5" style={{ borderBottom: "1px solid #e5e5e5" }}>
+          {/* Profile photo — circle 80mm print / 80px screen */}
+          <div className="shrink-0">
+            <div
+              className="w-[80px] h-[80px] rounded-full overflow-hidden border-2 border-[#c9a84c]"
+              style={{ printColorAdjust: "exact", WebkitPrintColorAdjust: "exact" }}
+            >
+              <img
+                src={profile.photoUrl}
+                alt={profile.name}
+                width={80}
+                height={80}
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
-          <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1.5" style={{ fontSize: "12px" }}>
-            {socialLinks.map((s) => s.url && (
-              <a key={s.platform} href={s.url} target="_blank" rel="noopener noreferrer" className="qr-link">
-                <QRCode url={s.url} size={24} />
-                {linkLabels[s.platform]}
-              </a>
-            ))}
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl font-extrabold tracking-tight" style={{ color: "#222222" }}>
+              {profile.name}
+            </h1>
+            <p className="mt-1 text-sm font-semibold uppercase tracking-widest" style={{ color: "#666666" }}>
+              System Architect
+            </p>
+            <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1" style={{ fontSize: "12px", color: "#666666" }}>
+              <span>{profile.phone}</span>
+              <span>{profile.email}</span>
+              <span>{profile.location}</span>
+            </div>
+            <div className="mt-1.5 flex flex-wrap gap-x-5 gap-y-1.5" style={{ fontSize: "12px" }}>
+              {socialLinks.map((s) => s.url && (
+                <a key={s.platform} href={s.url} target="_blank" rel="noopener noreferrer" className="qr-link">
+                  <QRCode url={s.url} size={24} />
+                  {linkLabels[s.platform]}
+                </a>
+              ))}
+            </div>
           </div>
         </header>
 
