@@ -25,6 +25,7 @@ export default async function CoverLetterPage({ params }: { params: Promise<{ sl
 
   const tailoring = app ? {
     coverLetterHook: app.tailoring_cover_letter_hook || "",
+    customTitle: app.tailoring_custom_title || "",
     customSummary: app.tailoring_custom_summary || "",
     keyAchievements: parseArr(app.tailoring_key_achievements),
     highlightProjects: parseArr(app.tailoring_highlight_projects),
@@ -60,7 +61,7 @@ export default async function CoverLetterPage({ params }: { params: Promise<{ sl
         <div className="mt-10">
           <p className="text-sm text-slate-700">Best regards,</p>
           <p className="text-base font-semibold text-slate-900 mt-3">{profile.name}</p>
-          <p className="text-sm text-slate-600">{profile.role}</p>
+          <p className="text-sm text-slate-600">{tailoring && tailoring.customTitle ? tailoring.customTitle : profile.role}</p>
           <p className="text-sm text-slate-600">{profile.email}</p>
           <p className="text-sm text-slate-600">{profile.phone}</p>
           <p className="text-sm text-slate-600">{profile.location}</p>

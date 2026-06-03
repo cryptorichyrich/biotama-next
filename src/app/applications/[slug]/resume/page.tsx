@@ -17,6 +17,7 @@ function getApp(slug: string) {
   return {
     slug: row.slug,
     tailoring: {
+      customTitle: row.tailoring_custom_title || "",
       customSummary: row.tailoring_custom_summary || "",
       keyAchievements: parseArr(row.tailoring_key_achievements),
     },
@@ -64,7 +65,7 @@ export default async function TailoredResumePage({ params }: { params: Promise<{
           </div>
           <div className="flex-1 min-w-0">
             <h1 className="text-3xl font-bold text-slate-900 tracking-tight">{profile.name}</h1>
-            <p className="text-lg font-medium text-slate-700 mt-1">{profile.role}</p>
+            <p className="text-lg font-medium text-slate-700 mt-1">{app && app.tailoring.customTitle ? app.tailoring.customTitle : profile.role}</p>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-slate-600">
               <span>{profile.email}</span><span className="hidden sm:inline text-slate-300">|</span>
               <span>{profile.phone}</span><span className="hidden sm:inline text-slate-300">|</span>
