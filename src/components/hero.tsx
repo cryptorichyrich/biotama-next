@@ -112,6 +112,21 @@ export function Hero() {
         <div className="flex flex-col md:flex-row md:items-center gap-12 md:gap-16">
           {/* ── LEFT COLUMN ── */}
           <div className="flex-1 md:max-w-[620px]">
+            {/* Profile photo — circle 160px */}
+            <div
+              className={`transition-all duration-700 ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+            >
+              <div className="w-[160px] h-[160px] rounded-full overflow-hidden border-2 border-[var(--color-gold)] shadow-[0_0_20px_var(--color-gold-glow)] mx-auto md:mx-0 mb-8">
+                <img
+                  src={profile.photoUrl}
+                  alt={profile.name}
+                  width={160}
+                  height={160}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+
             {/* $ whoami label */}
             <div
               className={`transition-all duration-700 ${
