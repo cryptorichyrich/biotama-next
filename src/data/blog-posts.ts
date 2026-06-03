@@ -2627,6 +2627,95 @@ Start with something small. A code review checklist. A deployment procedure. A w
 
 The first morning you wake up and find a task finished while you slept, you will get the point.`,
   },
+  {
+    slug: "pci-dss-compliance-startup",
+    title: "PCI DSS Compliance as a Startup: What You Need vs. What They Sell You",
+    description:
+      "A practical breakdown of PCI DSS requirements for early-stage fintechs. What you must do, what consultants overcharge for, and how to reach compliance without enterprise budgets.",
+    date: "2026-06-03",
+    tags: ["fintech", "compliance", "security", "startup"],
+    content: `# PCI DSS Compliance as a Startup: What You Need vs. What They Sell You
+
+A consultant quoted me $120,000 for PCI DSS compliance on a payment system that processed $50,000 a month. The quote included a 40-page gap analysis, quarterly vulnerability scans priced at enterprise rates, and a "compliance management platform" that was a glorified spreadsheet. I said no, built compliance myself, and passed the audit for under $8,000.
+
+That experience taught me something valuable: PCI DSS has a reputation problem. The standard itself is reasonable. The ecosystem around it is not.
+
+## What PCI DSS Actually Requires
+
+PCI DSS 4.0 has twelve requirements organized into six goals. Most of them boil down to common-sense security practices you should follow regardless of compliance:
+
+**Build and maintain a secure network.** Firewalls between cardholder data and everything else. No default passwords on any system component.
+
+**Protect cardholder data.** Encrypt it in transit (TLS 1.2 minimum) and at rest (AES-256). Don't store the CVV. Full stop. You can store the PAN if you tokenize it or encrypt it, but ask yourself whether you need to store it at all.
+
+**Maintain a vulnerability management program.** Keep your systems patched. Run antivirus. Develop and maintain secure systems. This is operational hygiene, not a special project.
+
+**Implement strong access control.** Need-to-know access. Unique IDs for every person with system access. Restrict physical access to servers.
+
+**Monitor and test networks.** Track and monitor all access. Test security systems regularly.
+
+**Maintain an information security policy.** Write down your security practices and enforce them.
+
+None of these require a six-figure consulting engagement.
+
+## The Consultant Tax
+
+The compliance industry thrives on fear. PCI DSS uses language like "compensating controls" and "scope reduction" that sounds more complex than it is. Consultants exploit that gap.
+
+Here are three things I refused to pay for and handled instead:
+
+**Gap analysis.** You can read the PCI DSS Self-Assessment Questionnaire yourself. It takes two hours. The questionnaire for SAQ A (the simplest level, where a third-party payment processor handles all card data) is seven pages. Most startups qualify for this tier if they architect their system correctly from the start.
+
+**Quarterly vulnerability scans.** Approved Scanning Vendors charge between $500 and $3,000 per scan. ASVs listed on the PCI Council website offer scans at the lower end. Pick one from the official list. The scan itself is automated. You get a PDF with findings. Fix the critical ones, rescan, done.
+
+**Compliance management platforms.** Use a spreadsheet or a Notion database. Track your twelve requirements, note your evidence, and link to the relevant documentation. The platform vendors sell convenience, not capability.
+
+## The Level That Matters Most: SAQ A
+
+Startups building payment systems should aim for SAQ A or SAQ A-EP from day one. This means you never touch raw card data. A third-party payment processor (Stripe, Braintree, Adyen) handles the cardholder data environment. Your servers never see a PAN, never see a CVV, never process an unencrypted card number.
+
+The architecture decision is straightforward: redirect or iframe the payment form to the processor's hosted page, receive a token back, and store the token. Your PCI scope shrinks to "we don't handle card data, here's the token."
+
+This one architectural choice eliminates requirements 1 through 4 from your direct responsibility. The processor handles encryption, key management, and secure transmission. You handle token storage, access control, and network monitoring.
+
+## Where Startups Spend Too Much
+
+Three areas where I see money wasted:
+
+**Over-scoping the cardholder data environment.** If you use tokenization through a certified processor, your CDE is the token storage layer. Not your entire application. Not your marketing website. Not your internal wiki. Draw the boundary tight and document it.
+
+**Purchasing enterprise tools for startup-scale problems.** You do not need a $50,000 Security Information and Event Management system when you have three servers. Use cloud provider logging (CloudWatch, GCP Logging) with alert rules. Aggregate into a single dashboard. Done.
+
+**Hiring a dedicated compliance officer too early.** At 10 engineers, compliance is a shared responsibility between your CTO, your DevOps lead, and your backend lead. At 50 engineers, hire a dedicated person. The threshold is team size and transaction volume, not calendar time.
+
+## Where Startups Spend Too Little
+
+Two areas where cutting corners causes real damage:
+
+**Access logging.** You need an immutable record of who accessed what and when. Not for auditors. For incident response. When something goes wrong, the first question is "what changed?" If you cannot answer that in under five minutes, your logging is insufficient. PostgreSQL with an append-only audit table covers most workloads.
+
+**Network segmentation documentation.** If your payment processing runs on the same VPC as your development environment with no firewall rules between them, you have failed requirement 1. Draw a network diagram. Label the segments. Write firewall rules. Test that the rules work. This takes a day and costs nothing.
+
+## My Actual Compliance Budget
+
+For a system processing under $1M per month through a third-party processor, here is what compliance cost me:
+
+- SAQ A self-assessment: $0 (free from PCI Council website)
+- Quarterly ASV scans: $800 per year ($200 per scan)
+- Attestation of compliance: $0 (signed document)
+- Cloud provider security tooling (logging, monitoring, firewall): included in infrastructure costs
+- Time spent on documentation and policy writing: about 40 hours spread across the team
+
+Total out-of-pocket cost: under $1,000 per year. Total time investment: one person-week per year for maintenance.
+
+## The Mindset Shift
+
+PCI DSS compliance is not a project with a completion date. It is an operational discipline. You build secure systems because that is how financial software should work, and compliance becomes evidence of good practice rather than the goal itself.
+
+Design your architecture to minimize scope from the start. Use a certified payment processor. Tokenize everything. Log access immutably. Document your network. Patch your systems. Write a security policy that reflects what you do, not what a consultant pasted from a template.
+
+The consultants want you to believe compliance is complex because complexity pays their invoices. The standard is specific, the requirements are achievable, and the cheapest path to compliance is building secure software from the first line of code.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
