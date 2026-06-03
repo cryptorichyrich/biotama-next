@@ -2716,6 +2716,77 @@ Design your architecture to minimize scope from the start. Use a certified payme
 
 The consultants want you to believe compliance is complex because complexity pays their invoices. The standard is specific, the requirements are achievable, and the cheapest path to compliance is building secure software from the first line of code.`,
   },
+  {
+    slug: "dedicated-ledger-service-fintech",
+    title: "Why Every Fintech Needs a Dedicated Ledger Service Before Day One",
+    description:
+      "Most fintech startups bolt on a ledger service after launch. Here's why building it first prevents months of reconciliation pain and phantom money bugs.",
+    date: "2026-06-03",
+    tags: ["fintech", "architecture", "backend"],
+    content: `# Why Every Fintech Needs a Dedicated Ledger Service Before Day One
+
+I joined a project where the payment system stored transaction amounts in the same database table as order metadata. One column for \`amount\`, one for \`status\`, one for \`created_at\`. The business ran on this for two years. Then the CFO noticed the numbers did not add up.
+
+The discrepancy was $47,000 over 18 months. Not from fraud, not from a bug in the traditional sense. From floating point arithmetic applied to currency across three different code paths, each rounding in a different direction. One rounded up. Another truncated. A third let PostgreSQL's numeric type handle it but cast to float in the application layer. None of these paths talked to each other.
+
+This is what happens when you treat money as a number instead of a first-class concept.
+
+## What a Ledger Service Does
+
+A ledger service is a standalone microservice with one job: record financial events as immutable entries in a double-entry bookkeeping system. Every credit has a corresponding debit. The sum of all balances is zero. This invariant holds regardless of how many services originate transactions, how many currencies you support, or how many payment providers you integrate with.
+
+The key properties:
+
+- **Immutable entries.** You never update or delete a ledger record. Corrections are new entries that offset the original.
+- **Double-entry structure.** Each transaction touches at least two accounts. This makes it impossible to create or destroy money through software bugs.
+- **Single source of truth.** When the payment service, the refund service, and the fee calculator all write to the same ledger, your financial data stays consistent.
+
+## Build It Before You Launch
+
+Most fintech startups build their payment flow first and think about ledgers later. The logic seems sound: get revenue flowing, then invest in financial infrastructure. The problem is that adding a ledger to a live system with inconsistent balances is a nightmare.
+
+I have seen teams try to retrofit a ledger service onto a system running for six months with drifted balances. The migration required freezing all financial operations for a weekend while they reconciled thousands of records against bank statements. They found discrepancies in 3% of their transaction history. Fixing those records demanded custom scripts for each edge case.
+
+Building the ledger service first costs two extra weeks of engineering time. Retrofitting it costs months of forensic accounting and lost trust with finance teams.
+
+## The Minimal Implementation
+
+You do not need a blockchain or an event sourcing framework. A ledger service can be straightforward:
+
+\`\`\`python
+class LedgerEntry(Base):
+    id: UUID
+    transaction_id: UUID
+    account_id: str
+    amount: Decimal  # never float
+    currency: str
+    entry_type: Literal["credit", "debit"]
+    created_at: datetime
+    # no updated_at column. append-only.
+\`\`\`
+
+The core API exposes two endpoints: \`POST /transactions\` to create a balanced transaction (credits and debits must sum to zero), and \`GET /accounts/{id}/balance\` to query the current balance.
+
+The balance query sums all entries for an account. For performance, maintain a materialized balance snapshot and update it on each transaction. The raw entries remain the source of truth.
+
+## The Invariant That Saves You
+
+The golden rule: \`SUM(all credits) - SUM(all debits) = 0\`. Check this invariant after every transaction. If it fails, roll back the entire transaction and alert the team.
+
+This one constraint catches an entire class of bugs that would otherwise manifest as phantom money. Missing a debit entry? Invariant fails. Duplicate credit? Invariant fails. Currency mismatch within a single transaction? Your validation layer catches it before it reaches the ledger.
+
+## When You Scale
+
+At low volume, a single PostgreSQL table handles thousands of entries per second with proper indexing. Partition by date once you cross 100 million rows. Add read replicas for balance queries.
+
+The architecture stays the same. The ledger remains the single source of truth for all financial data. Other services write entries through the ledger API. None of them own balance state.
+
+## The Takeaway
+
+Money is a first-class domain concept that demands its own service, its own data model, and its own invariants. Build the ledger before you process your first dollar. The two weeks of upfront investment saves months of reconciliation pain and prevents the silent errors that erode trust with finance teams and regulators.
+
+![Featured image for dedicated ledger service article](/images/blog/dedicated-ledger-service-fintech.jpg)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
