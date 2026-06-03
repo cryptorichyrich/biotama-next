@@ -2529,6 +2529,104 @@ I have never met a developer who enabled strict mode, worked with it for a month
 
 If you are starting a new project, enable strict mode on day one. If you are maintaining an existing one, start the migration this sprint. The bugs you prevent will not show up in your incident reports. That is the point. The compiler caught them first.`,
   },
+  {
+    slug: "building-custom-hermes-skills",
+    title: "Building Custom Hermes Skills: From Idea to Automated Workflow",
+    description:
+      "How I encode repeatable workflows into structured Hermes skill files that run on cron schedules, handle edge cases, and produce consistent results without human involvement.",
+    date: "2026-06-03",
+    tags: ["AI", "Hermes", "Automation"],
+    content: `# Building Custom Hermes Skills: From Idea to Automated Workflow
+
+![Featured image](/images/blog/building-custom-hermes-skills.png)
+
+I spent 20 minutes writing a skill file. That skill now publishes blog articles to my site on a cron schedule, from topic selection through git push, with zero human involvement.
+
+Most developers treat AI agents like chat interfaces. You type a question, you get an answer. The shift worth making: encode repeatable workflows into structured instructions that an agent executes on schedule, with consistency and judgment baked in.
+
+## What a Skill Is
+
+A Hermes skill is a markdown file with frontmatter. Name, description, trigger phrases, and a body of instructions. When a trigger phrase matches user input, Hermes loads the skill and follows those instructions instead of improvising.
+
+Think of it as a runbook an AI can read, understand, and execute. The skill defines what to do, what constraints to respect, what outputs to produce, and how to handle edge cases.
+
+The structure:
+
+\`\`\`markdown
+---
+name: my-skill-name
+description: What this skill does
+version: 1.0.0
+triggers:
+  - trigger phrase one
+  - trigger phrase two
+related_skills:
+  - other-skill-name
+---
+
+# Skill Instructions
+
+The instructions go here...
+\`\`\`
+
+No framework. No SDK. Markdown and frontmatter.
+
+## The Build Process
+
+I follow the same six steps for every skill:
+
+**1. Identify the repeatable task.** If I do something more than twice, it becomes a candidate.
+
+**2. Write the steps in plain English.** No code. The sequence of actions, the decisions at each step, the expected output.
+
+**3. Add constraints.** What must the skill refuse to do? What edge cases exist? What quality gates must pass?
+
+**4. Define triggers.** What phrases should load this skill? What context does Hermes need before execution?
+
+**5. Test by hand.** Trigger the skill. Watch Hermes execute. Fix gaps in the instructions.
+
+**6. Set the schedule.** If the task runs on a cadence, add a cron entry.
+
+A straightforward skill takes 20-30 minutes. Skills with multiple integrations take an hour or two.
+
+## A Real Example
+
+My blog pipeline skill coordinates the entire article publishing workflow. It reads a topic backlog file, researches the topic, writes a full article in my voice, generates a featured image, inserts the article into a TypeScript data file, commits, and pushes to git.
+
+Each step could be a separate tool call. The skill coordinates them. It references another skill, the article writer, which contains the detailed style guide, quality rules, and anti-patterns to avoid.
+
+The constraint section carries the most weight. My article writer skill has a "Stop Slop" protocol with 15 checks. It scores each draft on five dimensions. A score below 35 out of 50 means Hermes rewrites the article before committing. These are rules I care about, encoded into a format Hermes enforces on every execution.
+
+## Why Not Shell Scripts
+
+I could write a shell script for most of these tasks. If the git push fails on a merge conflict, a shell script exits with code 1 and dies. Hermes reads the error, resolves the conflict, and continues.
+
+If image generation produces something off-brand, a script deposits it in the folder regardless. Hermes evaluates the output against the instructions and regenerates when needed.
+
+Judgment is the difference. Skills give Hermes the context to make decisions within bounds. Scripts execute instructions without understanding them.
+
+## Five Tips for Effective Skills
+
+**Be specific about output format.** "Write a blog post" gives too much latitude. "Write an 800-1200 word article with a hook opening, no adverbs, and a specific TypeScript object format" produces consistent results across runs.
+
+**Include anti-patterns.** Telling Hermes what to avoid matters as much as telling it what to do. My article writer has a section of banned phrases and sentence patterns. This prevents common AI writing failures before they reach the draft.
+
+**Chain skills for complex workflows.** The blog pipeline skill references the article writer skill, which references the blog manager skill. Each handles its own domain. Individual skills stay focused and maintainable.
+
+**Version your skills in git.** Skills are text files. When I improve one, I bump the version. If something breaks, I diff the changes and revert.
+
+**Test with edge cases first.** The first version of my blog pipeline crashed when the topic backlog ran dry. The second version handles that case and falls back to a reserve pool. Edge cases determine whether a skill is robust or useless.
+
+## The 30-Minute Benchmark
+
+The title claims 30 minutes. Here is why that is realistic: most of the time goes to thinking through the steps, not writing the skill file. The markdown takes five minutes. The thinking takes twenty. The testing takes five.
+
+If you can describe a process step by step, you can build a skill for it. If you cannot describe it step by step, you are not ready to automate it. Skills force you to clarify your own thinking, which pays off before the automation does.
+
+Start with something small. A code review checklist. A deployment procedure. A weekly status report format. Get one skill working, trigger it by hand, watch it execute. Then add the cron schedule.
+
+The first morning you wake up and find a task finished while you slept, you will get the point.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
