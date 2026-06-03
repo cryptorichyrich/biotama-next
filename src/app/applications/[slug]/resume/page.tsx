@@ -28,10 +28,21 @@ export function generateStaticParams() {
   return DB.map((r: any) => ({ slug: r.slug }));
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const app = getApp(slug);
+  const title = app && app.tailoring.customTitle ? app.tailoring.customTitle : profile.role;
+  const fullName = `Bio Lumbantoruan — ${title}`;
+  return {
+    title: fullName,
+  };
+}
+
 export default async function TailoredResumePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const app = getApp(slug);
   const socialLinks = profile.socials.filter((s) => ["LinkedIn", "GitHub"].includes(s.platform));
+  const displayTitle = app && app.tailoring.customTitle ? app.tailoring.customTitle : profile.role;
 
   return (
     <>
@@ -43,7 +54,7 @@ export default async function TailoredResumePage({ params }: { params: Promise<{
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Download PDF
         </button>
-        <script dangerouslySetInnerHTML={{__html: "document.getElementById('printBtn').onclick=function(){window.print()}"}} />
+        <script dangerouslySetInnerHTML={{__html: `document.getElementById('printBtn').onclick=function(){document.title="Bio Lumbantoruan — ${displayTitle.replace(/"/g, '\\"')}";window.print()}`}} />
       </div>
 
       <div className="resume-content bg-white text-slate-800 p-8 md:p-10 lg:p-12">
@@ -65,7 +76,7 @@ export default async function TailoredResumePage({ params }: { params: Promise<{
           </div>
           <div className="flex-1 min-w-0">
             <h1 className="text-3xl font-bold text-slate-900 tracking-tight">{profile.name}</h1>
-            <p className="text-lg font-medium text-slate-700 mt-1">{app && app.tailoring.customTitle ? app.tailoring.customTitle : profile.role}</p>
+            <p className="text-lg font-medium text-slate-700 mt-1">{displayTitle}</p>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-sm text-slate-600">
               <span>{profile.email}</span><span className="hidden sm:inline text-slate-300">|</span>
               <span>{profile.phone}</span><span className="hidden sm:inline text-slate-300">|</span>

@@ -18,6 +18,15 @@ export function generateStaticParams() {
   return DB.map((r: any) => ({ slug: r.slug }));
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const app = getApp(slug);
+  const title = app && app.tailoring_custom_title ? app.tailoring_custom_title : profile.role;
+  return {
+    title: `Cover Letter — Bio Lumbantoruan — ${title}`,
+  };
+}
+
 export default async function CoverLetterPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const app = getApp(slug);
@@ -30,6 +39,8 @@ export default async function CoverLetterPage({ params }: { params: Promise<{ sl
     keyAchievements: parseArr(app.tailoring_key_achievements),
     highlightProjects: parseArr(app.tailoring_highlight_projects),
   } : null;
+
+  const displayTitle = tailoring && tailoring.customTitle ? tailoring.customTitle : profile.role;
 
   const contact = app ? {
     name: app.contact_name || "",
@@ -46,7 +57,7 @@ export default async function CoverLetterPage({ params }: { params: Promise<{ sl
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Download PDF
         </button>
-        <script dangerouslySetInnerHTML={{__html: "document.getElementById('printBtn').onclick=function(){window.print()}"}} />
+        <script dangerouslySetInnerHTML={{__html: `document.getElementById('printBtn').onclick=function(){document.title="Cover Letter — Bio Lumbantoruan — ${displayTitle.replace(/"/g, '\\"')}";window.print()}`}} />
       </div>
 
       <div className="letter-content bg-white p-8 md:p-12 lg:p-16">
@@ -61,7 +72,7 @@ export default async function CoverLetterPage({ params }: { params: Promise<{ sl
         <div className="mt-10">
           <p className="text-sm text-slate-700">Best regards,</p>
           <p className="text-base font-semibold text-slate-900 mt-3">{profile.name}</p>
-          <p className="text-sm text-slate-600">{tailoring && tailoring.customTitle ? tailoring.customTitle : profile.role}</p>
+          <p className="text-sm text-slate-600">{displayTitle}</p>
           <p className="text-sm text-slate-600">{profile.email}</p>
           <p className="text-sm text-slate-600">{profile.phone}</p>
           <p className="text-sm text-slate-600">{profile.location}</p>
