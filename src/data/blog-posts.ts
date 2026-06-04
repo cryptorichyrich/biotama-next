@@ -2937,6 +2937,61 @@ The investment was 30 minutes per service. The return: faster deployments, clean
 
 ![Featured image for multi-stage Docker Python article](/images/blog/multi-stage-docker-python-deploy.jpg)`,
   },
+  {
+    slug: "indonesia-payment-infrastructure",
+    title: "Indonesia's Payment Infrastructure Deserves More Attention",
+    description:
+      "QRIS unified 30M merchants under one standard. BI-FAST brought real-time settlement to 17,000 islands. Lessons from building payment infrastructure for Indonesia.",
+    date: "2026-06-04",
+    tags: ["Indonesia", "Fintech", "Payments"],
+    content: `# Indonesia's Payment Infrastructure Deserves More Attention
+
+Three hundred million people spread across seventeen thousand islands. Six thousand of those islands have inhabitants. Before 2019, most transactions happened in cash. Building payment infrastructure for this geography breaks assumptions that hold in compact, connected markets.
+
+I've spent enough time integrating Indonesian payment providers to appreciate what Bank Indonesia achieved. The ecosystem that emerged over the last six years solves problems most countries do not face.
+
+## The Fragmentation Problem
+
+Before 2019, accepting digital payments in Indonesia meant integrating with each e-wallet on its own: GoPay, OVO, DANA, ShopeePay, LinkAja. Each had its own API, its own settlement timeline, its own reconciliation format. A merchant wanting to accept all of them faced five integration projects with five different spec sheets.
+
+Compare this to countries with one or two dominant payment methods. Indonesia had a fragmented market where no single player commanded enough share to ignore the others. The infrastructure problem centered on coordination at scale across competing companies.
+
+## QRIS: The Mandate That Worked
+
+In August 2019, Bank Indonesia launched QRIS, the Quick Response Code Indonesian Standard. One QR code, any wallet. A merchant displays a single QR code. A customer scans it with GoPay, OVO, DANA, or any licensed e-wallet. The transaction routes through a switching network and settles to the merchant's account.
+
+The technical spec covers merchant category codes, transaction types (payment, refund, void), settlement rules, and security requirements. Payment service providers implement against this standard. Bank Indonesia certifies compliance. Non-compliant providers face regulatory consequences.
+
+The underlying QR code technology is standard. The innovation is regulatory coordination. Bank Indonesia mandated a single standard and gave providers a deadline. Over 30 million merchants now accept QRIS payments, growing faster than card terminal deployments in most markets.
+
+## BI-FAST: Real-Time Settlement
+
+QRIS handles the front end. BI-FAST handles the back end. Launched in December 2021, Bank Indonesia Fast Payment provides real-time, round-the-clock interbank fund transfers. Bank Indonesia caps transaction fees at IDR 2,500 per transfer, under twenty US cents.
+
+From an engineering perspective, BI-FAST changes how you design settlement flows. When interbank settlement takes seconds instead of hours, you can simplify reconciliation pipelines. You can settle with merchants faster. You can build financial products that would stall under batch-processed clearing.
+
+The trade-off: a real-time settlement system that drops during peak hours creates immediate settlement risk. The reliability engineering behind BI-FAST's switching infrastructure deserves more attention than it receives outside Indonesia.
+
+## What Building for Indonesia Teaches You
+
+Integrating Indonesian payment providers taught me three things about payment engineering:
+
+**Latency tolerance varies by island.** Network conditions differ between Jakarta and a village in Flores. Timeout budgets and retry logic need to account for connections that range from 50ms to 5 seconds. Aggressive timeouts reject valid transactions from users on slower connections.
+
+**Reconciliation complexity scales with provider count.** Each provider sends settlement reports in a different format on a different schedule. A reconciliation layer that normalizes these differences into a single ledger view is where most bugs hide.
+
+**Treat regulatory compliance as a feature in its own right.** Bank Indonesia requires specific data fields in transaction records, limits on certain transaction types, and periodic reporting. Building these requirements into your data model from day one costs less than retrofitting them after an audit finding.
+
+## Why This Matters Beyond Indonesia
+
+Indonesia's payment infrastructure represents a pattern I expect other markets to replicate: central banks mandating interoperability standards in fragmented markets. India's UPI pioneered this approach. Brazil's Pix followed. QRIS belongs in the same conversation.
+
+For payment engineers, these systems create new integration patterns. Unified merchant codes, real-time settlement rails, and government-mandated API standards simplify certain problems while introducing others, centered on regulatory compliance and multi-provider reconciliation.
+
+Over 30 million merchants process QRIS transactions today. The growth rate outpaces card terminal adoption in most established markets.
+
+![Featured image for Indonesia payment infrastructure article](/images/blog/indonesia-payment-infrastructure.jpg)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
