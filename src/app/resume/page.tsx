@@ -13,9 +13,9 @@ const socialLinks = [
 ];
 
 const linkLabels: Record<string, string> = {
-  LinkedIn: "linkedin.com/in/agustinus-biotamalo",
-  GitHub: "github.com/cryptorichyrich",
-  Website: "biotama.cv",
+  LinkedIn: "https://www.linkedin.com/in/agustinus-biotamalo-lumbantoruan-99126149/",
+  GitHub: "https://github.com/cryptorichyrich",
+  Website: "https://biotama.cv",
 };
 
 function formatDate(dateStr: string): string {

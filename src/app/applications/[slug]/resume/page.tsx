@@ -83,7 +83,9 @@ export default async function TailoredResumePage({ params }: { params: Promise<{
               <span>{profile.location}</span>
             </div>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-sm text-slate-600">
-              {socialLinks.map(s => <a key={s.platform} href={s.url} target="_blank" rel="noopener noreferrer" className="text-slate-600 hover:text-slate-900 underline underline-offset-2 decoration-slate-300">{s.platform}</a>)}
+              {socialLinks.map(s => <a key={s.url} href={s.url} target="_blank" rel="noopener noreferrer" className="text-slate-600 hover:text-slate-900 underline underline-offset-2 decoration-slate-300">{s.url}</a>)}
+              <span className="text-slate-300">|</span>
+              <a href="https://biotama.cv" target="_blank" rel="noopener noreferrer" className="text-slate-600 hover:text-slate-900 underline underline-offset-2 decoration-slate-300">https://biotama.cv</a>
             </div>
           </div>
         </header>

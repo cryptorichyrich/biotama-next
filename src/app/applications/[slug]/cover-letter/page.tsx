@@ -70,12 +70,17 @@ export default async function CoverLetterPage({ params }: { params: Promise<{ sl
           <p>I would welcome the opportunity to discuss how my background aligns with your team's needs. Thank you for your time and consideration.</p>
         </div>
         <div className="mt-10">
-          <p className="text-sm text-slate-700">Best regards,</p>
+          <p className="text-sm text-slate-700">Warm regards,</p>
           <p className="text-base font-semibold text-slate-900 mt-3">{profile.name}</p>
           <p className="text-sm text-slate-600">{displayTitle}</p>
           <p className="text-sm text-slate-600">{profile.email}</p>
           <p className="text-sm text-slate-600">{profile.phone}</p>
           <p className="text-sm text-slate-600">{profile.location}</p>
+          <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1 text-sm">
+            <a href="https://www.linkedin.com/in/agustinus-biotamalo-lumbantoruan-99126149/" target="_blank" rel="noopener noreferrer" className="text-slate-600 hover:text-slate-900 underline underline-offset-2 decoration-slate-300">https://www.linkedin.com/in/agustinus-biotamalo-lumbantoruan-99126149/</a>
+            <a href="https://github.com/cryptorichyrich" target="_blank" rel="noopener noreferrer" className="text-slate-600 hover:text-slate-900 underline underline-offset-2 decoration-slate-300">https://github.com/cryptorichyrich</a>
+            <a href="https://biotama.cv" target="_blank" rel="noopener noreferrer" className="text-slate-600 hover:text-slate-900 underline underline-offset-2 decoration-slate-300">https://biotama.cv</a>
+          </div>
         </div>
       </div>
     </>
