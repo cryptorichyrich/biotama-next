@@ -3065,6 +3065,112 @@ That's the framework in practice. Not a document you fill out once, but a lens y
 
 *Inspired by Microsoft's [Azure Well-Architected Framework](https://learn.microsoft.com/en-us/azure/well-architected/what-is-well-architected-framework).*`,
   },
+  {
+    slug: "architects-real-job-decisions-not-diagrams",
+    title: "The Architect's Real Job: Decisions, Not Diagrams",
+    description:
+      "What solution architects do beyond diagrams: decision records, tradeoff management, and the principles that separate effective architects from theorists.",
+    date: "2026-06-04",
+    tags: ["Architecture", "Career", "Leadership"],
+    content: `# The Architect's Real Job: Decisions, Not Diagrams
+
+People think architecture is about drawing boxes and arrows on whiteboards. Architecture is about making decisions under uncertainty, with incomplete information, where every choice has a cost and most costs surface months later.
+
+I've spent years building systems across fintech, e-commerce, and SaaS. The architect role keeps coming back to the same core responsibilities, no matter the domain. Here's what the job involves and what I wish someone had told me on day one.
+
+## Start With Business Requirements, Not Technology
+
+Before I touch a single design decision, I sit down with stakeholders and ask questions that make them uncomfortable. What's the revenue model? What happens if this system goes down for an hour? What regulations apply? How many users in year one versus year three?
+
+Most technical failures start with misunderstood business requirements. I've seen teams build distributed microservices for a system that processes 200 requests per day. I've seen monoliths collapse under load because nobody asked about growth projections.
+
+The process I follow:
+
+1. Gather every functional and nonfunctional requirement
+2. Map constraints: budget, timeline, compliance, team skills
+3. Identify what stakeholders say they want versus what they need
+4. Negotiate realistic outcomes
+5. Document everything and get signoff
+
+Step three is where the real work happens. Stakeholders ask for real-time analytics when they need a daily CSV export. They request 99.999% uptime when 99.9% would save hundreds of thousands in infrastructure costs. The architect's job is to translate ambitions into requirements that survive contact with reality.
+
+## Build a Decision Framework, Not Just a Design
+
+Architecture is the accumulation of decisions. Individual choices can be reasonable in isolation but produce a mess when combined. A series of correct micro-decisions can lead to a flawed macro-outcome.
+
+I log every significant decision in an Architecture Decision Record (ADR). The format is simple:
+
+- **Context:** What's the situation and what forces are at play?
+- **Decision:** What did we choose and why?
+- **Consequences:** What are the positive and negative outcomes?
+- **Rejected alternatives:** What else did we consider and why did we say no?
+
+ADRs serve two purposes. They force me to think through decisions rather than going with gut instinct. They give future team members context when they ask "why did we do it this way?" six months from now.
+
+The rejected alternatives section is where the learning lives. That's the part future you will thank present you for writing.
+
+## Validate With Working Code, Not Slide Decks
+
+I've sat through architecture reviews where the team presents a beautiful diagram with dozens of services connected by arrows. Everything looks perfect. Then someone asks: "Have you tested the latency between Service A and Service B?" Silence.
+
+Proof of concepts exist to prevent this silence. Before I finalize any design, I build PoCs for the high-risk or novel components. Not full implementations, but enough working code to validate assumptions about performance, integration points, or technology choices.
+
+The PoC for a payment gateway integration needs to prove that the authentication flow works, the webhook delivery is reliable, and the error handling covers the edge cases the vendor documentation glosses over. Diagrams can't tell you that. Running code can.
+
+## Know Your Patterns, But Don't Over-Apply Them
+
+Design patterns are tools, not architectural mandates. Strangler fig, CQRS, event sourcing, saga, circuit breaker, bulkhead: these patterns solve specific problems. The mistake is applying them to problems they don't solve.
+
+When I review requirements, I map them to patterns that address the actual constraints. A system that processes financial transactions needs different patterns than a content management system. Reliability patterns (retry, circuit breaker, bulkhead) apply almost everywhere. Data patterns (CQRS, event sourcing) apply when you have specific read/write asymmetry problems.
+
+Pattern fluency comes from building systems and seeing where patterns help and where they add complexity without value. No shortcut replaces that experience.
+
+## Design for the Unhappy Path
+
+Most architecture work focuses on the happy path: the user clicks a button, the request flows through the system, the database writes, the response comes back. Production systems spend a disproportionate amount of time on unhappy paths.
+
+What happens when the database connection times out mid-transaction? When a downstream service returns garbage data? When a deployment introduces a schema mismatch? When a certificate expires at 2AM on a Sunday?
+
+I design for observability first. Structured logs, distributed traces, metrics that tell a story. If the on-call engineer can't diagnose an outage in 15 minutes using the dashboards and alerts I've set up, the architecture is incomplete regardless of how elegant the happy path looks.
+
+Supportability is another dimension. Can the operations team engage vendor support with the right information? Are the configurations within supported parameters? Can customer support investigate user issues without engineering intervention?
+
+## Stay Hands-On or Become Irrelevant
+
+The architects I respect most share one trait: they still write code. Not production features, but prototypes, benchmarks, PoCs, and debugging sessions. They stay connected to the reality of implementation.
+
+I've worked with ivory tower architects who designed systems they couldn't build. Their architectures looked beautiful in presentations but fell apart during implementation because they didn't account for library limitations, API rate limits, or the actual behavior of the database under concurrent writes.
+
+Stay hands-on. Build prototypes. Break things in staging. Read release notes. Experiment with new tools. Your design decisions are as good as your understanding of the technology you're designing with.
+
+## The Collaboration Requirement
+
+Architecture doesn't happen in isolation. Platform teams manage shared infrastructure. Cloud providers offer architecture review sessions and design consultations. Security teams have requirements that affect topology decisions. The best architects I know treat collaboration as a core skill, not a soft skill.
+
+I schedule regular design sessions with the implementation team. Not to dictate decisions, but to provide clarity on the "why" behind architectural choices and to renegotiate requirements when reality doesn't match assumptions. The implementation sequence matters as much as the design itself. Get that wrong and you build dependencies you can't test until everything is connected.
+
+## The Methodical Approach
+
+Discipline beats brilliance in architecture. I follow a repeatable process for every system I design:
+
+1. Requirements gathering and stakeholder alignment
+2. Architecture design specification with diagrams
+3. Decision records for every significant choice
+4. Proof of concepts for high-risk components
+5. Implementation collaboration and sequence planning
+6. Operational modeling (cost, health, support)
+7. Ongoing optimization based on production data
+
+This isn't bureaucracy. It's a framework that prevents the common failure modes: unspecified requirements, undocumented decisions, untested assumptions, and designs that look great on paper but can't be operated in production.
+
+## What I've Learned
+
+Architecture is about tradeoffs. Every design decision optimizes for something and accepts risk somewhere else. The architect's job is to make those tradeoffs visible, intentional, and documented.
+
+The best architecture is one the team can build, operate, and evolve. Not the one with the most services on the diagram.
+
+*Inspired by Microsoft's [Solution Architect's Responsibilities and Guiding Principles](https://learn.microsoft.com/en-us/azure/well-architected/architect-role/fundamentals) from the Azure Well-Architected Framework.*`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
