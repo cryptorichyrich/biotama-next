@@ -2992,6 +2992,79 @@ Over 30 million merchants process QRIS transactions today. The growth rate outpa
 
 ![Featured image for Indonesia payment infrastructure article](/images/blog/indonesia-payment-infrastructure.jpg)`,
   },
+  {
+    slug: "well-architected-framework",
+    title: "The 5 Pillars That Separate Good Architecture from Bad",
+    description:
+      "A cloud-agnostic breakdown of the Well-Architected Framework: the five pillars, tradeoffs, maturity levels, and how I apply them in production systems.",
+    date: "2026-06-04",
+    tags: ["Architecture", "Cloud", "DevOps"],
+    content: `# The 5 Pillars That Separate Good Architecture from Bad
+
+Every system I've built or reviewed comes down to the same five questions. Can it stay up when things break? Is it secure enough? Does it cost what it should? Can the team operate it without burning out? Is it fast enough for the people using it?
+
+These aren't random concerns. They're the five pillars of architectural excellence: **Reliability**, **Security**, **Cost Optimization**, **Operational Excellence**, and **Performance Efficiency**. Together they form the backbone of every major cloud provider's Well-Architected Framework. Microsoft Azure documents this. AWS has their own version. The specifics differ but the principles are identical.
+
+I've used this framework as a mental model for years. Here's my take on what matters and what I skip.
+
+## The Five Pillars, Ranked by What Kills Projects
+
+**Reliability** comes first because downtime is the fastest way to lose users and revenue. A system that can't recover from failures on its own isn't production-ready. This means redundancy at every layer: multiple availability zones, circuit breakers, retry logic with exponential backoff, and graceful degradation when dependencies go dark.
+
+The key insight: reliability isn't about preventing failures. It's about recovering from them fast enough that users don't notice.
+
+**Security** is non-negotiable in fintech and healthcare, which is where I spend most of my time. Defense in depth, least-privilege access, encryption at rest and in transit, and a zero-trust network model. The framework asks you to classify your data, understand your threat model, and build controls that match the risk level.
+
+What I've learned: most security incidents come from misconfiguration, not sophisticated attacks. Automate your infrastructure and eliminate manual config drift.
+
+**Cost Optimization** isn't about being cheap. It's about spending money where it creates value. Right-sizing compute, using reserved capacity for predictable workloads, shutting down non-production environments on weekends, and choosing the right storage tier for data that's accessed once a quarter versus once a second.
+
+The tradeoff: optimizing cost often means optimizing architecture. Simpler systems cost less to run and less to maintain.
+
+**Operational Excellence** covers CI/CD, monitoring, alerting, incident response, and runbooks. If your team can't deploy confidently at 3AM or diagnose an outage in under 15 minutes, this pillar needs work. Observability is the foundation: structured logs, distributed traces, and metrics that tell a story, not just raw numbers.
+
+**Performance Efficiency** rounds out the list. Caching strategies, database query optimization, connection pooling, and choosing the right compute tier for the workload. Performance problems often hide behind architecture decisions made months earlier.
+
+## The Tradeoff Game
+
+Here's what the framework gets right that most engineering teams miss: these pillars conflict with each other.
+
+Adding redundancy improves reliability but increases cost. Tightening security controls adds latency. Optimizing for peak performance often means over-provisioning, which wastes money. Building comprehensive observability takes engineering time away from feature development.
+
+Architecture is about tradeoffs, not silver bullets. The framework gives you a structured way to make those tradeoffs visible and intentional. Every design decision should answer: which pillar am I optimizing for, which am I accepting risk in, and is that tradeoff justified by the business requirements?
+
+## The Maturity Model (How I Actually Use It)
+
+The framework defines five maturity levels. I've found these useful as a rough roadmap rather than a strict checklist.
+
+**Level 1: Foundation.** Get the basics right. Use managed services. Follow cloud-native patterns. Don't reinvent what the platform gives you for free.
+
+**Level 2: Build workload assets.** Write good code. Set up proper deployment pipelines. Establish operational procedures your team can follow without you.
+
+**Level 3: Production-ready.** Involve business stakeholders. Validate tradeoffs. For new systems, this is the gate before launch.
+
+**Level 4: Learn from production.** Monitor, measure, adjust. Real user traffic reveals problems no design review can predict.
+
+**Level 5: Future-proof.** Architect for change. The system should handle new requirements without rewrites because you built extensibility in from the start.
+
+Most teams I work with operate between Level 2 and Level 3. Getting to Level 4 requires production traffic and the discipline to act on what the data tells you. Level 5 is rare and that's fine. Most businesses don't need it.
+
+## What I Skip
+
+The framework includes workload-specific guides, service selection guides, and formal assessments. These are valuable for large enterprises with dedicated architecture teams. For the teams I work with, the highest ROI comes from understanding the five pillars and the tradeoffs between them.
+
+I also skip the parts that are specific to a single cloud provider. The principles are portable. The implementation details change with every new service release. Learn the principles, read the docs when you need the specifics.
+
+## The Pragmatic Approach
+
+Don't try to optimize all five pillars at once. Pick the two that matter most for your current business phase. An early-stage startup should optimize for speed to market (operational excellence and performance) and accept higher risk in areas like cost optimization. A fintech platform handling real money needs to prioritize security and reliability, even at the expense of development velocity.
+
+Measure where you stand. Pick the gaps that hurt the most. Fix them. Repeat.
+
+That's the framework in practice. Not a document you fill out once, but a lens you look through every time you make an architectural decision.
+
+*Inspired by Microsoft's [Azure Well-Architected Framework](https://learn.microsoft.com/en-us/azure/well-architected/what-is-well-architected-framework).*`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
