@@ -3296,6 +3296,49 @@ FastAPI's dependency injection replaced three things I used to build by hand: mi
 
 Write small, composable dependencies. Let the framework wire them together. Keep route handlers thin. When your dependencies read like a checklist of what an endpoint needs, you have found the right abstraction.`,
   },
+  {
+    slug: "architect-mindset-trade-offs",
+    title: "The Architect Mindset: Why Senior Engineers Think in Trade-offs",
+    description:
+      "The shift from chasing best tools to choosing right tools for the context. How thinking in trade-offs separates senior architects from junior developers.",
+    date: "2026-06-04",
+    tags: ["career", "engineering", "architecture"],
+    content: `![Featured image](/images/blog/architect-mindset-trade-offs.jpg)
+
+# The Architect Mindset: Why Senior Engineers Think in Trade-offs
+
+Junior engineers ask "what's the best tool?" Senior engineers ask "what's the right tool for this problem, team, and timeline?" That question marks the shift from writing code to designing systems.
+
+I spent years chasing best practices. PostgreSQL over MySQL. React over Angular. REST over GraphQL. Kubernetes over everything. Each choice felt like progress. Each one missed the mark because the question was wrong. "Best" doesn't exist in engineering. There are trade-offs, and the job is picking which ones you can live with.
+
+## The Pattern Across Projects
+
+A startup I advised spent three months designing a microservices architecture with separate databases per service, event sourcing, and CQRS. They had twelve users. A single PostgreSQL instance with well-structured tables would have carried them for two years. They confused the architecture of a system processing millions of payments with the architecture of a system proving product-market fit.
+
+I've seen teams adopt server components before understanding client-side rendering. The migration took months, broke their testing pipeline, and produced negligible performance gains. In hindsight, the trade-off was clear: ship features faster with a proven pattern, or ship slower with a newer one. For an early-stage product, the answer should have been obvious.
+
+A CTO once told me they chose GraphQL because their developers wanted to learn something new. The API served a mobile app with four screens. REST endpoints would have taken a week. The GraphQL implementation took three weeks and required resolver debugging for problems that don't exist in REST. The team learned something. The product fell behind.
+
+The common thread: treating technology choices as ideology. "We're a React shop" or "we use microservices" declares identity. The engineering comes second, if at all.
+
+## The Right Questions
+
+Senior engineers don't know more tools. They know which questions to ask before reaching for one:
+
+- How many users will this serve in six months?
+- Who maintains this after I leave?
+- What breaks if this component fails?
+- Can a mid-level engineer understand this in an hour?
+- What am I giving up by choosing this approach?
+
+The last question matters most. Each choice carries a cost. Microservices give you independent deployment and cost you transactional consistency. GraphQL gives you flexible queries and costs you caching simplicity. Kubernetes gives you orchestration and costs you operational complexity. A senior engineer names the cost before making the choice.
+
+What I've found after building systems across fintech, SaaS, and mobile apps is that the right call changes as the system grows. That PostgreSQL monolith serving twelve users might need three services in two years. The REST API built in a week might need GraphQL when the frontend hits forty screens. The trigger for restructuring is when the cost of the current architecture exceeds the cost of migration. Not before.
+
+"We might need this later" has killed more projects than any technical limitation.
+
+Architecture is about trade-offs, not silver bullets. The next time you reach for a tool or pattern, ask what you're giving up. Without naming the cost, you're following a trend.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
