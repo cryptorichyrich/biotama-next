@@ -3171,6 +3171,131 @@ The best architecture is one the team can build, operate, and evolve. Not the on
 
 *Inspired by Microsoft's [Solution Architect's Responsibilities and Guiding Principles](https://learn.microsoft.com/en-us/azure/well-architected/architect-role/fundamentals) from the Azure Well-Architected Framework.*`,
   },
+  {
+    slug: "fastapi-dependency-injection",
+    title: "FastAPI Dependency Injection That Scaled My Microservices",
+    description:
+      "How FastAPI's function-based dependency injection replaced middleware chains, context managers, and global singletons across my microservices architecture.",
+    date: "2026-06-04",
+    tags: ["Python", "FastAPI", "Backend"],
+    content: `# FastAPI Dependency Injection That Scaled My Microservices
+
+Most FastAPI tutorials show dependency injection for fetching a database session. That is the hello world of DI. In production, I use it for database connections, authentication context, configuration, rate limiting, feature flags, and cross-cutting logging. The pattern handles all of it without turning into a tangled mess.
+
+## Why FastAPI's DI System Is Different
+
+FastAPI's dependency injection runs on a simple principle: functions declare what they need, and the framework provides it. No decorators, no XML config, no service container. You write a function that returns a resource, then type-hint it in your route handler.
+
+\`\`\`python
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
+    async with async_session() as session:
+        yield session
+
+@router.get("/payments/{payment_id}")
+async def get_payment(
+    payment_id: str,
+    db: AsyncSession = Depends(get_db),
+):
+    result = await db.execute(
+        select(Payment).where(Payment.id == payment_id)
+    )
+    return result.scalar_one_or_none()
+\`\`\`
+
+The \`yield\` pattern handles teardown. The session closes when the request finishes. No context manager boilerplate in every route.
+
+## Composing Dependencies Is Where It Gets Powerful
+
+The value emerges when dependencies depend on each other. I stack authentication, tenant resolution, and permission checks into a chain that the framework resolves in order.
+
+\`\`\`python
+async def get_current_user(
+    token: str = Depends(oauth2_scheme),
+    db: AsyncSession = Depends(get_db),
+) -> User:
+    payload = decode_token(token)
+    user = await db.get(User, payload["sub"])
+    if not user:
+        raise HTTPException(401)
+    return user
+
+async def require_admin(
+    user: User = Depends(get_current_user),
+) -> User:
+    if user.role != "admin":
+        raise HTTPException(403)
+    return user
+
+@router.delete("/users/{user_id}")
+async def delete_user(
+    user_id: str,
+    admin: User = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+):
+    await db.execute(delete(User).where(User.id == user_id))
+    await db.commit()
+\`\`\`
+
+\`require_admin\` depends on \`get_current_user\`, which depends on the database and token. The framework resolves the whole graph. Each function does one thing. The route handler stays clean.
+
+This composability is what scales. When I add a new microservice, I copy the dependency chain, adjust the models, and the auth, config, and teardown logic works the same way.
+
+## Configuration Without Environment Variable Sprawl
+
+I define configuration as a dependency too. This makes testing straightforward: swap the config provider, and the whole service runs against test fixtures.
+
+\`\`\`python
+@dataclass
+class ServiceConfig:
+    database_url: str
+    redis_url: str
+    payment_provider_api_key: str
+
+def get_config() -> ServiceConfig:
+    return ServiceConfig(
+        database_url=os.environ["DATABASE_URL"],
+        redis_url=os.environ["REDIS_URL"],
+        payment_provider_api_key=os.environ["PAYMENT_API_KEY"],
+    )
+\`\`\`
+
+In tests, I override the dependency:
+
+\`\`\`python
+app.dependency_overrides[get_config] = lambda: ServiceConfig(
+    database_url="sqlite+aiosqlite:///test.db",
+    redis_url="redis://localhost:6379/1",
+    payment_provider_api_key="test_key",
+)
+\`\`\`
+
+Every route that depends on \`get_config\` now gets the test configuration. No mocking libraries, no monkey-patching, no test-specific environment files.
+
+## The Pattern That Scaled Across Services
+
+When I started splitting a monolith into services, the DI pattern carried over. Each service has its own \`dependencies.py\` with:
+
+1. **Database session provider** - handles connection pooling and teardown
+2. **Auth resolver** - validates tokens and returns user context
+3. **Config provider** - centralizes environment access
+4. **Logging context** - injects request IDs and tenant info into loggers
+
+These four dependencies cover 80% of what each service needs. The remaining 20% are service-specific: payment gateway clients, message queue publishers, external API wrappers. Same pattern, different resources.
+
+The consistency matters more than I expected. When a new engineer joins, they learn the DI pattern once and can navigate any service in the codebase. The route handlers read like documentation: this endpoint needs an admin user, a database session, and a payment client. The dependency list tells the whole story.
+
+## Where It Breaks Down
+
+FastAPI dependency injection has limits. The framework resolves dependencies per-request, which means you cannot use it for singleton resources that need explicit lifecycle management. A Kafka producer pool with custom shutdown logic needs FastAPI's lifespan events alongside DI.
+
+Dependencies cannot be conditional at runtime either. You cannot say "use this dependency in production and that one in staging" without the override mechanism, which targets testing, not runtime branching. For environment-specific behavior, I inject configuration and branch inside the dependency.
+
+## The Takeaway
+
+FastAPI's dependency injection replaced three things I used to build by hand: middleware chains for auth, context managers for database sessions, and global singletons for configuration. The pattern is simple enough to learn in an afternoon and powerful enough to structure an entire microservices architecture around.
+
+Write small, composable dependencies. Let the framework wire them together. Keep route handlers thin. When your dependencies read like a checklist of what an endpoint needs, you have found the right abstraction.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
