@@ -3339,6 +3339,93 @@ What I've found after building systems across fintech, SaaS, and mobile apps is 
 
 Architecture is about trade-offs, not silver bullets. The next time you reach for a tool or pattern, ask what you're giving up. Without naming the cost, you're following a trend.`,
   },
+  {
+    slug: "realtime-transaction-monitoring-event-sourcing",
+    title: "Real-Time Transaction Monitoring with Event Sourcing",
+    description:
+      "How event sourcing enables real-time fraud detection and full transaction auditing in financial systems, with architecture patterns I've used in production.",
+    date: "2026-06-05",
+    tags: ["event-sourcing", "fintech", "architecture"],
+    content: `# Real-Time Transaction Monitoring with Event Sourcing
+
+A payment system I worked on processed 12,000 transactions per hour at peak. The fraud team needed answers within seconds: Is this transaction anomalous? Does this user's pattern match known fraud signatures? Can we trace the full lifecycle of a disputed charge?
+
+Traditional CRUD architectures fail here. You update a row in a database, and the previous state vanishes. You lose the ability to reconstruct what happened, when, and in what order. Event sourcing solves this by treating every state change as an immutable fact.
+
+## Why Event Sourcing Fits Financial Systems
+
+Financial regulators require a complete audit trail. Every transformation of a transaction, from initiation to settlement, must be traceable in full detail. Event sourcing makes this the default behavior rather than an afterthought.
+
+In a CRUD system, you add audit logging as a separate concern. In an event-sourced system, the event stream is the audit log. Every deposit, withdrawal, status change, and refund exists as a typed event with a timestamp, a correlation ID, and the identity of the actor who triggered it.
+
+The trade-off: you trade storage simplicity for query flexibility. Your write model becomes fast and append-only. Your read model requires projections, which means maintaining materialized views that reconstruct current state from the event stream.
+
+## The Architecture
+
+I structure a transaction monitoring system around three components: the event store, the projection engine, and the rule evaluator.
+
+### Event Store
+
+The event store is an append-only log. Each event follows a strict schema: transaction ID, event type, timestamp, payload, and metadata. PostgreSQL handles this well with a partitioned table per month and a JSONB payload column.
+
+\`\`\`sql
+CREATE TABLE transaction_events (
+    event_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    transaction_id UUID NOT NULL,
+    event_type VARCHAR(50) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    payload JSONB NOT NULL,
+    metadata JSONB DEFAULT '{}'
+);
+\`\`\`
+
+I partition this table by month on \`created_at\`. Queries for recent events hit small partitions. Historical queries scan only the relevant range. An index on \`(transaction_id, created_at)\` gives you the event stream for any transaction in chronological order.
+
+### Projection Engine
+
+The projection engine consumes events and builds read models. For transaction monitoring, the critical projection is the "current transaction state" view. It aggregates events per transaction ID and produces the current status, amount, risk score, and associated user.
+
+I run projections as background workers that subscribe to new events. When a \`TransactionInitiated\` event arrives, the projection creates a row in the \`transaction_summary\` table. When a \`FraudFlagRaised\` event follows, the projection updates the risk score and status.
+
+The key insight: projections can be rebuilt from scratch. If you discover a bug in your projection logic, you fix the code, drop the read model, and replay the event stream. This is a capability that traditional architectures lack.
+
+### Rule Evaluator
+
+The rule evaluator runs fraud detection rules against the projected state. It consumes the same event stream and evaluates patterns:
+
+- Three transactions above the user's average in five minutes
+- A transaction from a new device in a different country within an hour of the last one
+- A pattern of transactions just below a reporting threshold
+
+Rules emit new events: \`FraudFlagRaised\`, \`TransactionBlocked\`, \`ManualReviewRequired\`. These events flow back into the event store, creating a feedback loop where monitoring output becomes part of the audit trail.
+
+## Handling the Rebuilding Problem
+
+Event sourcing introduces a specific operational challenge: replaying events to rebuild state takes time. If your event store contains two years of transaction data and you need to rebuild a projection, you wait.
+
+I mitigate this with snapshots. Every 1,000 events per aggregate, I write a snapshot of the current state to a separate table. Rebuilding from a snapshot and replaying events since that snapshot completes fast enough for most recovery scenarios.
+
+For the monitoring use case, the critical projection stays warm. I keep it in memory and update it as events arrive. Cold projections for historical analysis rebuild overnight.
+
+## What I Would Do Differently
+
+After running this architecture for over a year, I would change two things.
+
+First, I would start with a simpler projection strategy. I built five projections on day one. Two of them saw minimal query traffic and could have been ad-hoc queries against the event store. Projections carry maintenance burden. Build them when you identify a repeated query pattern, not in anticipation.
+
+Second, I would invest in event versioning from the start. My initial events had no schema version field. When the payload structure changed, I needed migration scripts to transform old events. A \`schema_version\` field on each event costs nothing upfront and saves hours during evolution.
+
+## When to Use This
+
+Event sourcing for transaction monitoring makes sense when you need:
+
+- Complete audit trails for regulatory compliance
+- Real-time pattern matching across transaction lifecycles
+- The ability to replay and analyze past states
+- Decoupled write and read models for independent scaling
+
+It does not make sense when your transaction volume is low, your audit requirements are minimal, or your team lacks experience with eventual consistency. Start with append-only audit logs in a traditional architecture. Graduate to event sourcing when the limitations of CRUD become the bottleneck.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
