@@ -115,8 +115,33 @@ function renderMarkdown(markdown: string) {
         boldParts.push(remaining.slice(lastBoldIdx));
       }
 
+      // Links: [text](url)
+      const boldResolved = boldParts.map((part, idx) => {
+        if (typeof part !== "string") return part;
+        const linkParts: (string | JSX.Element)[] = [];
+        const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+        let linkMatch;
+        let lastLinkIdx = 0;
+
+        while ((linkMatch = linkRegex.exec(part as string)) !== null) {
+          if (linkMatch.index > lastLinkIdx) {
+            linkParts.push(part.slice(lastLinkIdx, linkMatch.index));
+          }
+          linkParts.push(
+            <a key={`l-${idx}-${linkMatch.index}`} href={linkMatch[2]} target="_blank" rel="noopener noreferrer" className="text-[var(--color-green-term)] underline underline-offset-2 hover:text-[var(--color-gold)] transition-colors duration-200">
+              {linkMatch[1]}
+            </a>
+          );
+          lastLinkIdx = linkMatch.index + linkMatch[0].length;
+        }
+        if (lastLinkIdx < part.length) {
+          linkParts.push(part.slice(lastLinkIdx));
+        }
+        return linkParts.length === 1 ? linkParts[0] : linkParts.length > 1 ? <>{...linkParts}</> : part;
+      });
+
       // Inline code: `text`
-      const result = boldParts.map((part, idx) => {
+      const result = boldResolved.map((part, idx) => {
         if (typeof part !== "string") return part;
         const codeParts: (string | JSX.Element)[] = [];
         const codeRegex = /`([^`]+)`/g;
@@ -202,6 +227,66 @@ function renderMarkdown(markdown: string) {
             </li>
           ))}
         </ul>
+      );
+      continue;
+    }
+
+    // Ordered lists: 1. item
+    const olMatch = trimmed.match(/^(\d+)\.\s+(.*)/);
+    if (olMatch) {
+      const items: { text: string; index: number }[] = [{ text: olMatch[2], index: i }];
+      let j = i + 1;
+      while (j < lines.length) {
+        const nextTrimmed = lines[j].trim();
+        const nextOlMatch = nextTrimmed.match(/^(\d+)\.\s+(.*)/);
+        if (nextOlMatch) {
+          items.push({ text: nextOlMatch[2], index: j });
+          j++;
+        } else if (nextTrimmed === "") {
+          j++;
+        } else {
+          break;
+        }
+      }
+      i = j - 1;
+      elements.push(
+        <ol key={key++} className="list-none pl-0 mb-5 space-y-1.5 font-[family-name:var(--font-mono)] leading-relaxed">
+          {items.map((item) => (
+            <li key={item.index} className="flex items-start gap-2 text-[var(--color-text-body)]">
+              <span className="text-[var(--color-gold)] shrink-0 mt-0.5 font-semibold">{item.index + 1}.</span>
+              <span>{renderInline(item.text)}</span>
+            </li>
+          ))}
+        </ol>
+      );
+      continue;
+    }
+
+    // Horizontal rule
+    if (trimmed === "---" || trimmed === "***" || trimmed === "___") {
+      elements.push(
+        <hr key={key++} className="my-10 border-t border-[var(--color-amber-dim)]/30" />
+      );
+      continue;
+    }
+
+    // Image: ![alt](src)
+    const imgMatch = trimmed.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+    if (imgMatch) {
+      elements.push(
+        <figure key={key++} className="my-8">
+          <img
+            src={imgMatch[2]}
+            alt={imgMatch[1]}
+            className="w-full rounded-lg border border-[var(--color-amber-dim)]/20"
+            loading="lazy"
+          />
+          {imgMatch[1] && (
+            <figcaption className="mt-2 text-xs font-[family-name:var(--font-mono)] text-[var(--color-text-secondary)] text-center">
+              {imgMatch[1]}
+            </figcaption>
+          )}
+        </figure>
       );
       continue;
     }
