@@ -3649,6 +3649,71 @@ You stop asking "did the balance update?" and start asking "do the books balance
 
 If you build fintech software and haven't internalized this principle, pause and learn it. Two hours studying debits and credits will save you from bugs that are expensive to detect and painful to fix.`,
   },
+  {
+    slug: "typescript-discriminated-unions-every-project",
+    title: "TypeScript Discriminated Unions: The Pattern I Use in Every Project",
+    description:
+      "Why discriminated unions are the most practical TypeScript pattern for state, API responses, and form handling, with code examples from real production systems.",
+    date: "2026-06-05",
+    tags: ["TypeScript", "Frontend", "Patterns"],
+    content: `![TypeScript Discriminated Unions](/images/blog/typescript-discriminated-unions-every-project.png)
+
+# TypeScript Discriminated Unions: The Pattern I Use in Every Project
+
+I used to model API responses with optional fields and prayer. A response object with \`data?\`, \`error?\`, \`loading?\`, and a comment saying "only one of these is set at a time." TypeScript couldn't help me. The compiler couldn't catch the bug where I accessed \`error.message\` on a successful response.
+
+Then I found discriminated unions. Now I reach for them in every new codebase: API responses, form state, async operations, configuration objects. The pattern is simple, but the payoff compounds.
+
+## The Core Idea
+
+A discriminated union uses a shared property (the discriminant) to narrow a type to one specific branch. TypeScript's control flow analysis understands this and narrows types in \`if\` and \`switch\` statements.
+
+\`\`\`typescript
+type ApiResult<T> =
+  | { status: "success"; data: T }
+  | { status: "error"; message: string }
+  | { status: "loading" };
+\`\`\`
+
+Each branch is explicit. No optional fields. No guessing. When you check \`result.status\`, TypeScript knows which fields are available.
+
+## Where I Use This Pattern
+
+**API responses.** Each fetch call returns a discriminated result. Loading, error, and success are three distinct objects, not one object with five optional fields. UI components pattern-match on status and render the right view without null checks.
+
+**Form state.** A multi-step form where each step carries different fields and validation rules. Instead of one giant form type with everything optional, each step is a separate branch discriminated by a \`step\` field. The submit handler receives only the fields for that step.
+
+**Async operations.** I wrap promises in a state machine: \`{ state: "idle" }\`, \`{ state: "loading" }\`, \`{ state: "success"; data: T }\`, \`{ state: "error"; error: Error }\`. React components render based on \`state\`, and TypeScript blocks access to \`data\` before confirming \`state\` is \`"success"\`.
+
+## Why This Beats Optional Fields
+
+Optional fields create ambiguity. When a type has \`data?: T\` and \`error?: string\`, nothing prevents both from being \`undefined\`, or both from being populated. You rely on convention, not the compiler.
+
+Discriminated unions encode business rules into the type system. "A result is loading, errored, or successful" becomes a constraint the compiler enforces. Exhaustiveness checking with \`never\` ensures you handle all cases.
+
+\`\`\`typescript
+function handleResult(result: ApiResult<User>) {
+  switch (result.status) {
+    case "success": return renderUser(result.data);
+    case "error": return renderError(result.message);
+    case "loading": return renderSpinner();
+    default:
+      const _exhaustive: never = result;
+      return _exhaustive;
+  }
+}
+\`\`\`
+
+Add a new status branch tomorrow, and TypeScript flags each handler that misses it. That kind of safety saves hours of debugging at the boundary between states.
+
+## The Mental Model
+
+Think of discriminated unions as "one thing at a time, guaranteed." Instead of modeling what could be present, model what is present for each case. The discriminating property acts as a tag that tells TypeScript which shape you hold.
+
+I converted a codebase from optional-field soup to discriminated unions once. The refactor caught bugs on the first compile: fields accessed in the wrong state, missing error handlers, unreachable code paths the old types permitted.
+
+This pattern costs nothing at runtime. It is a compile-time tool that makes invalid states unrepresentable. If you write TypeScript and skip discriminated unions, you leave the language's strongest feature unused.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
