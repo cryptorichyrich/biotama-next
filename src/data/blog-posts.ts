@@ -3584,6 +3584,71 @@ The teams I've seen succeed with monoliths share one trait: they treat internal 
 
 Start monolithic. Extract services when you have a concrete reason backed by production data, not a theoretical reason from a conference talk. Architecture is about trade-offs, not silver bullets.`,
   },
+  {
+    slug: "double-entry-bookkeeping-engineers",
+    title: "Why Fintech Engineers Need Double-Entry Bookkeeping",
+    description:
+      "The accounting principle behind every payment system. Skip it and you ship bugs that cost real money.",
+    date: "2026-06-05",
+    tags: ["fintech", "fundamentals", "accounting"],
+    content: `# Why Fintech Engineers Need Double-Entry Bookkeeping
+
+I've reviewed payment systems where money appeared from nowhere and vanished into thin air. The root cause was the same each time: the engineer treated financial data like any other CRUD resource. The code increments a balance column and decrements it, and no one checks whether the books balance.
+
+Double-entry bookkeeping dates to the 1400s. It exists for one reason: to prevent this class of bug.
+
+## The Core Rule
+
+Every financial transaction has two sides. When money moves, one account debits and another credits. The total debits must equal the total credits.
+
+It's conservation of value, not mere convention. Money transfers between accounts rather than materializing from nothing.
+
+In code, this means you never update a single balance column. You create a journal entry with two or more legs, each pointing to an account, and the sum of all legs equals zero.
+
+\`\`\`
+Journal Entry #1042:
+  Debit  User Wallet      +500,000 IDR
+  Credit Bank Account     -500,000 IDR
+  Sum: 0
+\`\`\`
+
+If that sum isn't zero, you reject the transaction.
+
+## What Breaks Without It
+
+Three patterns repeat across fintech codebases.
+
+**Single-column balances.** A \`wallet.balance\` field updated with \`SET balance = balance + 500000\`. Two concurrent requests hit the same wallet. One overwrites the other. The user's balance is now wrong, and you have no audit trail to reconstruct what happened.
+
+**Missing counterpart entries.** Money leaves one account but you never credit the receiving account. Or the credit posts but the debit fails halfway through. Your system now has phantom money.
+
+**No reconciliation mechanism.** Without the constraint that debits equal credits, you have no mechanism to detect errors. You find out when a customer complains, or worse, when an auditor finds the discrepancy.
+
+## How to Implement It
+
+Your ledger needs three tables minimum: accounts, journal entries, and journal entry lines. Each line references an account and carries a debit or credit amount. The journal entry is your transaction boundary.
+
+\`\`\`
+accounts:
+  id, name, type (asset, liability, equity)
+
+journal_entries:
+  id, created_at, description
+
+journal_entry_lines:
+  id, journal_entry_id, account_id, debit, credit
+\`\`\`
+
+Enforce the zero-sum constraint at the database level. A check constraint on the journal entries table that validates the sum of debits equals the sum of credits catches errors before they persist. Or compute balances from the lines and skip storing them altogether.
+
+## The Mental Model Shift
+
+Thinking in double-entry changes how you design financial features. "Top up wallet" becomes "debit bank, credit wallet." "Process refund" becomes "debit revenue, credit user wallet." Each operation has a complete story.
+
+You stop asking "did the balance update?" and start asking "do the books balance?" The second question catches errors the first one misses.
+
+If you build fintech software and haven't internalized this principle, pause and learn it. Two hours studying debits and credits will save you from bugs that are expensive to detect and painful to fix.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
