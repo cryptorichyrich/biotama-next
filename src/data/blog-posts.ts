@@ -3529,6 +3529,61 @@ The rule: make sure the tool works for you, not the other way around.
 
 Inspired by Gregor Hohpe's interview on the [Beyond Coding podcast](https://youtu.be/F8X9_Dp3ZUk).`,
   },
+  {
+    slug: "microservices-were-a-mistake",
+    title: "Microservices Were a Mistake (For Most Teams)",
+    description:
+      "Most teams adopt microservices before they need them. The distributed systems tax compounds fast. Here's when a monolith wins, and when services earn their cost.",
+    date: "2026-06-05",
+    tags: ["architecture", "microservices", "opinion"],
+    content: `![Featured image](/images/blog/microservices-were-a-mistake.png)
+
+# Microservices Were a Mistake (For Most Teams)
+
+I've built microservices. I've also migrated teams away from them. The second conversation is more common than the first, and it starts the same way each time: "We split our app into twelve services and now nobody can deploy without coordinating with three other teams."
+
+This isn't contrarianism. It's a pattern I've watched repeat across multiple projects.
+
+## The Distributed Tax Hits on Day One
+
+Microservices introduce costs before they deliver value. Network calls replace function calls. You need service discovery, circuit breakers, distributed tracing, saga patterns for transactions, and a deployment pipeline for each service. In production, none of this is optional.
+
+I worked with a team of six developers maintaining eleven services. They spent more time in incident calls than writing code. Their architecture diagram looked impressive on a whiteboard. The reality was four hours of coordination for a one-line change that touched two services.
+
+A monolith would have needed a function call and a test suite. Same outcome. A fraction of the operational overhead.
+
+## Why Teams Reach for the Split
+
+The three reasons I hear most:
+
+**"We need to scale independently."** Most services in a microservice architecture don't need independent scaling. The database is the bottleneck the majority of the time, and splitting your app into services doesn't fix that.
+
+**"We want teams to own their domain."** Domain ownership works in a monolith too. Use modules. Enforce boundaries with code review and linting rules. The organizational problem doesn't require an infrastructure solution.
+
+**"Our codebase is too big."** Modularization and bounded contexts work without network boundaries. Python packages, npm workspaces, Java modules, all let you split code without splitting deployments.
+
+These reasons sound reasonable in a planning meeting. In production, each one adds operational weight that compounds.
+
+## Where Microservices Earn Their Cost
+
+There are cases where the distributed tax is worth paying. The conditions are specific.
+
+**Independent scaling requirements.** One service handles 95% of traffic with distinct performance needs. The rest of the app runs on different constraints. I've seen this in payment processing where the transaction engine needs dedicated compute and the dashboard doesn't.
+
+**Different technology stacks.** One component needs Python for ML inference while the rest runs on Node.js. Deploying them together means compromising on tooling for one or both.
+
+**Genuine organizational boundaries.** You have 40+ engineers across multiple time zones. Team autonomy matters more than deployment simplicity. At that scale, the coordination cost of a monolith exceeds the coordination cost of microservices.
+
+If none of these apply to your team of eight developers, you're paying for distributed systems complexity without collecting the benefits.
+
+## The Monolith Is a Starting Point, Not a Compromise
+
+A well-structured monolith uses clear module boundaries, enforces them at the build level, and deploys in one step. You get fast local development, simple debugging, and transactional consistency without extra infrastructure.
+
+The teams I've seen succeed with monoliths share one trait: they treat internal boundaries with the same discipline that microservice teams use for API contracts. The difference is you enforce boundaries at compile time or test time, not at the network layer.
+
+Start monolithic. Extract services when you have a concrete reason backed by production data, not a theoretical reason from a conference talk. Architecture is about trade-offs, not silver bullets.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
