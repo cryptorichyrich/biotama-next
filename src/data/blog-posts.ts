@@ -3797,6 +3797,174 @@ I still use SQLAlchemy for most of my database interactions. The ORM handles sin
 
 SQLAlchemy remains my default for database work. The ORM handles the common cases. Core handles the ones where the ORM gets in the way. The boundary between them moves with each project, and recognizing where it sits saves more time than any ORM feature.`,
   },
+  {
+    slug: "payment-gateway-failover",
+    title: "Building a Payment Layer That Survives Provider Outages",
+    description:
+      "How to design a payment integration layer with automatic failover, circuit breakers, and idempotent retry that keeps transactions flowing when providers go down.",
+    date: "2026-06-06",
+    tags: ["fintech", "architecture", "resilience", "backend"],
+    content: `# Building a Payment Layer That Survives Provider Outages
+
+Your payment provider just went down. Transactions are failing. Customers see error screens. Your phone rings. What happens next depends on decisions you made months ago.
+
+I learned this the hard way when a provider's maintenance window stretched from 30 minutes to 4 hours during peak traffic. No failover. No queue. Angry merchants and lost revenue. That day I committed to building an integration layer that treats provider outages as an expected condition, not an emergency.
+
+## The Problem With Single-Provider Integrations
+
+Most payment integrations start the same way: pick a provider, read the SDK docs, call the API. It works. You ship. Months later the provider has an outage, and you discover your checkout flow has a single point of failure at the network boundary.
+
+Adding a second provider alone does not fix this. You need an abstraction layer that owns the relationship with providers, manages their health, and makes routing decisions without the rest of your system knowing or caring which provider handles a given transaction.
+
+## The Architecture
+
+The integration layer sits between your application and the provider SDKs. It has four responsibilities:
+
+1. **Route** transactions to the right provider based on cost, geography, and health
+2. **Shield** the application from provider-specific errors and formats
+3. **Retry** with intelligence, not blind loops
+4. **Failover** when a provider signals distress
+
+### Provider Abstraction
+
+Define a common interface for payment operations:
+
+\`\`\`python
+class PaymentProvider(Protocol):
+    async def charge(self, request: ChargeRequest) -> ChargeResult: ...
+    async def refund(self, request: RefundRequest) -> RefundResult: ...
+    async def check_status(self, transaction_id: str) -> TransactionStatus: ...
+    async def health_check(self) -> ProviderHealth: ...
+\`\`\`
+
+Each provider implements this interface. Your application calls the interface, not the SDK. When you add a third provider, you write one adapter class. No changes to checkout code, no changes to your transaction service.
+
+### Circuit Breaker Pattern
+
+A circuit breaker tracks provider health. When failures cross a threshold, the breaker trips and routes traffic away from that provider.
+
+\`\`\`python
+class CircuitBreaker:
+    def __init__(self, failure_threshold: int = 5, recovery_timeout: int = 60):
+        self.failure_count = 0
+        self.failure_threshold = failure_threshold
+        self.recovery_timeout = recovery_timeout
+        self.state = "closed"  # closed, open, half-open
+        self.last_failure_time: float | None = None
+
+    def record_success(self):
+        self.failure_count = 0
+        self.state = "closed"
+
+    def record_failure(self):
+        self.failure_count += 1
+        self.last_failure_time = time.time()
+        if self.failure_count >= self.failure_threshold:
+            self.state = "open"
+
+    def can_execute(self) -> bool:
+        if self.state == "closed":
+            return True
+        if self.state == "open":
+            if time.time() - self.last_failure_time > self.recovery_timeout:
+                self.state = "half-open"
+                return True
+            return False
+        return True  # half-open allows one request through
+\`\`\`
+
+Three states: closed (normal), open (rejecting), half-open (testing recovery). When the breaker opens, the router skips that provider. After a cooldown period, it sends one request through to test. Success closes the circuit. Failure reopens it.
+
+In production, I set the failure threshold to 3 consecutive failures with a 30-second recovery timeout. This catches real outages fast without tripping on transient network blips.
+
+### Intelligent Retry With Idempotency
+
+Retry is dangerous in payment systems. Retrying a charge can create duplicate charges. Every retry must carry an idempotency key that the provider recognizes.
+
+\`\`\`python
+async def charge_with_retry(
+    provider: PaymentProvider,
+    request: ChargeRequest,
+    max_retries: int = 2
+) -> ChargeResult:
+    idempotency_key = f"{request.merchant_ref}-{request.amount}-{request.currency}"
+    request.idempotency_key = idempotency_key
+
+    for attempt in range(max_retries + 1):
+        try:
+            result = await provider.charge(request)
+            return result
+        except ProviderTimeout:
+            if attempt == max_retries:
+                raise
+            await asyncio.sleep(2 ** attempt)
+        except ProviderError as e:
+            if e.is_retryable:
+                continue
+            raise
+\`\`\`
+
+Two rules I follow: never retry more than twice, and never retry errors that indicate a problem with the transaction itself (insufficient funds, invalid card). Retrying those wastes time and can lock funds on the customer's card.
+
+### Provider Routing
+
+The router selects a provider based on:
+
+- Circuit breaker state (skip open circuits)
+- Transaction characteristics (currency, amount, payment method)
+- Cost optimization (prefer cheaper providers when healthy)
+- Geographic rules (some providers handle specific regions better)
+
+\`\`\`python
+class ProviderRouter:
+    def __init__(self, providers: dict[str, PaymentProvider]):
+        self.providers = providers
+        self.breakers = {name: CircuitBreaker() for name in providers}
+
+    async def route(self, request: ChargeRequest) -> ChargeResult:
+        candidates = self._get_candidates(request)
+        for provider_name in candidates:
+            if not self.breakers[provider_name].can_execute():
+                continue
+            try:
+                result = await self.providers[provider_name].charge(request)
+                self.breakers[provider_name].record_success()
+                return result
+            except ProviderError:
+                self.breakers[provider_name].record_failure()
+
+        raise AllProvidersDownError("No healthy providers available")
+\`\`\`
+
+When the primary provider's breaker opens, the router moves to the secondary. The application sees a successful charge. The customer sees a confirmation. The application never sees the primary provider's failure.
+
+## The Queue: Your Safety Net
+
+Some transactions fail because of network timeouts between your server and the provider. You sent the request. You do not know if it arrived. You do not know if the charge succeeded.
+
+For these cases, I use a transaction queue. When a charge request comes in, it goes to the queue first. A worker picks it up and attempts the charge. If the worker loses connection mid-charge, another worker picks up the same job and uses the idempotency key to avoid duplicating the charge.
+
+The queue guarantees at-least-once delivery. The idempotency key guarantees exactly-once execution. Together, they handle most failure modes: provider outages, network partitions, worker crashes.
+
+## Monitoring and Alerting
+
+The integration layer needs its own observability stack:
+
+- **Per-provider latency percentiles** (p50, p95, p99)
+- **Circuit breaker state transitions** (closed to open is a critical alert)
+- **Failover frequency** (failing over daily means something deeper is wrong)
+- **Queue depth and age** (growing queue means providers cannot keep up)
+
+I set alerts on circuit breaker opens and queue depth exceeding 100 transactions. Both indicate a provider problem that needs human attention within minutes, not hours.
+
+## What This Costs
+
+Building this layer takes 2 to 3 weeks for an experienced team. It adds latency (one more network hop), complexity (another service to maintain), and requires disciplined error handling from each provider adapter.
+
+One 4-hour outage during peak traffic can cost more in lost transactions than the entire build. The resilience compounds: you sleep through provider incidents that used to wake you at 2 AM.
+
+Architecture is about trade-offs, not silver bullets. This one trades upfront complexity for resilience that pays dividends the first time your primary provider goes dark on a Friday afternoon.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
