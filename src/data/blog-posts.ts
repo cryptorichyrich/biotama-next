@@ -3965,6 +3965,127 @@ One 4-hour outage during peak traffic can cost more in lost transactions than th
 
 Architecture is about trade-offs, not silver bullets. This one trades upfront complexity for resilience that pays dividends the first time your primary provider goes dark on a Friday afternoon.`,
   },
+  {
+    slug: "graphql-vs-rest-neither",
+    title: "GraphQL vs REST in 2026: The Answer Is Neither",
+    description:
+      "The GraphQL vs REST debate misses the point. What matters: typed contracts, boundary observability, and consumer-driven design.",
+    date: "2026-06-06",
+    tags: ["api-design", "architecture", "opinion"],
+    content: `# GraphQL vs REST in 2026: The Answer Is Neither
+
+Two teams. Same company. One built their API layer with GraphQL because the frontend team wanted flexible queries. The other went with REST because the backend team valued simplicity. Six months later, both teams were debugging the same problems: over-fetching in some places, under-fetching in others, and a growing collection of ad-hoc endpoints that nobody wanted to maintain.
+
+I have worked with both paradigms across fintech platforms, SaaS products, and internal tools. The "which is better" debate misses the point. The answer depends on what problem you are solving and who is consuming the API. But more often than I would like, the answer is neither in the way most teams implement them.
+
+## The GraphQL Promise vs The GraphQL Reality
+
+GraphQL sells you on flexible queries. The frontend asks for what it needs. One endpoint, typed schema, self-documenting. In practice, I have watched teams create GraphQL servers that wrap REST APIs that wrap database queries. The flexibility becomes a performance liability when a mobile developer crafts a query that joins seven types in a single request and your resolver chain makes 43 database calls.
+
+The N+1 problem is not new. DataLoader exists to batch and cache resolver calls. But DataLoader requires discipline: you need to identify every batching opportunity, structure your resolvers around it, and test the batch boundaries. Miss one, and an innocent query tanks your database during peak traffic.
+
+Schema maintenance is the hidden cost. A GraphQL schema with 200 types is not self-documenting. It is a maze. Without strict governance, schemas grow tentacles. Fields get deprecated but never removed. Union types accumulate members until nobody remembers which components consume which variants.
+
+## The REST Reality
+
+REST has its own failure modes. The textbook definition (resources, HTTP verbs, HATEOAS) sounds clean. In production, you end up with endpoints like \`GET /api/v2/users/{id}/transactions?status=pending&from=2026-01-01&sort=-amount\`. That is not a resource. That is a query language wearing a resource's clothes.
+
+Versioning is where REST gets ugly. You either version in the URL (\`/v1/\`, \`/v2/\`), in headers (\`Accept: application/vnd.api+json; version=2\`), or you skip versioning and break consumers with field renames. None of these options are great. GraphQL avoids this by adding fields without breaking old queries, but that only works if your consumers migrate off deprecated fields. They will not.
+
+The over-fetching problem in REST is real but overstated. Most mobile apps do not save meaningful bandwidth by trimming three fields from a JSON response. The under-fetching problem is more interesting: REST APIs that require five round trips to render a dashboard. This is where GraphQL helps and where most teams justify the switch.
+
+## What Matters
+
+The API paradigm matters less than three things:
+
+**Typed contracts.** Whether you use OpenAPI specs or GraphQL schemas, the contract between producer and consumer must be machine-readable and version-controlled. I generate types from the contract, not the other way around. This catches breaking changes in CI, not in production.
+
+**Observability at the boundary.** Every API needs request-level tracing, latency percentiles, and error rate dashboards. I do not care if the request hits a REST endpoint or a GraphQL resolver. I care that I can trace a user's failed payment from the mobile app through the API gateway to the database query that timed out.
+
+**Consumer-driven design.** Build the API for the consumers you have, not the consumers you imagine. A public API needs different design constraints than an API consumed by your own frontend. Internal APIs should optimize for developer velocity. Public APIs should optimize for stability and backward compatibility.
+
+## The Pattern I Use
+
+For backend services communicating with each other: REST with gRPC for high-throughput internal calls. No GraphQL between services.
+
+For frontend-facing APIs: it depends on the frontend complexity. A dashboard with 15 data widgets benefits from GraphQL. A simple CRUD app does not need it.
+
+For public APIs: REST with OpenAPI specs. Every public GraphQL API I have seen implements query complexity analysis, depth limiting, and persistence, which recreates REST constraints with extra steps.
+
+Architecture is about trade-offs, not silver bullets. Pick the tool that minimizes friction for your specific consumers, invest in typed contracts, and stop treating API design as a religion.`,
+  },
+  {
+    slug: "flutter-riverpod-clean-architecture",
+    title: "Flutter at Scale: Riverpod + Clean Architecture",
+    description:
+      "How I structure production Flutter apps with Riverpod for state management and clean architecture layers that keep the codebase navigable past 100 screens.",
+    date: "2026-06-06",
+    tags: ["flutter", "architecture", "mobile"],
+    content: `# Flutter at Scale: Riverpod + Clean Architecture
+
+I built my first production Flutter app with a flat folder structure and Providers everywhere. Six months in, I had 40 files in a single \`lib/\` directory, state leaking between screens, and no idea which widget owned which data. The refactor took longer than the initial build.
+
+After shipping multiple Flutter projects, I landed on a structure that scales: clean architecture layers enforced by folder boundaries, Riverpod for dependency injection and state management, and a strict rule about who talks to whom.
+
+![Flutter Clean Architecture](/images/blog/flutter-riverpod-clean-architecture.png)
+
+## The Three-Layer Split
+
+Every feature in my apps follows the same pattern: presentation, domain, and data. Not as abstract concepts, as enforced folder boundaries.
+
+\`\`\`
+lib/
+  features/
+    payments/
+      presentation/
+        pages/
+        widgets/
+        providers/    # Riverpod providers for this feature
+      domain/
+        entities/
+        repositories/  # Abstract repository interfaces
+        usecases/      # Business logic functions
+      data/
+        models/        # DTOs, fromJson/toJson
+        repositories/  # Concrete implementations
+        datasources/   # API clients, local DB
+\`\`\`
+
+The dependency rule is simple: presentation depends on domain, data depends on domain. Domain depends on nothing. No import from \`data/\` in \`presentation/\`. No import from \`presentation/\` in \`domain/\`. I enforce this with import lint rules and code review.
+
+## Why Riverpod, Not BLoC
+
+BLoC is the enterprise default. I used it for two projects. The boilerplate adds up: events, states, bloc classes, and separate files for each. For a login flow, you write four files before you render a single widget.
+
+Riverpod gives me the same testability with less ceremony. A provider is a declared dependency. It can hold state, compute derived values, or fetch from an API. The dependency graph is explicit and compile-time checked. When I need a BLoC-style event stream, I use \`StreamProvider\`. When I need a simple value, I use \`StateProvider\`. No framework tax for simple cases.
+
+The killer feature: scoped providers. A provider can be overridden for a specific widget subtree. This makes testing trivial. Override the API client provider with a mock, and the entire feature under test runs against fake data. No DI framework, no reflection, no code generation.
+
+## The Use Case Pattern
+
+Each user action maps to a single use case file in \`domain/usecases/\`. A use case takes input, calls a repository, returns output. No widget references. No state management. Pure business logic.
+
+\`\`\`dart
+class ProcessPayment {
+  final PaymentRepository repo;
+  ProcessPayment(this.repo);
+
+  Future<Either<Failure, Receipt>> call(PaymentRequest req) {
+    // Validate, transform, delegate to repo
+  }
+}
+\`\`\`
+
+The presentation layer calls this through a Riverpod provider. The provider handles loading state, error state, and cache invalidation. The widget tree just renders.
+
+## What This Costs You
+
+Upfront boilerplate. A three-screen feature creates 8 to 12 files. The first week on this pattern feels slow.
+
+The payoff comes at month three, when a new developer can find the payment logic by looking at the folder structure, when swapping the API client means changing one file in \`data/datasources/\`, and when every feature can be tested in isolation without mounting a widget.
+
+Architecture is about trade-offs, not silver bullets. This one trades upfront ceremony for long-term velocity. In production, that trade pays off the moment you onboard someone new to the codebase.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
