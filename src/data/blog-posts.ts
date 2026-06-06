@@ -3714,6 +3714,89 @@ I converted a codebase from optional-field soup to discriminated unions once. Th
 
 This pattern costs nothing at runtime. It is a compile-time tool that makes invalid states unrepresentable. If you write TypeScript and skip discriminated unions, you leave the language's strongest feature unused.`,
   },
+  {
+    slug: "orm-hidden-costs-sqlalchemy",
+    title: "The ORM Tax: When SQLAlchemy Costs More Than It Saves",
+    description:
+      "How a payment reconciliation service went from 14-minute batches to 90 seconds by identifying session bloat, N+1 patterns, and bulk insert overhead in SQLAlchemy.",
+    date: "2026-06-06",
+    tags: ["python", "sqlalchemy", "performance"],
+    content: `# The ORM Tax: When SQLAlchemy Costs More Than It Saves
+
+I shipped a payment reconciliation service that processed 10,000 transactions per batch. The SQLAlchemy models looked clean. In production, each batch took 14 minutes. After profiling, the ORM issued 47,000 individual queries for what should have been 12. The N+1 problem was the beginning, not the end.
+
+## The N+1 Trap Is Obvious. The Other Problems Aren't.
+
+Most developers know about lazy loading and N+1 queries. You access a relationship, SQLAlchemy fires a separate query per row. The fix is \`joinedload()\` or \`selectinload()\`. Move on.
+
+The subtler issues show up when you stop counting queries and start measuring what SQLAlchemy does to construct each one.
+
+## Session Management Overhead
+
+SQLAlchemy's session tracks every object it loads. Mutate an attribute, and the session marks it dirty. On commit or flush, it compares every dirty object's current state against its original state to generate UPDATE statements.
+
+In a batch job that processes thousands of rows, the session holds references to every object touched since the session began. Memory scales with the record count. The dirty-checking cost grows with it.
+
+I watched a batch processor consume 2.3 GB of RAM for a 500,000-row job. The fix was not a bigger instance. The fix was expunging objects after processing and committing in batches of 1,000 rows. Memory dropped to 180 MB. Runtime dropped from 14 minutes to 90 seconds.
+
+\`\`\`python
+for i, record in enumerate(query.yield_per(1000)):
+    process(record)
+    session.expunge(record)
+    if i % 1000 == 0:
+        session.commit()
+\`\`\`
+
+The \`yield_per()\` method keeps the result set cursor open and fetches rows in chunks. Combined with periodic commits and expunges, the session stays bounded to the current batch window.
+
+## The Insert Problem
+
+ORMs handle reads with relationships well. They struggle at bulk writes. Inserting 100,000 rows through \`session.add()\` means 100,000 individual INSERT statements, each passing through the session's identity map, each triggering autoflush checks.
+
+SQLAlchemy Core offers \`insert().values()\` for bulk operations, but most codebases I've seen default to the ORM path because it is what developers know. The performance gap is significant:
+
+\`\`\`python
+# ORM path: ~120 seconds for 100k rows
+for item in items:
+    session.add(Model(**item))
+
+# Core path: ~2 seconds for 100k rows
+session.execute(Model.__table__.insert(), items)
+\`\`\`
+
+Sixty times faster. Same database. Same table. The difference is bypassing the session's identity map, dirty tracking, and autoflush machinery.
+
+For anything beyond a few hundred rows, use Core's bulk insert or, if your database supports it, COPY (PostgreSQL) or its equivalents. The ORM adds no value for pure inserts.
+
+## Relationship Loading Strategy Matters More Than You Think
+
+\`joinedload()\` solves N+1 by using JOINs. \`selectinload()\` solves it with a second query using IN clauses. Both fix the query count. Neither is free.
+
+\`joinedload()\` multiplies row counts when you load multiple collections. If an order has 5 items and 3 shipments, a joinedload of both produces a Cartesian product: 15 rows per order instead of 8. With 10,000 orders, you fetch 150,000 rows when you needed 80,000.
+
+\`selectinload()\` avoids the Cartesian problem but hits a different wall: PostgreSQL's IN clause limit and query planner behavior. Loading 50,000 parent IDs in a single IN clause causes the planner to abandon the index and scan the table.
+
+The right strategy depends on cardinality. Low cardinality relationships, meaning 3 to 5 related rows per parent? Use \`joinedload()\`. High cardinality or multiple collections? Use \`selectinload()\` with chunked IDs.
+
+## The Identity Map Trap
+
+SQLAlchemy guarantees that querying the same row twice returns the same Python object. This is the identity map pattern. It prevents inconsistencies within a session.
+
+It also prevents memory from being released. If your long-running service queries customer records throughout its lifetime, the session accumulates every customer loaded. In a service processing transactions for 200,000 customers per day, the session becomes a memory leak by design.
+
+The fix is scoped sessions. In a web framework, tie the session to the request. In a background worker, tie the session to the job or batch. In a long-running service, call \`session.expire_all()\` between logical units of work to allow garbage collection of expired attributes.
+
+## When to Drop the ORM
+
+I still use SQLAlchemy for most of my database interactions. The ORM handles single-record CRUD, complex reads, and transactional relationships well. But I reach for Core in specific situations:
+
+- Bulk inserting or updating more than 500 rows
+- Running aggregations over large datasets where the ORM's abstraction adds overhead without benefit
+- Building dynamic queries where the ORM's expression language becomes harder to read than raw SQL
+- Processing batch jobs where session tracking overhead outweighs convenience
+
+SQLAlchemy remains my default for database work. The ORM handles the common cases. Core handles the ones where the ORM gets in the way. The boundary between them moves with each project, and recognizing where it sits saves more time than any ORM feature.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
