@@ -11,15 +11,15 @@ export const projects: Project[] = [
   {
     id: "toko-vavelle",
     name: "Toko Vavelle",
-    description: "Vietnam Coffee E-Commerce platform built with AstroJS, Tailwind, and SEO-optimized architecture for global reach.",
-    tech: ["AstroJS", "Tailwind", "SEO"],
+    description: "Vietnam Coffee E-Commerce platform built with AstroJS, Tailwind, and SEO-optimized architecture. Features automated AI image generation pipeline for commercial product photography.",
+    tech: ["AstroJS", "Tailwind", "SEO", "fal.ai", "Nano Banana"],
     featured: true,
   },
   {
     id: "vavelle-crispy-pork",
     name: "Vavelle Crispy Pork Belly",
-    description: "E-commerce storefront for premium crispy pork belly products, built with AstroJS and Tailwind CSS.",
-    tech: ["AstroJS", "Tailwind"],
+    description: "E-commerce storefront for premium crispy pork belly products, featuring an automated AI image generation pipeline (fal.ai, Nano Banana) for commercial-quality product photography at scale.",
+    tech: ["AstroJS", "Tailwind", "fal.ai", "Nano Banana", "Python"],
     featured: true,
   },
   {

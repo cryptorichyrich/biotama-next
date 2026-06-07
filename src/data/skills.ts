@@ -65,4 +65,12 @@ export const skillGroups: SkillGroup[] = [
       { name: "OpenWork", level: 3 },
     ],
   },
+  {
+    category: "AI Image Generation",
+    skills: [
+      { name: "fal.ai", level: 4 },
+      { name: "Nano Banana", level: 4 },
+      { name: "Prompt Engineering", level: 4 },
+    ],
+  },
 ];

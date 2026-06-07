@@ -47,7 +47,7 @@ export const profile: Profile = {
   location: "Jakarta, Indonesia",
   bio: "",
   photoUrl: "/photo.jpg",
-  summary: "Senior fullstack architect with 10+ years of experience building high-performance web applications across fintech, e-commerce, and SaaS domains. Proven track record of architecting scalable systems — from payment gateways processing transactions across 69 countries to AI-powered freelance marketplaces. Deep expertise in React, Next.js, Astro, Node.js, NestJS, FastAPI and modern cloud infrastructure. Combines engineering excellence with business acumen to deliver solutions that satisfy both C-level stakeholders and end-users while maintaining strict regulatory compliance.",
+  summary: "Senior fullstack architect with 10+ years of experience building high-performance web applications across fintech, e-commerce, and SaaS domains. Proven track record of architecting scalable systems — from payment gateways processing transactions across 69 countries to AI-powered freelance marketplaces. Deep expertise in React, Next.js, Astro, Node.js, NestJS, FastAPI and modern cloud infrastructure. Built automated AI image generation pipelines for commercial product photography using fal.ai and Nano Banana. Combines engineering excellence with business acumen to deliver solutions that satisfy both C-level stakeholders and end-users while maintaining strict regulatory compliance.",
   metrics: [
     { label: "Years Live", value: "10" },
     { label: "Pepperstone Clients", value: "14K+" },
