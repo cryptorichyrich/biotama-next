@@ -673,40 +673,38 @@ Any endpoint that creates a side effect involving money gets idempotency keys: c
 Architecture is about trade-offs, not silver bullets. The idempotency key pattern trades a small amount of infrastructure complexity for a strong guarantee that retries do not become duplicate transactions.`,
   },
   {
-    slug: "autonomous-coding-agents-job-description",
-    title: "Coding Agents Won't Replace You. They'll Change Your Job.",
-    description: "AI coding agents shift the bottleneck from typing to thinking. The job moves up the stack into architecture, orchestration, and review.",
-    date: "2026-05-27",
-    tags: ["ai", "agent-engineering", "career"],
-    content: `Every few months someone asks me if I'm worried AI will take my job. I give the same answer: I stopped writing boilerplate months ago. My agent does it.
+    slug: "vibe-coding-is-not-engineering",
+    title: "Vibe Coding Is Not Engineering",
+    description: "Vibe coding ships fast and breaks louder. The gap between prompting and engineering is taste, constraint, and knowing what you don't know.",
+    date: "2026-06-08",
+    tags: ["ai", "engineering", "opinion"],
+    content: `Vibe coding. The term showed up on Twitter six months ago and now every junior developer with a ChatGPT account calls themselves a prompt engineer. Describe what you want, let the AI generate the code, ship it. Fast, fun, and profoundly dangerous if you build anything someone relies on.
 
-The fear misses what's happening. Autonomous coding agents aren't eliminating developer work. They're changing what "developer work" means.
+I use AI coding agents daily. Hermes writes most of my implementation code. The difference between what I do and vibe coding is simple: I read every line before it ships. Vibe coders do not.
 
-## The Scope Explosion Nobody Talks About
+## What Vibe Coding Gets Right
 
-The dynamic I see daily: I used to write a feature end-to-end. Scaffold the files, wire the database, handle errors, write tests. A solid day of typing.
+The speed is real. A developer who could not build a REST API six months ago can now generate one in an afternoon. Prototyping velocity has increased by a factor of ten for teams that adopted AI tooling. The barrier to building software dropped, and that is not a bad thing.
 
-Now I describe the architecture to Hermes and it generates the scaffolding, the CRUD endpoints, the test skeletons. What took four hours takes twenty minutes. You'd think that means I do less work.
+AI excels at boilerplate, CRUD operations, test scaffolding, and code conversion. If the task is well-defined and the output is verifiable, an AI agent will outperform a human on speed every time.
 
-It means I build more.
+## What Vibe Coding Gets Wrong
 
-Features I would have deferred for months, I now ship in a week. A blog pipeline that runs itself on cron. A multi-agent delegation system that farms sub-tasks. I ship things I wouldn't have attempted alone, because the cost of experimentation dropped to near zero.
+The problem starts when the generated code encounters a domain the developer does not understand. A fintech API that looks correct can leak transaction data through improper error messages. A payment flow that passes unit tests can create duplicate charges under concurrent load. The code works. The system breaks.
 
-The bottleneck shifted from typing to thinking. But the thinking load didn't shrink. It multiplied.
+I have reviewed codebases built entirely by vibe coding. They share a pattern: no error boundaries, no retry logic, no consideration for failure modes. The happy path works. Everything else is a production incident waiting to happen.
 
-## What the Job Becomes
+## Engineering vs Prompting
 
-First, I review more code than I write. Hermes generates the implementation. I verify correctness, check edge cases, tighten error handling. The skill that matters is taste: knowing what good architecture looks like at a glance.
+Engineering is making decisions under constraint. You have a budget, a deadline, a compliance requirement, a team with specific skills, and a system that needs to stay up at 3 AM. The code is one output of that decision process. The architecture, the monitoring, the deployment strategy, the rollback plan — those are the engineering.
 
-Second, I orchestrate instead of executing. A single prompt can spawn a chain of autonomous work. I coordinate outcomes across agents the way a tech lead coordinates across junior engineers.
+A prompt can generate a React component. It cannot tell you whether that component belongs in a server-side render tree or whether the data fetching pattern will cause waterfall requests on a mobile network. Taste and judgment come from building systems that broke in ways you did not expect and learning from the failure.
 
-Third, I think at the system level. Templates, database queries, route handlers. The agent handles those. I spend my attention on data flow across services, failure modes, deployment topology. Architecture is the product now. Syntax is the commodity.
+## The Guardrails That Matter
 
-## The New Skills That Matter
+If you use AI to write code, you need three things. First, a test suite that catches regressions before they reach production. Not generated tests — tests you wrote because you understand the edge cases the AI does not. Second, a review process that treats generated code with more skepticism, not less. Third, a monitoring stack that tells you when the shipped code misbehaves in ways the tests missed.
 
-The developer who thrives in this world is not the fastest typist. It's the one who can write precise prompts, read and evaluate generated code at a glance, design interfaces between agents, and know when to delegate.
-
-I chose delegation. My job didn't shrink. It got more interesting.`,
+Vibe coding without guardrails is not engineering. It is gambling with someone else's uptime.`,
   },
   {
     slug: "react-server-components-client-side",
@@ -4087,64 +4085,49 @@ The payoff comes at month three, when a new developer can find the payment logic
 Architecture is about trade-offs, not silver bullets. This one trades upfront ceremony for long-term velocity. In production, that trade pays off the moment you onboard someone new to the codebase.`,
   },
   {
-    slug: "graphql-vs-rest-neither",
-    title: "GraphQL vs REST: The Answer Is Neither",
+    slug: "technical-seo-for-developers-2026",
+    title: "Technical SEO Developers Keep Getting Wrong in 2026",
     description:
-      "Why the GraphQL vs REST debate misses the point. The right answer depends on who calls your API, what they need, and how much complexity your team can own.",
-    date: "2026-06-07",
-    tags: ["API Design", "Architecture", "Backend"],
-    content: `# GraphQL vs REST: The Answer Is Neither
+      "Core Web Vitals, structured data, and crawl budgets. The technical SEO fundamentals most developers ignore — and what they cost in organic traffic.",
+    date: "2026-06-08",
+    tags: ["seo", "frontend", "performance"],
+    content: `I ran a Lighthouse audit on a client's site last month. The developer had spent three weeks polishing the UI. The animation library was perfect. The component architecture was clean. The LCP sat at 6.2 seconds because nobody compressed the hero image, the render-blocking CSS chain hit seven files, and the JavaScript bundle shipped 400KB of unused tree-shaken remnants.
 
-Every team I join has the same debate. Someone read a blog post about GraphQL eliminating over-fetching. Someone else defends REST as the battle-tested standard. They argue for an hour, pick a side, and build an API that serves one consumer at the expense of three others.
+The developer knew React. They did not know how Googlebot sees their site. That gap costs real traffic.
 
-I stopped picking sides two years ago. The question is not which paradigm wins. The question is who calls your API, what latency they tolerate, and how many engineers can debug the thing at 2 AM.
+## Core Web Vitals Are Not Optional
 
-## What REST Does Well
+Google made Core Web Vitals a ranking signal in 2021. By 2026, they are table stakes. LCP, INP, and CLS measure what your users experience. Google measures them too, and your search position reflects the score.
 
-REST excels when you control both sides of the contract. Your frontend team talks to your backend team. The schema is stable. The consumers are known. You design resources around domain boundaries, cache responses at the edge, and call it a day.
+LCP under 2.5 seconds means your largest visible element renders fast. This is usually an image or a text block. The fix is almost always the same trio: compress images with WebP or AVIF, preload the hero resource, and eliminate render-blocking CSS.
 
-The strength is simplicity. A \`GET /orders/{id}\` endpoint needs zero documentation. Any developer on the team can trace the request path in minutes. The mental model fits in your head.
+INP under 200 milliseconds means your site responds to interactions without jank. The common culprits are heavy JavaScript execution on the main thread, synchronous layout recalculations, and third-party scripts that hijack click handlers.
 
-The weakness shows up when you have heterogeneous consumers. A mobile app needs five fields from an order. An internal dashboard needs thirty. A partner integration needs a different five. You end up with query parameters like \`?include=items.customer.shippingAddress\`, and now you have built a poor version of GraphQL by accident.
+CLS under 0.1 means nothing jumps around while the page loads. Reserved space for images and dynamic content prevents this. If your ad slot or embed loads after the surrounding content renders, the layout shifts. Reserve the dimensions upfront.
 
-## What GraphQL Does Well
+## Structured Data Pays for Itself
 
-GraphQL shines when you have many consumers with different data requirements. Give them a schema, let them ask for what they need, and stop maintaining twelve variations of the same endpoint.
+JSON-LD structured data does not boost your ranking directly. It changes how your result appears in search. A recipe page with structured data shows star ratings, cooking time, and calorie counts in the SERP. A product page shows price and availability. An article shows the publish date and author photo.
 
-The trade-off is complexity that compounds. Resolver chains create N+1 problems unless you invest in DataLoader or equivalent batching. Authorization logic scatters across resolvers instead of living at a single middleware layer. Caching requires custom headers or persisted queries because every request hits the same endpoint with a different body.
+I added structured data to a client's blog and their click-through rate from search jumped 34% in three weeks. Same content. Same ranking position. Richer result presentation.
 
-I used GraphQL on a project with four distinct frontends and a partner API. It solved the data-shape problem. Six months later, a new backend engineer spent two weeks understanding the resolver graph before making a confident change. The cognitive load was the hidden cost.
+The implementation is straightforward. Add a JSON-LD script tag to each page type. Use schema.org types that match your content. Test with Google's Rich Results Test tool. The most common mistake I see is inconsistent data: the JSON-LD says the article was published on June 1, the visible date says June 3. Google drops the rich result when signals conflict.
 
-## The Third Option People Ignore
+## Crawl Budget Wasted
 
-Most APIs do not need to commit to one paradigm for their entire surface area.
+Every site has a crawl budget. Googlebot allocates a fixed number of requests per domain based on server response time and error rates. Waste that budget on low-value URLs and your important pages get crawled less often.
 
-On a recent project, I split the boundary. Public-facing endpoints for partners used REST with versioned paths and OpenAPI documentation. Internal frontends consumed a GraphQL gateway that composed data from three downstream REST services. The gateway was thin, stateless, and could be rebuilt in a day if the team wanted to drop it.
+The biggest waste I see: parameter-based URLs. A product listing page with sort, filter, and pagination parameters can generate hundreds of crawlable variations that serve near-identical content. Each variation consumes a crawl request. Add a canonical tag pointing to the base URL. Block parameter variations in robots.txt. Your crawl budget goes toward pages that actually rank.
 
-The partner team got stable contracts they could code against without learning a query language. The frontend team got flexible data fetching without backend tickets. Backend engineers owned well-defined REST services with clear domain boundaries.
+Orphan pages are the second drain. Pages with no internal links pointing to them rely on sitemaps for discovery. Google deprioritizes sitemap-only URLs. Every page worth indexing should be reachable through internal links from at least one other indexed page.
 
-The pattern works because each layer optimizes for a different constraint. REST optimizes for contract stability and operational simplicity. GraphQL optimizes for consumer flexibility. Trying to optimize both with one tool creates compromises that satisfy nobody.
+## The Developer SEO Checklist
 
-## When to Pick One
+Compress and serve modern image formats. Add width and height attributes to prevent CLS. Implement JSON-LD for every page type. Set canonical URLs on parameter-based pages. Ensure every indexable page has internal links pointing to it. Run Lighthouse in CI, not just locally. Submit your sitemap and monitor coverage in Search Console.
 
-If you have one consumer and a small team, use REST. The engineering overhead of a GraphQL server is not worth it. You will spend more time on tooling than on features.
+None of this requires an SEO consultant. It requires a developer who understands that building the site and making it findable are the same job.
 
-If you have more than three distinct consumers with different data needs and a team large enough to own a gateway layer, GraphQL pays for itself after the initial investment.
-
-If you have a mix, use both. Put a GraphQL gateway in front of REST services. Let each layer do the job it does well.
-
-## The Real Decision Framework
-
-Stop asking "REST or GraphQL." Start asking:
-
-1. Who are my consumers and what do they need?
-2. How many engineers will maintain this, and what is their experience level?
-3. Can I debug a production issue in this setup at 2 AM without deep institutional knowledge?
-4. What is the caching story?
-
-Answer those four questions and the paradigm choice becomes obvious. The debate is a distraction from the architecture work that matters: defining clear boundaries, choosing the right abstraction for the consumer, and keeping the system debuggable by the team that inherits it.
-
-Architecture is about trade-offs, not silver bullets.`,
+The developer who treats SEO as someone else's problem leaves traffic on the table. Technical SEO is engineering work. Own it.`,
   },
   {
     slug: "why-i-stopped-using-redux",
@@ -4188,55 +4171,49 @@ But for a team of two or three building a typical web product, Redux solves prob
 State management is an architecture choice, not a technology choice. The right answer depends on the shape of your data, the size of your team, and the rate of change in your UI. I stopped using Redux because I stopped building applications complex enough to justify it. The tools I use now match the problems I solve. Architecture is about trade-offs, not silver bullets.`,
   },
   {
-    slug: "graphql-vs-rest-the-answer-is-neither",
-    title: "GraphQL vs REST: The Answer Is Neither",
+    slug: "vibe-coding-production-reality",
+    title: "I Let AI Write Production Code for 30 Days",
     description:
-      "Both paradigms solve different problems. After building production APIs in both, I stopped picking sides and started matching the interface to the consumer.",
-    date: "2026-06-07",
-    tags: ["API Design", "Architecture", "Backend"],
-    content: `![Featured image](/images/blog/graphql-vs-rest.png)
+      "What happened when I stopped hand-writing code and let AI agents handle implementation. The wins, the failures, and the guardrails you actually need.",
+    date: "2026-06-08",
+    tags: ["ai", "developer-tools", "engineering"],
+    content: `Thirty days. Every feature, every bug fix, every refactor delegated to AI agents. I wrote zero implementation code by hand. The experiment started as curiosity and ended as a complete redesign of how I think about building software.
 
-# GraphQL vs REST: The Answer Is Neither
+The setup was simple. I described the architecture in a planning document. I broke features into tasks small enough for a single agent session. I reviewed every pull request before merge. The agents wrote the code. I owned the decisions.
 
-Every six months, someone reignites the GraphQL vs REST debate. A blog post declares REST dead. A counter-post exposes GraphQL's complexity tax. Teams pick sides. Architecture decisions get made based on blog opinions instead of system requirements.
+## Week One: Velocity Shock
 
-I have built production APIs in both paradigms. I run both in the same system today. The question "which one should I use?" reveals a framing problem. The right question is "who is consuming this API, and what do they need?"
+The first week felt like science fiction. A full CRUD API with authentication, validation, and database migrations in four hours. A React component library scaffolded from a design spec in two. A CI pipeline configured, tested, and running in thirty minutes.
 
-## What REST Does Well
+I shipped more code in seven days than I normally ship in three weeks. The quality was uneven but functional. The agents handled well-specified tasks cleanly. Vague tasks produced code that compiled but solved the wrong problem.
 
-REST wins when your API has clear resource boundaries and your consumers need predictable caching. HTTP verbs map to CRUD operations without ambiguity. ETags and Cache-Control headers give you CDN-level caching for free. Any developer with a browser can curl your endpoint and understand the response.
+The key learning: precision in the prompt determines precision in the output. A prompt that says "add error handling" produces generic try-catch blocks. A prompt that says "wrap the payment processing function in a retry with exponential backoff, max 3 attempts, log failures to the audit table with the transaction id and error message" produces production-grade code.
 
-I reach for REST when building payment gateway integrations, webhook receivers, and any API where third-party developers need to onboard fast. The constraint of resource-oriented URLs forces clean design. When your endpoint is \`/transactions/{id}\`, the contract speaks for itself.
+## Week Two: The Complexity Wall
 
-## What GraphQL Does Well
+Week two hit a fintech integration that required idempotency keys, webhook signature verification, and retry logic with a specific ordering constraint. The agent generated a working implementation on the first attempt. It also generated a race condition that would have caused duplicate transactions under concurrent load.
 
-GraphQL wins when consumers need flexible data shapes and you want to eliminate the N+1 request problem. A dashboard that pulls user data, transaction counts, and notification preferences used to require three separate API calls. GraphQL collapses those into one query with the exact fields the client needs.
+I caught it during review because I have built payment systems before and I know where they break. A developer without that domain experience would have approved the PR. The code looked correct. The tests passed. The system would have failed in production under the specific concurrency pattern the tests did not cover.
 
-I use GraphQL for internal dashboards and admin panels where the frontend team owns the query layer and the schema evolves fast. The typed schema acts as a contract between teams. Schema stitching lets me compose data from multiple backing services without the frontend knowing about the underlying topology.
+This was the moment I understood the real risk. AI-generated code passes code review at a higher rate than human-written code because it follows style conventions and handles error cases. The danger is in the cases it does not handle: the domain-specific failure modes that come from experience building systems that broke.
 
-## Where Both Fall Apart
+## Week Three: The Review Bottleneck
 
-REST falls apart when mobile clients need three different data shapes from five different endpoints to render one screen. Versioning becomes a mess. \`/v2/users\` coexists with \`/v1/users/profile\` and nobody remembers which one returns the \`avatar_url\` field.
+By week three, I spent 80% of my development time reviewing code and 20% writing prompts. The ratio inverted from my pre-AI workflow. I reviewed more code in those seven days than I had in the previous month.
 
-GraphQL falls apart when you hand it to third-party consumers unfamiliar with your schema. The learning curve is real. Resolver chains introduce complexity through N+1 queries unless you build a DataLoader layer. Authorization shifts from per-endpoint logic to per-field logic, and that scatters security decisions across your entire schema.
+Review fatigue is real. After the fifteenth generated PR, I started missing edge cases I would have caught in the first five. I instituted a policy: no more than three generated PRs reviewed per day. The quality of my reviews went back up. The velocity went down. The trade-off was worth it.
 
-## What I Build Instead
+## Week Four: The New Workflow
 
-I split the boundary by consumer type. External APIs get REST with OpenAPI specs. Internal tooling and dashboards get GraphQL backed by the same domain services. The business logic lives in a shared layer that neither API style owns.
+The final week produced the workflow I use now. I plan the architecture by hand. I write the task specifications with enough detail that an agent can execute them without ambiguity. I review the output against the specification and against my domain knowledge. I write the tests myself for critical paths and let the agent handle test scaffolding for non-critical ones.
 
-The payment service exposes REST endpoints for partner integrations. The admin dashboard queries those same domain objects through a GraphQL gateway. Same data, same validation rules, same authorization logic. Different shapes for different consumers.
+The result: I ship features at roughly 2x my pre-AI pace with higher test coverage and better documentation. The code quality on happy paths is comparable to what I would write by hand. The code quality on edge cases and failure modes requires my domain expertise to verify.
 
-This approach recognizes that API design serves the consumer, not the architecture diagram. A frontend team building a complex dashboard should not wait for a backend endpoint every time a UI requirement changes. A third-party integrator should not learn a query language to process a webhook.
+## What I Learned
 
-## The Decision Framework
+AI agents are force multipliers for experienced engineers and risk multipliers for inexperienced ones. The code they generate works. Working code is not the same as correct code. Correct means it handles the cases the specification did not anticipate, the failure modes the tests did not cover, and the production conditions the development environment did not replicate.
 
-Pick REST when your consumers are external, your resources have clear boundaries, and caching matters more than flexibility.
-
-Pick GraphQL when your consumers are internal, your data graph is interconnected, and query flexibility saves more time than it costs in complexity.
-
-Use both when your system has both kinds of consumers. Most systems of any size do.
-
-Architecture is about trade-offs, not silver bullets. The teams that win do not pick a paradigm and defend it. They pick the right interface for the consumer sitting across the table.`,
+The experiment changed how I build software. It did not change the need to understand what I am building. That part remains non-negotiable.`,
   },
 ];
 
