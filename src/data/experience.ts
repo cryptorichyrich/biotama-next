@@ -35,7 +35,6 @@ export const experiences: Experience[] = [
       "Delivered consulting for Pepperstone, TitanFX, BaxiaMarkets, Funded Prop BX, Traderscolo, Liquidity Connect",
       "Built web apps with React, Vue, WordPress, Laravel, HubSpot CMS",
       "Architected backend systems, automated data sync with n8n, Python, Flask",
-      "Built automated AI image generation pipeline using fal.ai and Nano Banana for commercial product photography at Toko Vavelle",
       "Docker deployment on DigitalOcean & Google Cloud",
     ],
     tech: [
@@ -49,8 +48,6 @@ export const experiences: Experience[] = [
       "n8n",
       "Python",
       "DigitalOcean",
-      "fal.ai",
-      "Nano Banana",
     ],
   },
   {
