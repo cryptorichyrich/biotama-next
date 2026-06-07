@@ -4086,6 +4086,66 @@ The payoff comes at month three, when a new developer can find the payment logic
 
 Architecture is about trade-offs, not silver bullets. This one trades upfront ceremony for long-term velocity. In production, that trade pays off the moment you onboard someone new to the codebase.`,
   },
+  {
+    slug: "graphql-vs-rest-neither",
+    title: "GraphQL vs REST: The Answer Is Neither",
+    description:
+      "Why the GraphQL vs REST debate misses the point. The right answer depends on who calls your API, what they need, and how much complexity your team can own.",
+    date: "2026-06-07",
+    tags: ["API Design", "Architecture", "Backend"],
+    content: `# GraphQL vs REST: The Answer Is Neither
+
+Every team I join has the same debate. Someone read a blog post about GraphQL eliminating over-fetching. Someone else defends REST as the battle-tested standard. They argue for an hour, pick a side, and build an API that serves one consumer at the expense of three others.
+
+I stopped picking sides two years ago. The question is not which paradigm wins. The question is who calls your API, what latency they tolerate, and how many engineers can debug the thing at 2 AM.
+
+## What REST Does Well
+
+REST excels when you control both sides of the contract. Your frontend team talks to your backend team. The schema is stable. The consumers are known. You design resources around domain boundaries, cache responses at the edge, and call it a day.
+
+The strength is simplicity. A \`GET /orders/{id}\` endpoint needs zero documentation. Any developer on the team can trace the request path in minutes. The mental model fits in your head.
+
+The weakness shows up when you have heterogeneous consumers. A mobile app needs five fields from an order. An internal dashboard needs thirty. A partner integration needs a different five. You end up with query parameters like \`?include=items.customer.shippingAddress\`, and now you have built a poor version of GraphQL by accident.
+
+## What GraphQL Does Well
+
+GraphQL shines when you have many consumers with different data requirements. Give them a schema, let them ask for what they need, and stop maintaining twelve variations of the same endpoint.
+
+The trade-off is complexity that compounds. Resolver chains create N+1 problems unless you invest in DataLoader or equivalent batching. Authorization logic scatters across resolvers instead of living at a single middleware layer. Caching requires custom headers or persisted queries because every request hits the same endpoint with a different body.
+
+I used GraphQL on a project with four distinct frontends and a partner API. It solved the data-shape problem. Six months later, a new backend engineer spent two weeks understanding the resolver graph before making a confident change. The cognitive load was the hidden cost.
+
+## The Third Option People Ignore
+
+Most APIs do not need to commit to one paradigm for their entire surface area.
+
+On a recent project, I split the boundary. Public-facing endpoints for partners used REST with versioned paths and OpenAPI documentation. Internal frontends consumed a GraphQL gateway that composed data from three downstream REST services. The gateway was thin, stateless, and could be rebuilt in a day if the team wanted to drop it.
+
+The partner team got stable contracts they could code against without learning a query language. The frontend team got flexible data fetching without backend tickets. Backend engineers owned well-defined REST services with clear domain boundaries.
+
+The pattern works because each layer optimizes for a different constraint. REST optimizes for contract stability and operational simplicity. GraphQL optimizes for consumer flexibility. Trying to optimize both with one tool creates compromises that satisfy nobody.
+
+## When to Pick One
+
+If you have one consumer and a small team, use REST. The engineering overhead of a GraphQL server is not worth it. You will spend more time on tooling than on features.
+
+If you have more than three distinct consumers with different data needs and a team large enough to own a gateway layer, GraphQL pays for itself after the initial investment.
+
+If you have a mix, use both. Put a GraphQL gateway in front of REST services. Let each layer do the job it does well.
+
+## The Real Decision Framework
+
+Stop asking "REST or GraphQL." Start asking:
+
+1. Who are my consumers and what do they need?
+2. How many engineers will maintain this, and what is their experience level?
+3. Can I debug a production issue in this setup at 2 AM without deep institutional knowledge?
+4. What is the caching story?
+
+Answer those four questions and the paradigm choice becomes obvious. The debate is a distraction from the architecture work that matters: defining clear boundaries, choosing the right abstraction for the consumer, and keeping the system debuggable by the team that inherits it.
+
+Architecture is about trade-offs, not silver bullets.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
