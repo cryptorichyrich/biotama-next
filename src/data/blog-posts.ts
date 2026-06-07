@@ -4187,6 +4187,57 @@ But for a team of two or three building a typical web product, Redux solves prob
 
 State management is an architecture choice, not a technology choice. The right answer depends on the shape of your data, the size of your team, and the rate of change in your UI. I stopped using Redux because I stopped building applications complex enough to justify it. The tools I use now match the problems I solve. Architecture is about trade-offs, not silver bullets.`,
   },
+  {
+    slug: "graphql-vs-rest-the-answer-is-neither",
+    title: "GraphQL vs REST: The Answer Is Neither",
+    description:
+      "Both paradigms solve different problems. After building production APIs in both, I stopped picking sides and started matching the interface to the consumer.",
+    date: "2026-06-07",
+    tags: ["API Design", "Architecture", "Backend"],
+    content: `![Featured image](/images/blog/graphql-vs-rest.png)
+
+# GraphQL vs REST: The Answer Is Neither
+
+Every six months, someone reignites the GraphQL vs REST debate. A blog post declares REST dead. A counter-post exposes GraphQL's complexity tax. Teams pick sides. Architecture decisions get made based on blog opinions instead of system requirements.
+
+I have built production APIs in both paradigms. I run both in the same system today. The question "which one should I use?" reveals a framing problem. The right question is "who is consuming this API, and what do they need?"
+
+## What REST Does Well
+
+REST wins when your API has clear resource boundaries and your consumers need predictable caching. HTTP verbs map to CRUD operations without ambiguity. ETags and Cache-Control headers give you CDN-level caching for free. Any developer with a browser can curl your endpoint and understand the response.
+
+I reach for REST when building payment gateway integrations, webhook receivers, and any API where third-party developers need to onboard fast. The constraint of resource-oriented URLs forces clean design. When your endpoint is \`/transactions/{id}\`, the contract speaks for itself.
+
+## What GraphQL Does Well
+
+GraphQL wins when consumers need flexible data shapes and you want to eliminate the N+1 request problem. A dashboard that pulls user data, transaction counts, and notification preferences used to require three separate API calls. GraphQL collapses those into one query with the exact fields the client needs.
+
+I use GraphQL for internal dashboards and admin panels where the frontend team owns the query layer and the schema evolves fast. The typed schema acts as a contract between teams. Schema stitching lets me compose data from multiple backing services without the frontend knowing about the underlying topology.
+
+## Where Both Fall Apart
+
+REST falls apart when mobile clients need three different data shapes from five different endpoints to render one screen. Versioning becomes a mess. \`/v2/users\` coexists with \`/v1/users/profile\` and nobody remembers which one returns the \`avatar_url\` field.
+
+GraphQL falls apart when you hand it to third-party consumers unfamiliar with your schema. The learning curve is real. Resolver chains introduce complexity through N+1 queries unless you build a DataLoader layer. Authorization shifts from per-endpoint logic to per-field logic, and that scatters security decisions across your entire schema.
+
+## What I Build Instead
+
+I split the boundary by consumer type. External APIs get REST with OpenAPI specs. Internal tooling and dashboards get GraphQL backed by the same domain services. The business logic lives in a shared layer that neither API style owns.
+
+The payment service exposes REST endpoints for partner integrations. The admin dashboard queries those same domain objects through a GraphQL gateway. Same data, same validation rules, same authorization logic. Different shapes for different consumers.
+
+This approach recognizes that API design serves the consumer, not the architecture diagram. A frontend team building a complex dashboard should not wait for a backend endpoint every time a UI requirement changes. A third-party integrator should not learn a query language to process a webhook.
+
+## The Decision Framework
+
+Pick REST when your consumers are external, your resources have clear boundaries, and caching matters more than flexibility.
+
+Pick GraphQL when your consumers are internal, your data graph is interconnected, and query flexibility saves more time than it costs in complexity.
+
+Use both when your system has both kinds of consumers. Most systems of any size do.
+
+Architecture is about trade-offs, not silver bullets. The teams that win do not pick a paradigm and defend it. They pick the right interface for the consumer sitting across the table.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
