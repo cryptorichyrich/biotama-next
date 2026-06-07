@@ -4146,6 +4146,47 @@ Answer those four questions and the paradigm choice becomes obvious. The debate 
 
 Architecture is about trade-offs, not silver bullets.`,
   },
+  {
+    slug: "why-i-stopped-using-redux",
+    title: "Why I Stopped Using Redux and Never Looked Back",
+    description:
+      "After years of reaching for Redux on every project, I switched to a three-tool stack that matches the problems I solve. Here is what changed and when Redux still wins.",
+    date: "2026-06-07",
+    tags: ["React", "State Management", "Frontend"],
+    content: `# Why I Stopped Using Redux and Never Looked Back
+
+Three years ago, every new project I started began with the same ritual: install Redux, set up the store, create slices, write actions, wire middleware. I treated it as infrastructure, like picking a database. You just did it.
+
+Then I spent two weeks debugging a state update bug that traced back to a race condition between two middleware chains. Two weeks for a problem that boiled down to one boolean flag being set by two async flows in the wrong order. That was the moment I questioned whether the ceremony justified the outcome.
+
+## The Problem Was Never Redux
+
+Redux works. It solves a real problem: predictable state updates in complex applications. The issue is that most applications I build do not have the complexity that justifies Redux's overhead.
+
+A typical SaaS frontend has three categories of state. Server state: data fetched from APIs. Form state: temporary user input. UI state: modals open, tabs selected, animations running.
+
+Redux pushes all three into the same pattern. You write reducers for form validation errors. You dispatch actions to close a sidebar. You store API responses in a global store and write selectors to pull them out. The boilerplate-to-value ratio tips the wrong direction somewhere around the second feature.
+
+## What Replaced It
+
+On my current projects, I use three tools instead of one.
+
+**Server state goes to TanStack Query.** Caching, background refetching, optimistic updates, and stale-while-revalidate come out of the box. I stopped writing loading states, error states, and cache invalidation logic by hand. A single \`useQuery\` call replaces a reducer, three action types, and a thunk.
+
+**Client state goes to Zustand.** A store in 15 lines that would take 80 in Redux. No providers wrapping the app. No action creators. One hook reads and writes. For the shared state I manage, this covers 90% of what Redux did with a tenth of the code.
+
+**Component state stays local.** \`useState\` and \`useReducer\` for anything that does not leave the component tree. Most state is local. Keeping it local means keeping it simple.
+
+## When Redux Still Wins
+
+I still reach for Redux on large teams building applications with complex cross-cutting state. If five developers share a codebase where forty components read from overlapping slices, the discipline Redux enforces pays for itself. The devtools, the time-travel debugging, the strict update pattern, these become assets when a state bug costs hours of coordination across team members.
+
+But for a team of two or three building a typical web product, Redux solves problems you do not have while creating problems you did not need.
+
+## The Principle
+
+State management is an architecture choice, not a technology choice. The right answer depends on the shape of your data, the size of your team, and the rate of change in your UI. I stopped using Redux because I stopped building applications complex enough to justify it. The tools I use now match the problems I solve. Architecture is about trade-offs, not silver bullets.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
