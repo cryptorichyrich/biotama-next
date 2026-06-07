@@ -46,6 +46,7 @@ export const skillGroups: SkillGroup[] = [
       { name: "GitHub Actions", level: 4 },
       { name: "DigitalOcean", level: 4 },
       { name: "n8n", level: 4 },
+      { name: "Redis", level: 4 },
     ],
   },
   {
