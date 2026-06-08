@@ -4215,6 +4215,279 @@ AI agents are force multipliers for experienced engineers and risk multipliers f
 
 The experiment changed how I build software. It did not change the need to understand what I am building. That part remains non-negotiable.`,
   },
+  {
+    slug: "system-design-concepts",
+    title: "Six System Design Concepts That Changed How I Build Software",
+    description:
+      "Statelessness, caching, CAP theorem, message queues, databases, and API design — not as definitions to memorize, but as trade-offs to reason through. Production lessons from building distributed systems.",
+    date: "2026-06-08",
+    tags: ["architecture", "system-design", "backend"],
+    content: `# Six System Design Concepts That Changed How I Build Software
+
+I froze in a system design interview. Could recite every definition. DNS resolution flow, sharding strategies, idempotency keys. The interviewer asked me to design a notification system for 50 million users, and I had nothing. Not because I lacked knowledge. I lacked a mental model for connecting the pieces.
+
+That experience sent me back to fundamentals. Not to memorize more terms, but to understand the forces that shape every architecture decision. Six concepts kept appearing across every system I built afterward, from payment gateways to e-commerce platforms to real-time dashboards. Not as definitions to recite, but as trade-offs to reason through.
+
+## 1. Statelessness: The Prerequisite for Scale
+
+I learned this one the hard way. A fintech service stored session data in local memory. Worked fine in development. Three users, one server, no problems. In production, the load balancer routed traffic to whichever server had capacity. Users got logged out mid-transaction because their session lived on a different server than the one handling their current request.
+
+We "fixed" it with sticky sessions. The load balancer pinned each user to the server holding their session. Problem solved, new problems created. The pinned server caught 60% of traffic while two others sat at 20%. When we needed to restart that server for a deploy, 200 active sessions vanished. Users got logged out, their in-progress work gone.
+
+Statelessness means the server treats every request as if it has never seen the client before. No session data in local memory. No in-progress cart held in process state. Every request carries everything the server needs, through a client-side token, and the server forgets the client the moment the response ships.
+
+### Where State Belongs
+
+Offload state to Redis. Once session data lives outside the application server, every server becomes identical. The load balancer routes based on capacity, not affinity. You spin servers up and down without losing data. You gain real fault tolerance.
+
+In my production systems, Redis holds sessions with a TTL matching the session timeout. The application server reads the session token from the request header, looks up the session in Redis, processes the request. Server restarts? Session untouched. Scale from 3 servers to 12? Even distribution, no special state on any node.
+
+### The Hidden Cost Nobody Mentions
+
+Statelessness is not free. Every request now incurs a network round trip to the session store. At high throughput, that external dependency becomes both a bottleneck and a single point of failure. Redis goes down, every authenticated request fails.
+
+Production hardening for external state:
+- **Redis Sentinel or Cluster** for automatic failover when a node dies
+- **Connection pooling** to avoid exhausting the Redis connection limit under load
+- **Local memory fallback** with a short TTL for graceful degradation when Redis is unreachable
+- **Latency monitoring** on the session store, because a 50ms Redis response adds 50ms to every authenticated request
+
+Before scaling any service, ask: what state does each server hold, and where should it live?
+
+## 2. Caching: Speed in Exchange for Freshness
+
+Caching appears at every layer of a system. Browser, CDN, application server, database query cache. Learning each one felt like studying a dozen separate technologies. Then I realized every cache makes the same trade: speed in exchange for freshness. You store a copy of data somewhere faster, closer to where it is needed, and accept that the copy might be stale.
+
+### The Layers and Their Trade-offs
+
+Browser cache stores static assets on the client. JS, CSS, images. Controlled by Cache-Control and ETag headers. Best for assets that change between releases, not between requests.
+
+CDN cache serves content from edge nodes geographically close to users. Best for static content, media files, pre-rendered pages. Changes propagate based on TTL or explicit purge. I use CDNs for product images and static pages. A user in Jakarta gets the image from a Singapore edge node instead of fetching it from an origin server in Virginia.
+
+Application cache (Redis, Memcached) sits between your application and the database. Best for read-heavy queries where you need sub-millisecond latency and can tolerate slightly stale data. Product catalogs, user profiles, search results.
+
+Database query cache lives inside the database engine. MySQL's query cache, PostgreSQL's materialized views. Best for expensive aggregations that run repeatedly on unchanged data.
+
+### Cache Invalidation: Where Production Systems Break
+
+"There are only two hard things in Computer Science: cache invalidation and naming things." The quote persists because invalidation is where production incidents happen.
+
+Three strategies, each with distinct consequences:
+
+**Cache-Aside (Lazy Loading):** The application checks the cache. On a miss, it queries the database, writes the result to the cache, returns it. On a hit, returns the cached value. The cache only contains data that has been requested. Stale data stays until the TTL expires or the entry expires from eviction policy. Simple to implement, stale data is the default.
+
+**Write-Through:** Every write hits the cache and the database. The cache stays consistent with the database. The cost: every write takes two operations. Write throughput drops. I use this for product prices where stale data means wrong charges.
+
+**Write-Back (Write-Behind):** Writes go to the cache first, flush to the database later. Writes are fast. The risk: if the cache node dies before the flush completes, data is lost. I reserve this for analytics workloads where durability matters less than throughput.
+
+### TTL as a Business Decision
+
+Time-to-live is not a technical parameter. It is a business decision:
+
+- Product prices: 30-60 seconds or write-through invalidation. Stale prices cause wrong charges and customer complaints.
+- User profiles: 5-15 minutes. A delayed profile update is acceptable.
+- Product catalog metadata: hours. Product descriptions change between sprints, not between requests.
+- Analytics dashboards: long TTL or manual refresh. Users expect these to be approximate.
+
+### Cache Stampede: The Incident You Did Not See Coming
+
+A cached entry expires. 1,000 concurrent requests all see a miss at the same time. All 1,000 hit the database. The database, tuned for a 95% cache hit rate, cannot handle the sudden load and falls over. I have seen this take down a production system for 45 minutes.
+
+Three mitigations:
+- **Mutex locking:** The first request to see a miss acquires a lock, fetches from the database, populates the cache, releases the lock. Other requests wait or serve stale data.
+- **Probabilistic early expiration:** Each request has a small random chance of refreshing the cache before the TTL expires. Spreads the refresh load across time.
+- **Per-request jitter:** Add random jitter to TTLs so entries do not all expire at the same instant.
+
+## 3. CAP Theorem: The Real Choice Is Not What You Think
+
+CAP theorem states a distributed system can provide at most two of three guarantees: Consistency, Availability, and Partition tolerance.
+
+Most explanations get one thing wrong. Partition tolerance is not optional. In any real distributed system running over a network, partitions happen. Network cables get unplugged. Switches fail. DNS has outages. Packets drop. Partition tolerance is a given constraint of distributed computing, not a design choice.
+
+The real choice: consistency or availability, during a partition.
+
+### Strong Consistency vs Availability
+
+Strong consistency means every read returns the most recent write. If user A updates their profile, user B sees the updated version on the next request, not five seconds later. This requires coordination between replicas. A write must propagate to all nodes before the system considers it committed. That coordination adds latency.
+
+Availability means the system responds to every request, even if it cannot guarantee the response reflects the latest write. During a partition, each node serves requests using whatever data it has. Some responses are stale, but the system never refuses a request.
+
+### The Spectrum, Not the Binary
+
+The CAP choice is not a global system-wide toggle. Different operations within the same system make different choices.
+
+Financial transactions demand strong consistency. A balance read must reflect all committed writes. I use consensus protocols (Raft, Paxos) and accept the latency cost. A double-spend incident costs more than the latency penalty.
+
+Access control and permissions demand strong consistency. A revoked permission must take effect on the next request. No exceptions.
+
+Content feeds and recommendations tolerate eventual consistency. Showing a post three seconds after publication is acceptable. The freshness requirement is "soon," not "now."
+
+Shopping carts favor availability with reconciliation. Losing a cart update frustrates users more than showing a stale item that resolves in seconds.
+
+Search indexes use eventual consistency. Re-indexing is asynchronous by nature.
+
+### Beyond CAP: PACELC
+
+CAP tells you what happens during a partition. PACELC extends the model to normal operation.
+
+If there is a Partition (P), choose between Availability (A) and Consistency (C). Else (E), during normal operation, choose between Latency (L) and Consistency (C).
+
+This captures a trade-off the original CAP theorem misses. Even without partitions, strong consistency adds latency. Every write must propagate to a quorum of nodes before acknowledging. If your system needs sub-10ms writes, you relax consistency.
+
+### Decision Framework
+
+When designing a service, I run through four questions:
+1. Does this operation handle money or access control? Strong consistency. No discussion.
+2. Can the user tolerate seeing stale data for seconds? Eventual consistency.
+3. Is the operation idempotent? Eventual consistency with retries is safe.
+4. What is the blast radius of a consistency violation? Wrong payment, strong consistency. Duplicate notification, eventual consistency.
+
+## 4. Message Queues: Decoupling for Resilience
+
+An order placement flow in a synchronous world. The user places an order, and the server calls the inventory service, then the payment service, then the notification service. All in sequence. All before returning a response.
+
+Five services at 99.9% uptime each produce a combined availability of 99.5%. That is 43 hours of downtime per year. The system's reliability is the product of every dependency's uptime.
+
+### Breaking the Chain
+
+The order service publishes an event ("order_placed") to a message broker. Kafka, RabbitMQ, SQS. Each downstream service picks up the event and processes it on its own schedule. If the notification service goes down, the message waits. When the service recovers, it processes the backlog. The order still goes through. Payment still happens. The notification arrives late, which is acceptable.
+
+I ran this pattern in an e-commerce platform. The payment service had a 30-minute outage during a peak sale. Orders kept flowing into the queue. When payment came back, it processed 12,000 queued orders in sequence. Zero lost sales.
+
+### Delivery Guarantees Matter for Correctness
+
+Three levels:
+
+**At-most-once:** The message is delivered zero or one times. If the consumer crashes before acknowledging, the message is lost. Fast, unreliable. Use for analytics events where a lost data point does not matter.
+
+**At-least-once:** The message is delivered one or more times. If the consumer crashes after processing but before acknowledging, the message gets redelivered. Reliable, requires idempotent consumers. Most production systems use this.
+
+**Exactly-once:** The message is delivered exactly one time. The hardest guarantee to achieve. Kafka implements this through transactional writes and idempotent producers, but the overhead is significant.
+
+Making consumers idempotent is simpler than achieving exactly-once delivery at the broker level. I reach for idempotency keys.
+
+### Idempotency Keys in Practice
+
+An idempotency key is a unique identifier the client sends with each request. The server tracks which keys have been processed. If a duplicate arrives from a retry, the server returns the cached result instead of processing again.
+
+For payments, the idempotency key is the order ID. For message processing, the message ID. The key lives in a deduplication table (Redis or a database) with a TTL.
+
+I once debugged a double-charge issue caused by a missing idempotency check. The payment service retried a timed-out request. The first request had succeeded but the response was lost. The retry charged the customer again. The fix was three lines: check the deduplication table before processing, store the result after processing. The incident cost a day of customer support emails and a manual refund batch.
+
+### When Queues Create New Problems
+
+Queues are not a universal solution.
+
+Added complexity. You now operate a message broker. Kafka clusters need ZooKeeper or KRaft, partition management, monitoring. This is infrastructure your team needs to understand and maintain.
+
+Debugging gets harder. A failure in a synchronous call produces a stack trace. A failure in an async pipeline produces a message sitting in a dead-letter queue with no obvious trigger. I have spent hours correlating message timestamps with service logs to find the root cause of a failed order.
+
+Ordering guarantees have scope. Kafka guarantees ordering within a partition, not across partitions. Need global ordering? Funnel everything through one partition, which eliminates parallelism. The trade-off between ordering and throughput is real.
+
+Poison messages. A malformed message crashes the consumer. It gets retried. Crashes again. Retried indefinitely. You need a dead-letter queue, a max-retry count, and alerting. Without these, one bad message can block an entire pipeline.
+
+## 5. Databases: SQL vs NoSQL Asks the Wrong Question
+
+The SQL versus NoSQL debate gets framed as old versus new, simple versus scalable. The actual question: what guarantees does your data layer need to make?
+
+### ACID: Four Guarantees Worth Understanding
+
+SQL databases are built around ACID. Not as an acronym to recognize, but as four guarantees that shape every transaction.
+
+**Atomicity:** A transaction is all or nothing. Transfer money between two accounts. Debit one, credit the other. Either both operations succeed or neither does. The database never leaves you in a state where money left one account but did not arrive in the other. The mechanism is a write-ahead log (WAL). Before any change hits disk, the database logs the intended change. On crash recovery, it replays the WAL to complete committed transactions and rolls back uncommitted ones. I have seen WAL replay save a production database after a power failure. Committed transactions survived. Uncommitted ones rolled back cleanly.
+
+**Consistency (database-level):** The database moves from one valid state to another. Schema constraints, foreign keys, unique indexes, check constraints hold on every write. The database rejects any data that violates them. This is different from CAP consistency (replica consistency across nodes). Database consistency is about rules within a single node.
+
+**Isolation:** Concurrent transactions do not interfere. Two users hitting the database at the same time see clean results as if their transactions ran one after the other. Isolation levels range from Read Uncommitted (see uncommitted writes from other transactions) to Serializable (complete isolation). Most production systems use Read Committed or Repeatable Read as a balance between correctness and performance. Choosing Serializable for everything sounds safe until you measure the throughput impact.
+
+**Durability:** Once a transaction commits, it persists even if the server crashes. The database flushes the WAL to disk before acknowledging the commit. "fsync" is the system call that matters. If your database config skips fsync for performance, you gain speed and risk losing committed transactions on crash.
+
+### NoSQL: What You Trade for Scale
+
+NoSQL databases trade some ACID guarantees for horizontal scalability and schema flexibility.
+
+Schema flexibility means the database does not enforce a fixed structure. Documents in the same collection can have different fields. Speeds up iteration during early development. Creates data consistency problems at scale when some documents have a field called "userId" and others have "user_id" and nobody enforced a standard.
+
+Relaxed consistency (eventual consistency by default in many NoSQL systems) enables horizontal partitioning (sharding). When replicas do not need to agree on every write, they can accept writes independently. This is the feature that lets NoSQL scale across many machines.
+
+### When to Use Each
+
+SQL for financial transactions, inventory systems, user authentication, any workload where partial writes are catastrophic. If the answer to "what happens if this write is half-complete?" involves "money disappears" or "users lose access," use SQL.
+
+NoSQL for activity feeds, product catalogs, session stores, real-time analytics at massive scale, content management where schema flexibility matters.
+
+Both is the common production pattern. A fintech platform I worked on ran PostgreSQL for transactions and account balances (ACID required), Redis for session storage and rate limiting (sub-millisecond reads), and Elasticsearch for search indexing (full-text search at scale). Each store handled the part of the workload it was built for.
+
+### Polyglot Persistence
+
+Real systems use multiple data stores. PostgreSQL and MySQL for transactional data with relational queries, accepting the vertical scaling ceiling. Redis and Memcached for caching and session data, accepting volatility without persistence configuration. MongoDB for document storage with flexible schemas, accepting weaker transaction guarantees. Cassandra for time-series data and high write throughput, accepting eventual consistency and CQL limitations. Elasticsearch for full-text search and log analytics, accepting near-real-time freshness. Neo4j for relationship-heavy queries like social graphs, accepting a niche ecosystem.
+
+Choosing a database is not a religion. It is a question of which guarantees your workload requires and which trade-offs you accept.
+
+## 6. API Design: The Contract You Cannot Break
+
+An API is a contract with every client that depends on it. Ship an endpoint, and changing it is not a code update. It is a coordinated migration affecting every downstream consumer. Mobile apps on old versions. Third-party integrations. Internal services nobody remembers building.
+
+I once removed a field from an API response during a "cleanup." Three mobile app versions in production still read that field. The app crashed for 15% of users until we shipped a hotfix that added the field back. The field returned as "deprecated but present." It stayed for 18 months until the last app version using it dropped below 1%.
+
+### REST vs GraphQL: Different Optimization Targets
+
+REST is simple, cacheable, and easy to reason about. Resources map to URLs. HTTP methods map to operations. GET /orders, POST /orders, PUT /orders/123. The uniform interface makes REST straightforward to cache at the CDN level through GET requests with standard cache headers, and to document through OpenAPI and Swagger.
+
+GraphQL lets clients request the exact fields they need in a single request. This solves over-fetching (REST endpoints returning 40 fields when the client needs 3) and under-fetching (the client making 5 API calls to assemble a single view). The cost is server-side complexity. Every query can hit any combination of fields and relations, making performance unpredictable. N+1 query problems are the default without DataLoader or careful resolver design.
+
+I use REST for public APIs and mobile clients where caching matters and the data shape is predictable. I reach for GraphQL when multiple clients (web, mobile, internal tools) need different slices of the same data and the overhead of maintaining versioned REST endpoints outweighs the complexity of a GraphQL layer.
+
+### Versioning: Decide on Day One
+
+API versioning is not optional. You will need to change your API. The question is whether you planned for it.
+
+Three strategies I have used:
+
+URL versioning (/v1/orders, /v2/orders). Explicit, easy to route, visible in logs. My default choice for most projects. The downside is URL proliferation, but that is a manageable problem compared to the alternative of no versioning.
+
+Header versioning (Accept: application/vnd.api.v2+json). Clean URLs, version negotiation is invisible to casual users. Harder to debug. Not visible in browser devtools. I reserve this for APIs consumed by internal services where the team controls both sides.
+
+Query parameter (?version=2). Simple, but pollutes the URL and can conflict with domain-specific query parameters. I avoid this pattern.
+
+Pick one on day one and stick with it. Retrofitting versioning after launch is painful.
+
+### Backward Compatibility as a Discipline
+
+The real skill is not versioning. It is evolving an API without breaking existing clients.
+
+Add new fields. Never remove or rename old ones. Adding a field to a response is backward compatible. Removing one breaks every client reading it.
+
+Use default values for new required fields. If you add a required field to a request body, give it a sensible default so old clients continue working.
+
+Deprecate, then remove. Mark fields as deprecated in documentation. Monitor usage. Remove only when traffic to the deprecated field reaches zero.
+
+Use semantic versioning for SDKs. Major versions for breaking changes. Minor for additions. Patch for fixes.
+
+### Rate Limiting and Pagination
+
+Two concerns that separate production APIs from prototypes.
+
+Rate limiting protects your service from abuse and ensures fair resource allocation. Implement at the API gateway level using token bucket or sliding window algorithms. Return rate limit headers (X-RateLimit-Remaining, X-RateLimit-Reset) so well-behaved clients can self-regulate. I once saw an unauthenticated endpoint get discovered by a scraping bot that made 2,000 requests per second. The database connection pool exhausted in 30 seconds. Rate limiting at 100 requests per minute per IP would have prevented the incident.
+
+Pagination prevents unbounded queries from destroying database performance. Offset-based pagination (LIMIT/OFFSET) is simple but degrades on large datasets because the database still scans all skipped rows. Page 10,000 on a table with 5 million rows means the database scans 100,000 rows just to return 10. Cursor-based pagination (WHERE id > last_seen_id) performs at the same speed regardless of dataset size. Use cursor-based for any collection that can grow past a few thousand rows.
+
+## The Connecting Thread
+
+These six concepts are not isolated topics to check off a study list. They interact.
+
+Statelessness enables horizontal scaling, but creates dependency on external state stores, which need caching strategies for performance.
+
+Caching improves read latency, but introduces consistency challenges that connect to CAP theorem decisions.
+
+CAP theorem decisions determine which database technology fits each workload. SQL for consistency, NoSQL for availability at scale.
+
+Message queues decouple services for resilience, but the delivery guarantees you choose depend on the consistency requirements of the downstream consumers.
+
+API design determines how clients interact with all of the above, and the versioning contract determines how the system can evolve.
+
+The senior engineer sees these connections. The junior engineer sees six definitions to memorize. The difference is not years of experience. It is whether you understand the trade-offs or just the terminology.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
