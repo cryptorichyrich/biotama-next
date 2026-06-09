@@ -4809,6 +4809,88 @@ Context windows are a transport mechanism, not a memory system. The agents that 
 
 ![Context Windows Won't Save AI Agents](/images/blog/context-windows-wont-save-ai-agents.jpg)`,
   },
+  {
+    slug: "webhook-reliability-payment-systems",
+    title: "Webhook Reliability in Payment Systems",
+    description:
+      "How to build payment webhook consumers that survive provider retries, missed events, and the 72-hour settlement window without losing financial data.",
+    date: "2026-06-09",
+    tags: ["Fintech", "Architecture", "Backend"],
+    content: `# Webhook Reliability in Payment Systems: Retries, Signatures, and the 72-Hour Window
+
+A payment provider sends you a webhook. Your server returns a 500 because the database consumed the entire connection pool for two seconds. The provider marks the webhook as failed. Twelve hours later, a customer calls support asking why their account still shows "pending" after the money left their bank.
+
+I have lived through this scenario. The fix was not more retries or a bigger database. The fix was treating webhooks as a distributed systems problem from day one, not as a simple HTTP POST handler.
+
+## Why Webhooks Break in Payment Systems
+
+Payment webhooks carry state transitions: payment captured, refund processed, chargeback opened, settlement completed. These events are not optional notifications. They are the source of truth for your financial records. Lose one, and your ledger drifts. Process one twice, and you credit a customer twice.
+
+Three things make payment webhooks harder than regular webhooks:
+
+1. They arrive at the provider's schedule, not yours. During settlement windows, a provider might send hundreds of webhooks in a burst.
+2. They carry financial consequences. A missed chargeback webhook means you miss the response window and lose the dispute by default.
+3. They have strict timing constraints. Most providers stop retrying after 72 hours. After that, the event is gone, and you discover the gap during reconciliation.
+
+## The Architecture That Prevents Data Loss
+
+The pattern I use has four components: an ingestion endpoint, a persistent queue, a processing worker, and a reconciliation job.
+
+The ingestion endpoint does one thing: validate the webhook signature, write the raw payload to a database table, and return 200. No business logic, no database transactions, no external API calls. This endpoint must have a p99 latency under 50ms. If it does more than signature validation and a single INSERT, it does too much.
+
+\`\`\`
+POST /webhooks/payment-provider
+  -> validate HMAC signature
+  -> INSERT INTO webhook_events (provider, event_id, payload, received_at)
+  -> return 200 OK
+\`\`\`
+
+The processing worker reads from that table in order, applies business logic, and marks each event as processed. If the worker crashes mid-processing, the event stays in "pending" state and gets picked up on restart. This is the transactional outbox pattern applied to inbound webhooks.
+
+## Signature Verification Is Non-Negotiable
+
+Payment providers sign webhooks with HMAC. The verification is straightforward: take the raw request body, hash it with the shared secret using the provider's algorithm (SHA-256 in most cases), and compare against the signature header.
+
+Two mistakes I see repeatedly: comparing signatures with \`==\` instead of constant-time comparison, which opens a timing attack vector; and parsing the JSON body before verifying the signature, which means you parse untrusted input. Verify first, parse second. Use \`crypto.timingSafeEqual\` in Node.js or \`hmac.compare_digest\` in Python.
+
+## Retry Strategy: What the Provider Expects vs. What You Need
+
+Providers retry on non-200 responses. Stripe retries for up to 72 hours with exponential backoff. Midtrans retries for 24 hours. Some providers cap at 5 attempts. The schedule is not under your control.
+
+This means two things for your system:
+
+First, your ingestion endpoint must be available. I put webhook endpoints behind a health check and deploy them separately from the main API. A database migration that takes the API down for 30 seconds should not take the webhook receiver down with it.
+
+Second, you must handle duplicate deliveries. Providers document that they may send the same event twice. Your processing worker needs an idempotency check: look up the event_id before processing. If you already processed it, return success. The ingestion table serves double duty here, since you record all event IDs on arrival.
+
+## The 72-Hour Window
+
+Settlement in most payment systems completes within 24 to 72 hours. During this window, the provider sends webhook updates: payment authorized, then captured, then settled. If your system misses the "captured" webhook because of a deployment at the wrong moment, you have a gap in your state machine.
+
+The defense is a reconciliation job that runs hourly. Pull the list of payments in "authorized" state for more than 4 hours, query the provider's API for the current status, and update your records. This job is your safety net. Webhooks are the primary mechanism. Reconciliation is the backup. You need both.
+
+I learned this after a deployment at 2 AM took the webhook endpoint offline for 8 minutes. The provider dropped fourteen payment events during that window. The reconciliation job caught all of them within an hour. Without it, those payments would have stayed in "authorized" state until someone noticed during the monthly audit.
+
+## Monitoring What Matters
+
+Track three metrics for each webhook endpoint:
+
+1. **Receipt rate**: webhooks received per minute, segmented by provider and event type. Sudden drops indicate a provider-side issue. Sudden spikes indicate settlement processing or a retry storm.
+2. **Processing lag**: time between webhook arrival and processing completion. If this grows beyond 5 minutes, your worker is falling behind.
+3. **Error rate by stage**: ingestion errors (signature failures, payload malformations) vs. processing errors (business logic failures, downstream API timeouts). These require different responses and belong in separate dashboards.
+
+Alert on processing lag exceeding 5 minutes and error rate exceeding 1% over any 10-minute window. These thresholds caught each incident I have seen before it affected customers.
+
+## What I Would Do Differently
+
+The first webhook integration I built processed events synchronously in the POST handler. It worked in development. It broke the first time the database slowed down and webhooks started timing out. The provider retried everything, and we processed duplicate payments because the idempotency check queried the same table the handler was writing to under a different transaction.
+
+The async pattern I described above, with separate ingestion and processing, took two days to build and has run without data loss for over a year. The synchronous version caused three incidents in its first month.
+
+Webhooks in payment systems are a reliability engineering problem. Treat the ingestion endpoint as infrastructure, not application code. Make it fast, make it stateless, make it available. Put the complexity in the worker where you control the retry schedule and can inspect failures. Run reconciliation as a safety net. The 72-hour window closes whether your system is ready or not.
+
+![Webhook Reliability in Payment Systems](/images/blog/webhook-reliability-payment-systems.jpg)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
