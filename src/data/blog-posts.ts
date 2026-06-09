@@ -4891,6 +4891,57 @@ Webhooks in payment systems are a reliability engineering problem. Treat the ing
 
 ![Webhook Reliability in Payment Systems](/images/blog/webhook-reliability-payment-systems.jpg)`,
   },
+  {
+    slug: "api-error-messages-leaking-state",
+    title: "Your API Error Messages Are Leaking Internal State",
+    description:
+      "Framework defaults dump stack traces, credentials, and internal paths in production responses. A practical guide to stripping error payloads before they leave your server.",
+    date: "2026-06-09",
+    tags: ["security", "api-design", "backend"],
+    content: `# Your API Error Messages Are Leaking Internal State
+
+A payment service I maintained threw stack traces in production JSON responses. Not on purpose. The default FastAPI error handler dumped the full traceback, including file paths, line numbers, and the SQLAlchemy connection string with credentials. A partner integration team forwarded that response in a support ticket. Their developer had copy-pasted the entire payload, credentials and all, into a Slack channel with 40 people.
+
+The credentials sat exposed in that channel for two weeks.
+
+## What Leaks and Why It Matters
+
+Framework defaults favor developer convenience over production safety. Express returns \`err.stack\` in development mode. FastAPI includes \`detail\` and \`traceback\` in validation errors. Django DEBUG mode renders a full error page with local variables. These features exist for local development, but the boundary between development and production configuration is thinner than most teams assume.
+
+The specific categories of leakage I have seen in production:
+
+- Database connection strings in connection refused errors
+- Internal file paths in import errors and stack traces
+- Third-party API keys in upstream timeout messages
+- User IDs and email addresses in validation errors returned to other users
+- Internal service hostnames and port numbers in downstream error chains
+
+Any one of these gives an attacker reconnaissance material. Combined, they paint a detailed picture of your infrastructure.
+
+## The Fix Is Boring
+
+Strip error responses to three fields: a machine-readable code, a human-readable message, and a correlation ID for log lookup. Move everything else into your structured logs where it belongs.
+
+\`\`\`json
+{
+  "code": "PAYMENT_PROCESSING_FAILED",
+  "message": "Unable to process payment. Please try again.",
+  "request_id": "req_8f3a2b1c"
+}
+\`\`\`
+
+The full stack trace, the upstream error from the payment provider, the database query that timed out, the connection pool state. Those belong in your logs with the same request ID. Your support team correlates the ID. The caller gets enough information to retry or report. Nothing more.
+
+This means wrapping your framework's error handler. In FastAPI, override \`HTTPException\` and add a generic exception handler that catches everything unhandled. In Express, add a global error middleware that redacts before sending. In both cases, log the full error server-side first.
+
+## The Deeper Problem
+
+Error leakage is a symptom of not treating error responses as part of your API contract. Teams design request schemas, response schemas, status codes, and then let exceptions escape uncontrolled. An error response is still a response. It goes over the same network, to the same client, through the same proxies and logs.
+
+Audit your production error responses. Send bad requests on purpose. Check what comes back. If you see anything beyond a code, message, and correlation ID, you have work to do.
+
+![API Error Messages Leaking State](/images/blog/api-error-messages-leaking-state.jpg)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
