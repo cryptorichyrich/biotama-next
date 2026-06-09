@@ -4644,6 +4644,110 @@ This practice compounds. After a year, you have a personal operating system for 
 
 This is the skill that separates senior engineers from mid-level ones. Not years of experience. Depth of thinking about why things work and why they fail.`,
   },
+  {
+    slug: "zero-downtime-database-migrations",
+    title: "Zero-Downtime Database Migrations: Patterns That Work",
+    description:
+      "How expand-contract, shadow tables, and adaptive backfills prevent migration-caused outages in production databases handling thousands of transactions per second.",
+    date: "2026-06-09",
+    tags: ["Database", "PostgreSQL", "DevOps"],
+    content: `# Zero-Downtime Database Migrations Are Hard. Here's How I Do Them.
+
+A deployment at 2 AM brought down the payments service for 11 minutes. The cause was a single \`ALTER TABLE\` that acquired an exclusive lock on a 30-million-row transactions table. No warning in staging. No alert during canary. The lock held while PostgreSQL rewrote the entire table on disk, and each request timed out waiting for it.
+
+That incident rewrote how I think about schema changes. Most teams treat migrations as a routine step in CI. Drop a column here, add an index there, ship it. In production databases handling hundreds of transactions per second, routine migrations carry a specific set of failure modes that staging will not reproduce because staging has no load.
+
+## The Expand-Contract Pattern
+
+The foundation of zero-downtime migrations is a two-phase approach called expand-contract. Instead of replacing a column or table in one migration, you spread the change across two or more deploys.
+
+Phase one: expand. Add the new column or table alongside the old one. The application writes to both the old and new locations. Reads come from the old location. You remove no data, and existing queries keep working.
+
+Phase two: contract. After the application no longer references the old structure, remove it in a follow-up migration. By this point, the old column or table has no readers and no writers. Dropping it acquires no conflicting locks.
+
+This sounds tedious because it is. The trade-off is complexity during transition versus guaranteed availability during deployment. For financial systems processing real transactions, the choice is clear.
+
+## The Lock Tax
+
+Each migration pays a lock tax. PostgreSQL requires an \`ACCESS EXCLUSIVE\` lock for most DDL operations, including \`ALTER TABLE\` statements that add or remove columns. The database grants this lock only after all concurrent queries on that table finish. Under load, queries arrive faster than they complete. The migration waits. Queries queue behind the migration. Within seconds, your connection pool saturates and the service degrades.
+
+Three operations are safe. \`CREATE INDEX CONCURRENTLY\` builds the index without blocking writes. \`ALTER TABLE ... ADD COLUMN\` with a constant default (since PostgreSQL 11) avoids a table rewrite. \`ALTER TABLE ... SET DEFAULT\` is metadata-only. Anything beyond these three needs deliberate planning.
+
+I once watched a team deploy a migration that added a \`NOT NULL\` constraint without a default value. On a table with 40 million rows. The database scanned each row to verify the constraint, holding an exclusive lock for 90 seconds. Reads and writes on that table queued behind the scan. The fix: add the column as nullable, backfill in batches, then add the constraint with \`NOT VALID\`, followed by \`VALIDATE CONSTRAINT\` which only requires a \`SHARE UPDATE EXCLUSIVE\` lock.
+
+## Batching Backfills
+
+When a migration requires backfilling data, doing it in a single UPDATE statement locks rows for the duration. On large tables, that duration exceeds any reasonable timeout.
+
+The pattern I use:
+
+\`\`\`sql
+UPDATE orders
+SET new_column = computed_value
+WHERE new_column IS NULL
+AND id BETWEEN $batch_start AND $batch_end
+\`\`\`
+
+Run this in a loop with small batch sizes (1,000 to 5,000 rows) and a configurable sleep between batches. The sleep lets other transactions acquire locks between batches. The batch size keeps each individual transaction short.
+
+I set a target: each batch must complete in under 100 milliseconds. If a batch exceeds that threshold, I halve the batch size. If batches complete in under 10 milliseconds, I double the size. This adaptive approach handles the variance between staging and production without manual tuning.
+
+## The Shadow Table Strategy
+
+For destructive changes that cannot use expand-contract, I use a shadow table. Create a new table with the desired schema. Populate it from the old table in batches. Set up triggers on the old table to mirror writes to the new table during the migration. When the new table is current, rename both tables in a single transaction.
+
+\`\`\`sql
+BEGIN;
+ALTER TABLE orders RENAME TO orders_legacy;
+ALTER TABLE orders_new RENAME TO orders;
+COMMIT;
+\`\`\`
+
+The rename completes in milliseconds because it is a metadata operation. The application reconnects to the new table on the next query. The old table remains available as a rollback target.
+
+The trigger overhead is measurable. On a table processing 500 writes per second, the trigger added 3 milliseconds per write. For a 12-hour migration window, that cost was acceptable. I would not use this on a table processing 10,000 writes per second without benchmarking first.
+
+## Reversibility
+
+Each migration I write has a corresponding down migration. This is non-negotiable. If a deployment fails, the rollback path must pass testing before the deployment starts.
+
+The expand-contract pattern makes reversibility easier. Rolling back the expand phase means the application stops writing to the new column and ignores it. No data loss, no schema change required. Rolling back the contract phase is harder because the system has removed data, but the contract phase only runs after the application no longer needs the old data.
+
+For shadow table migrations, the rollback is renaming the tables back. This requires keeping the old table around until the deployment confirms stable. Storage cost versus safety. I keep the old table for 48 hours.
+
+## Monitoring During Migration
+
+I do not deploy migrations without three monitors in place:
+
+1. **Lock wait time.** Alert if any query waits more than 5 seconds for a lock. During migrations, this catches lock contention before it cascades.
+2. **Migration script progress.** The batch backfill script logs progress after each batch. If progress stalls for more than 2 minutes, the deployment team gets paged.
+3. **Application error rate.** If the error rate climbs above baseline during a migration, halt the migration. Do not wait to see if it resolves itself.
+
+I learned this third monitor after a migration that added a column with a computed default. The computation triggered a function that queried another table. That table had grown since staging, and the function's query plan changed from an index scan to a sequential scan. Error rate spiked within 30 seconds. Without the monitor, the migration would have completed, but the application would have degraded for the full duration.
+
+## What Staging Will Not Tell You
+
+Staging databases lack production load, production data distribution, and production concurrency patterns. A migration that completes in 2 seconds on a staging table with 100,000 rows can take 20 minutes on a production table with 30 million rows under concurrent write load.
+
+Test migrations against a sanitized production snapshot. Run a load generator against the snapshot while the migration executes. Measure lock wait times, query latency impact, and total migration duration under realistic concurrency.
+
+The cost of setting up this test environment is a fraction of the cost of a single outage. The 11-minute outage I mentioned at the start cost more in incident response time than the migration testing infrastructure would have cost in a year.
+
+## The Rules I Follow
+
+1. Use expand-contract for any change that modifies or removes an existing column.
+2. Use \`CONCURRENTLY\` for all index creation. No exceptions.
+3. Batch all backfills with adaptive sizing and inter-batch sleeps.
+4. Test against a production snapshot under load.
+5. Keep a tested rollback path for each migration.
+6. Monitor lock wait time, migration progress, and application error rate during execution.
+7. Add constraints as \`NOT VALID\` first, then validate separately.
+8. Schedule destructive changes for low-traffic windows, even with precautions in place.
+
+Schema changes are not a deployment afterthought. They are a deployment phase that deserves the same rigor as code review, testing, and canary analysis. The database is the one component you cannot roll forward from without data consequences. Treat migrations accordingly.
+
+![Zero-Downtime Database Migrations](/images/blog/zero-downtime-database-migrations.png)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
