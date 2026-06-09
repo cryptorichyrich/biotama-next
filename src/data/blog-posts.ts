@@ -4748,6 +4748,67 @@ Schema changes are not a deployment afterthought. They are a deployment phase th
 
 ![Zero-Downtime Database Migrations](/images/blog/zero-downtime-database-migrations.png)`,
   },
+  {
+    slug: "context-windows-wont-save-ai-agents",
+    title: "Context Windows Won't Save AI Agents",
+    description:
+      "Bigger context windows don't fix agent reliability. Structured memory, on-demand context loading, and state persistence are the architecture patterns that make autonomous agents work in production.",
+    date: "2026-06-09",
+    tags: ["AI", "Architecture", "Developer Tools"],
+    content: `# Context Windows Won't Save AI Agents
+
+I watched a coding agent produce a perfect function, then forget it existed three calls later. The context window was 128K tokens. It didn't matter. The agent couldn't recall its own output because the relevant context had scrolled past the attention horizon. Bigger context windows don't fix this. Structured memory does.
+
+## The Context Window Trap
+
+The industry narrative says: give models more context, get better results. Google pushed to 1M tokens. Claude hit 200K. The assumption is that more tokens in the window means more relevant information available to the model. In practice, the relationship breaks down past a certain point.
+
+Attention dilution is the core problem. A model with 200K tokens of context doesn't weigh the 500 tokens that matter the same as it would in a 4K window. The signal-to-noise ratio drops. Important instructions compete with verbose log output, boilerplate code, and tangential context that got included "just in case."
+
+I tested this on a refactoring task. Same agent, same codebase. With 8K tokens of curated context (the files that matter, the architecture doc, the constraint list), the agent produced correct code on the first attempt. With 80K tokens of context (the entire repository dumped in), it forgot the constraint about not modifying the database schema and produced a migration that would have broken production. More context, worse result.
+
+## What Structured Memory Looks Like
+
+Structured memory means giving the agent information in a format designed for retrieval, not just inclusion. Instead of dumping a file into the context window and hoping the model finds the relevant section, you organize knowledge so the agent can access what it needs, when it needs it.
+
+Three patterns I use:
+
+**Skill files.** Markdown documents that describe specific capabilities, constraints, and workflows. The agent loads them on demand based on the task. A skill for database migrations contains the rules about expand-contract, batching, and lock monitoring. A skill for API design contains the error taxonomy, naming conventions, and versioning strategy. Each skill is a self-contained knowledge module that the agent can pull into context when relevant.
+
+**State persistence.** Between sessions, the agent writes what it learned to a structured state file. What it tried, what failed, what the current status is. Next session, it reads that state instead of reconstructing it from conversation history. This is the difference between a developer who remembers yesterday's debugging session and one who starts fresh each morning.
+
+**Indexed retrieval.** For large codebases, the agent doesn't read all files. It queries an index based on the task. Need to modify the payment flow? The index returns the three files that handle payment routing, the middleware that validates idempotency keys, and the test file that covers the happy path. The agent gets 2K tokens of high-relevance context instead of 50K tokens of everything.
+
+## Why This Matters in Production
+
+I run an agent that handles automated blog publishing. It reads topic backlogs, checks for duplicate articles, writes content, generates images, inserts into a TypeScript data file, and pushes to git. The full workflow touches eight different systems and requires remembering state across multiple steps.
+
+Without structured memory, this fails in predictable ways. The agent writes an article, then writes another article on the same topic because it doesn't recall the first one. It inserts a blog post at the wrong position in the array because it doesn't remember the schema constraints. It generates an image in the wrong format because the format requirement got buried in a 3,000-word skill document that it had to re-read at each step.
+
+With structured memory, the agent reads a 200-byte state file at the start. It knows what topics are done, what the last action was, and what constraints apply to the current step. The skill files stay on disk until needed. The agent loads the blog-manager skill when it's time to insert the article, not when it's generating the image.
+
+## The Architecture Decision
+
+Building structured memory for agents is an architecture decision, not a model capability issue. The model doesn't need to "remember" more. The system around the model needs to organize information so the model receives relevant context at the right time.
+
+This is the same principle as good API design. You don't send your entire database to the client and let it filter. You build endpoints that return what the client needs. Agent memory works the same way. The model is the compute layer. The memory system is the data layer. Conflating the two is the architectural mistake.
+
+The trade-off is engineering effort. Building skill files, state persistence, and retrieval systems takes time. Dumping files into a context window takes seconds. For quick tasks, dumping works fine. For repeatable workflows that run on a schedule without human supervision, structured memory is the difference between a system that works 90% of the time and one that works 99% of the time.
+
+## What I Changed
+
+After months of running agents with raw context, I restructured around three principles:
+
+1. Load context on demand, not upfront. The agent starts with a task description and a pointer to relevant skills. It loads additional context as needed.
+2. Persist state between sessions. Each session writes what happened. Each session reads what happened before.
+3. Curate what goes into the context window. Include the information that matters for the current step, not the information that might matter for some future step.
+
+The result: the blog pipeline went from requiring manual intervention on 3 out of 5 runs to running autonomously for 50 consecutive articles without a single failure traceable to context confusion.
+
+Context windows are a transport mechanism, not a memory system. The agents that work well in production are the ones that treat memory as a separate architectural concern, not the ones with the biggest token counts.
+
+![Context Windows Won't Save AI Agents](/images/blog/context-windows-wont-save-ai-agents.jpg)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
