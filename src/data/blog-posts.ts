@@ -5240,6 +5240,63 @@ The 847 duplicate charges from that Tuesday morning cost more in engineering tim
 
 ![HTTP Timeouts in Payment Pipelines](/images/blog/http-timeouts-payment-pipelines.png)`,
   },
+  {
+    slug: "jotai-atomic-state-when-it-wins",
+    title: "I Dropped Zustand for Jotai. Here's When Atomic State Wins",
+    description:
+      "When a 40-field form broke Zustand's store model, I switched to Jotai and removed 300 lines of state wiring. Here's when atomic state beats a centralized store.",
+    date: "2026-06-10",
+    tags: ["react", "state-management", "frontend"],
+    content: `# I Dropped Zustand for Jotai on One Project. Here's When Atomic State Wins
+
+Zustand is my default state management pick. Has been for two years. But on a recent project with a sprawling form that had 40+ independent fields, Zustand's store model started fighting the component tree. I switched to Jotai mid-sprint and removed 300 lines of state wiring in a single afternoon.
+
+## The Problem: One Store, Too Many Subscribers
+
+Zustand gives you a single store. You select slices with selectors, and components re-render when their slice changes. This works well for most apps. But when dozens of components each need one distinct atom of state, the selector layer becomes ceremony. Each new field means a new selector, a new slice definition, and a new import path through the store file.
+
+On this project, the store file had grown to 400 lines. Most of it was selector definitions for fields no two components shared. The form had sections for personal data, address, employment details, and document uploads. Each section lived in its own component subtree. None of them needed to know about the others until final submission.
+
+## What Jotai Does Differently
+
+Jotai models state as atoms. Each atom is an independent unit. Components subscribe to the atoms they use, and nothing else. No store file. No selectors. No slice definitions.
+
+\`\`\`tsx
+const firstNameAtom = atom('');
+const lastNameAtom = atom('');
+\`\`\`
+
+A component reads and writes its atom:
+
+\`\`\`tsx
+function FirstNameInput() {
+  const [value, setValue] = useAtom(firstNameAtom);
+  return <input value={value} onChange={(e) => setValue(e.target.value)} />;
+}
+\`\`\`
+
+If \`firstNameAtom\` changes, only components subscribed to that atom re-render. The rest of the form stays untouched. In Zustand, I would need a selector like \`(s) => s.firstName\` to get the same result. With Jotai, the atom is the selector. The wiring is the dependency.
+
+## When Atomic State Wins
+
+Jotai shines when state spreads across many components with minimal overlap. Forms with independent sections. Feature flags scattered through the tree. UI state for isolated panels or tabs. Any scenario where most components care about one piece of state and ignore the rest.
+
+The derived atom pattern is where Jotai gets powerful. You can build computed atoms that depend on other atoms, and the dependency graph resolves itself:
+
+\`\`\`tsx
+const fullNameAtom = atom((get) => \`\${get(firstNameAtom)} \${get(lastNameAtom)}\`);
+\`\`\`
+
+No memo selectors. No manual dependency tracking. The atom reads its dependencies, and Jotai handles the rest.
+
+## When I Still Reach for Zustand
+
+Zustand remains my pick for shared state that many components read and write together. A shopping cart. A user session. A notification queue. These are cohesive units of state where slices make semantic sense. Forcing them into atoms adds indirection without benefit.
+
+The decision comes down to state shape. If your state is a single coherent object, use Zustand. If your state is a bag of independent values that happen to live in the same app, use Jotai.
+
+I now run both in the same project without guilt. Zustand handles the session and global config. Jotai handles the form fields and UI toggles. Each tool handles the shape it targets.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
