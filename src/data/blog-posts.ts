@@ -5025,6 +5025,111 @@ Make the choice consciously. Document it. Design for it. And when a product mana
 
 ![Eventual Consistency Design Choice](/images/blog/eventual-consistency-design-choice.png)`,
   },
+  {
+    slug: "rag-chunking-strategies",
+    title: "Building a RAG Pipeline That Doesn't Garble Your Documents",
+    description:
+      "The chunking strategy determines retrieval quality in RAG systems. Fixed-size splitting destroys context. Here are four strategies that preserve meaning, plus metadata enrichment and deduplication patterns from production.",
+    date: "2026-06-10",
+    tags: ["AI", "Architecture", "Engineering"],
+    content: `# Building a RAG Pipeline That Doesn't Garble Your Documents
+
+I fed a 200-page API reference into a RAG pipeline and got back answers that cited page 47 for something defined on page 12. The chunking strategy split pages at 512 tokens, sliced method signatures away from their parameter tables, and produced embeddings that conflated unrelated endpoints sharing the same words. The retrieval results looked plausible and were wrong.
+
+RAG fails for reasons that have nothing to do with the model. The chunking strategy determines retrieval quality, and retrieval quality determines everything downstream.
+
+## Why Chunking Destroys Context
+
+Most RAG tutorials teach a naive pipeline: split documents into fixed-size chunks, embed each chunk, store in a vector database, retrieve the top-k results at query time. This works for homogeneous text like blog posts. It breaks for structured technical documentation, where context flows across sections, tables depend on their headers, and code examples mean nothing without the paragraph explaining them.
+
+Three failure patterns I see in production RAG systems:
+
+**Boundary cuts slice meaning in half.** A fixed 512-token chunker splits a paragraph mid-sentence. The embedding captures half a thought. Retrieval returns a fragment that the model cannot reason about. The user gets a confident answer built on incomplete context.
+
+**Semantic drift within chunks.** A chunk covers two unrelated topics because the token boundary fell that way. The embedding averages two meanings into one vector that matches neither topic well. Retrieval returns this chunk for queries about either topic, and both answers suffer.
+
+**Orphaned structures.** Tables, code blocks, and list items get separated from their headers. A chunk contains parameter values without the parameter names. Another chunk contains the method signature without the return type. The model hallucinates to fill the gaps.
+
+## Chunking Strategies Ranked by Document Type
+
+No single chunking strategy works for all documents. I use different approaches based on content type.
+
+### Fixed-Size with Overlap
+
+Split at N tokens, overlap by M tokens. The overlap catches content that straddles a boundary.
+
+Best for: prose-heavy documents, articles, books.
+
+Weakness: overlap wastes embedding budget on repeated content. If your overlap is 20% of chunk size, 20% of your vector store contains duplicates.
+
+I start with 512-token chunks and 64-token overlap for prose. The numbers come from experimentation, not theory. Smaller chunks produce more precise retrieval but lose cross-paragraph context. Larger chunks preserve context but dilute the embedding signal with noise from adjacent topics.
+
+### Recursive Character Splitting
+
+Split on paragraph boundaries first. If a paragraph exceeds the chunk size, split on sentence boundaries. If a sentence exceeds the chunk size, split on word boundaries. This respects natural text structure.
+
+Best for: mixed content, markdown documents, README files.
+
+The recursive approach produces chunks that contain complete thoughts instead of sentence fragments. In a test on a 50,000-word technical manual, recursive splitting improved retrieval precision from 71% to 84% compared to fixed-size chunking. The improvement came from keeping method descriptions intact instead of splitting them across chunks.
+
+### Semantic Chunking
+
+Embed each sentence, then group consecutive sentences with similar embeddings into chunks. The boundary between chunks falls where the embedding similarity drops below a threshold.
+
+Best for: heterogeneous documents that shift topics within sections.
+
+Cost: two passes over the document, one for sentence-level embeddings and one for chunk-level embeddings. The latency doubles at index time. For static document collections, this cost pays once. For documents that update on a rapid cadence, the reindexing cost compounds.
+
+### Structural Chunking
+
+Parse the document structure and create chunks based on headings, sections, or code block boundaries. Each chunk contains one logical unit: a section with its heading, a code block with its description, a table with its header row.
+
+Best for: API documentation, technical specifications, reference material.
+
+This is the approach I use for structured documentation. A parser reads the markdown or HTML structure and extracts sections as atomic chunks. Tables stay with their captions. Code blocks stay with their explanations. The chunk boundaries align with the author's intent instead of an arbitrary token count.
+
+## The Overlap Problem Most Tutorials Skip
+
+Overlap is a bandage, not a cure. It helps when a topic straddles a chunk boundary, but it creates a different problem: duplicate retrieval. A query about topic X returns both chunks that contain the overlapping passage. The model processes the same content twice, and the duplicate displaces a different relevant chunk that might have provided additional context.
+
+I solved this with post-retrieval deduplication. After retrieving the top-k chunks, I compare consecutive chunks and merge any pair with more than 40% token overlap. The merged chunk carries more context, and the freed slot retrieves another relevant chunk.
+
+## Metadata Enrichment: The Multiplier
+
+Raw chunk text produces mediocre retrieval. Metadata enrichment changes the game. For each chunk, I attach:
+
+- **Document title and section path.** A chunk from "API Reference > Payments > Create Charge" carries this breadcrumb. When a user asks about creating charges, the vector match combines with the metadata match.
+- **Chunk type.** Code, prose, table, or list. When a user asks "show me the API for refunds," retrieval can prioritize code chunks over prose chunks.
+- **Document-level keywords.** Extracted from the full document and attached to all chunks in that document. This provides a baseline relevance signal independent of the chunk's own content.
+
+I store chunks in PostgreSQL with pgvector. The vector similarity search combines with metadata filters using WHERE clauses. A query for "refund API" searches within chunks tagged as "code" under the "Payments" section. The precision improvement over plain vector search is measurable: from 78% to 91% on my test set of 200 technical queries.
+
+## The Chunk Size Experiment
+
+I ran a controlled test across three chunk sizes on the same document corpus:
+
+- 256 tokens: high precision on specific queries, failed on broad questions that required cross-section context.
+- 512 tokens: balanced. Hit the sweet spot for most query types.
+- 1024 tokens: strong on broad questions, returned irrelevant content within chunks for specific queries.
+
+The insight: chunk size should match query granularity. If users ask specific questions ("what is the refund timeout?"), smaller chunks win. If users ask broad questions ("how does the payment flow work?"), larger chunks win.
+
+My production system uses 512-token chunks as the default and maintains a parallel index of 1024-token chunks for broad queries. The router classifies query intent and selects the appropriate index. Two indexes doubles storage but halves the number of irrelevant results.
+
+## What I Would Do Differently
+
+Three things I learned the hard way:
+
+First, invest in the parser before the model. I spent weeks tuning the embedding model and retrieval parameters before realizing my chunker was splitting JSON examples at random points. Fix the chunker, and half the retrieval problems disappear.
+
+Second, evaluate with real queries, not synthetic benchmarks. MRR and NDCG scores on benchmarks look great. Real users ask questions you did not anticipate, in language that does not match your documentation. Build an evaluation set from actual user queries and judge retrieval quality by whether the retrieved chunks contain the information needed to answer the question.
+
+Third, monitor retrieval quality in production. Track the percentage of queries where the top-3 retrieved chunks contain the answer. When this metric drops, the document corpus changed or the query distribution shifted. Either way, you need to investigate.
+
+Architecture is about trade-offs, not silver bullets. RAG pipelines trade simplicity for configurability. The chunking strategy is the knob with the highest impact on quality. Turn it before you reach for a bigger model.
+
+![RAG Chunking Strategies](/images/blog/rag-chunking-strategies.png)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
