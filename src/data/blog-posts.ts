@@ -5130,6 +5130,116 @@ Architecture is about trade-offs, not silver bullets. RAG pipelines trade simpli
 
 ![RAG Chunking Strategies](/images/blog/rag-chunking-strategies.png)`,
   },
+  {
+    slug: "http-timeouts-payment-pipelines",
+    title: "HTTP Timeouts in Payment Pipelines: The Defaults Will Burn You",
+    description:
+      "Why default timeout values cause cascading failures and duplicate charges in distributed payment systems, and the three timeout values you must configure independently.",
+    date: "2026-06-10",
+    tags: ["Fintech", "Backend", "Architecture"],
+    content: `# HTTP Timeouts in Payment Pipelines: The Defaults Will Burn You
+
+A payment gateway returned 502 at 3:47 AM on a Tuesday. The upstream provider took 31 seconds to respond. Our HTTP client had a 30-second timeout. The connection dropped mid-processing. The provider charged the card. Our system recorded a failure. The customer got charged without receiving credit. I spent the next three days building a manual reconciliation tool to find and refund the 847 affected transactions.
+
+That incident started with a timeout configuration no engineer had reviewed since the project's first commit.
+
+## Why Default Timeouts Fail in Payment Systems
+
+Most HTTP clients ship with sensible defaults for a web browser. A 30-second total timeout works fine when the worst case is a slow image load. In a payment pipeline, the worst case is a partial state across three systems: your service, the payment provider, and the customer's bank.
+
+The problem compounds when you chain services. Service A calls Service B with a 30-second timeout. Service B calls Provider C with a 25-second timeout. Provider C takes 28 seconds to respond. Service B gets the response at 28 seconds, processes it, and responds to Service A at 29 seconds. Service A accepts the response. This works, until Provider C takes 29 seconds instead of 28. Now Service B responds at 30.1 seconds. Service A has already timed out and retried. You now have two charges against one payment intent.
+
+In production, this matters because retries without idempotency keys create duplicate charges. And timeouts without consideration for downstream processing time create retried requests that the downstream service is still working on.
+
+## Three Timeout Values You Must Configure Independently
+
+I set three timeout values on each HTTP client in a payment pipeline, and none of them use the default.
+
+**Connection timeout.** How long to wait for the TCP handshake. I set this to 5 seconds. If the provider's server cannot complete a TCP handshake in 5 seconds, the network path or destination server is struggling. Waiting longer does not help. Fail fast, retry from a different angle or report an outage.
+
+**Read timeout.** How long to wait for the first byte of the response after sending the request. I set this based on the provider's documented SLA plus a 50% buffer. If the provider commits to a 10-second processing time, I set a 15-second read timeout. The buffer absorbs variance without waiting long enough to cascade into upstream timeouts.
+
+**Total timeout.** The absolute maximum for the entire operation, including retries. This should be shorter than the upstream caller's timeout for your service. If your API gateway has a 30-second timeout for your service, your total timeout across all retry attempts should be 25 seconds maximum. This gives you time to return a meaningful error before the gateway drops the connection.
+
+## The Retry Budget Problem
+
+Retries without a budget are a denial-of-service attack against your own infrastructure and your provider's. I configure three retry parameters:
+
+**Maximum retries.** Two retries maximum for payment operations. Not three. Not "until it works." Two. Each retry has a chance of creating a duplicate charge if idempotency is not enforced at the provider level.
+
+**Backoff strategy.** Exponential with jitter. Fixed-interval retries on a struggling service create a thundering herd at the retry interval. Jitter spreads the load. I use the formula: \\\`base_delay * 2^attempt + random(0, base_delay)\\\`.
+
+**Retry budget.** No more than 10% of total requests can be retries within any 60-second window. If the retry budget is consumed, fail without retrying. A provider rejecting 10% of your requests has a problem. Sending more requests will not fix it.
+
+## Timeout Budgets Across Service Boundaries
+
+I draw a timeout budget diagram for each payment integration before writing code. It looks like this:
+
+- Client → API Gateway: 30s
+- API Gateway → Payment Service: 25s
+- Payment Service → Fraud Check: 5s (failure here → abort)
+- Payment Service → Provider: 15s (failure here → retry once)
+- Payment Service → Ledger Write: 3s (failure here → flag for manual review)
+
+Each downstream timeout must be shorter than the upstream caller's timeout, accounting for the sum of all parallel and sequential calls. The fraud check and provider call are sequential. The total for both is 20 seconds, leaving 5 seconds for the payment service to process the response and write to the ledger before the API gateway times out.
+
+I have seen teams set timeouts to 30 seconds across all layers. The result is a cascading timeout chain where the client waits 30 seconds, the gateway waits 30 seconds, the service waits 30 seconds, and the provider takes 29 seconds. The client times out at 30. The gateway times out at 30. The service receives the provider response at 29 and processes it at 30. The gateway has already gone. The client has already gone. The charge went through. No one knows about it until the customer complains.
+
+## Circuit Breakers as Timeout Insurance
+
+Timeouts handle slow responses. Circuit breakers handle repeated slow responses. After a provider fails 5 consecutive timeout thresholds within a 60-second window, the circuit breaker opens. Subsequent requests fail immediately without hitting the provider.
+
+This sounds aggressive. It is. In payment systems, failing fast is safer than waiting in a queue while requests pile up. An open circuit breaker triggers a fallback: route to a secondary provider if available, or return a clear error that the client can handle.
+
+I configure circuit breakers with three states:
+
+**Closed.** Normal operation. Requests flow through. Track failures.
+**Open.** Requests fail immediately. The provider gets breathing room. Your system avoids accumulating timed-out connections.
+**Half-open.** After a cooldown period (I use 30 seconds), allow one request through. If it succeeds, close the circuit. If it fails, open it again.
+
+The cooldown period is shorter than most teams expect. Payment providers recover from transient issues in seconds, not minutes. A 30-second cooldown catches provider-side restarts and brief network blips without leaving the circuit open long enough to impact legitimate traffic.
+
+## Monitoring: What to Watch
+
+Three metrics tell you whether your timeout configuration is working:
+
+**P99 response time vs. timeout threshold.** If your P99 is within 80% of your read timeout, the timeout is too tight or the provider is degrading. I set alerts at the 80% mark.
+
+**Timeout error rate.** Track the percentage of requests that fail due to timeout. Baseline this during normal operation. An increase of more than 2x the baseline within a 5-minute window indicates a provider issue.
+
+**Retry success rate.** Of the requests that timeout and retry, what percentage succeed on retry? If retries succeed less than 30% of the time, the provider is having a sustained outage. Stop retrying and open the circuit.
+
+## The Configuration I Use
+
+For a typical payment provider integration in Python with httpx:
+
+\\\`\\\`\\\`
+client = httpx.Client(
+    timeout=httpx.Timeout(
+        connect=5.0,
+        read=15.0,
+        write=5.0,
+        pool=5.0,
+    ),
+    limits=httpx.Limits(
+        max_connections=50,
+        max_keepalive_connections=20,
+    ),
+)
+\\\`\\\`\\\`
+
+The write timeout at 5 seconds catches cases where the request payload is large or the network upload path is slow. The pool timeout at 5 seconds prevents queueing when the connection pool saturates.
+
+The connection pool limit of 50 is deliberate. Payment providers enforce rate limits. Opening 200 simultaneous connections to a provider that allows 100 requests per second means half your connections queue at the provider's end. Match your pool size to the provider's documented rate limit divided by your expected average response time.
+
+## The Takeaway
+
+Timeouts are not a configuration detail. In a payment pipeline, they are a financial control. A misconfigured timeout can create duplicate charges, lost transactions, and reconciliation nightmares. Set three independent timeouts. Draw a timeout budget across service boundaries. Add circuit breakers. Monitor the metrics. Review the configuration when you onboard a new provider, not when the first incident hits.
+
+The 847 duplicate charges from that Tuesday morning cost more in engineering time than a timeout review would have. I now review timeout configuration as part of each integration's design review, before the first line of code gets written.
+
+![HTTP Timeouts in Payment Pipelines](/images/blog/http-timeouts-payment-pipelines.png)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
