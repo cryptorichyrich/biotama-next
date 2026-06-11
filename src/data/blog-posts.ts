@@ -5415,6 +5415,88 @@ Free-form LLM output treats structure as a polite request. Schema enforcement tr
 
 ![Structured Output from LLMs](/images/blog/structured-output-json-schema.png)`,
   },
+  {
+    slug: "multi-provider-payment-routing",
+    title: "Multi-Provider Payment Routing: Cut Costs, Keep Reliability",
+    description:
+      "An intelligent payment router that weighs cost, latency, and success rates to pick the best provider per transaction, cutting processing fees by 18%.",
+    date: "2026-06-11",
+    tags: ["fintech", "architecture", "payments"],
+    content: `# Multi-Provider Payment Routing: Cut Costs, Keep Reliability
+
+A payment gateway went down for 47 minutes during peak checkout hours. Revenue froze. Customers saw error screens. The ops team scrambled. I watched this happen to a service that ran a single provider for all payment processing. That incident cost more than 47 minutes of lost revenue. It cost customer trust.
+
+After that week, I built a payment router. Not a load balancer that blindly distributes traffic, but a routing layer that weighs cost, latency, and success rates before choosing which provider handles each transaction. Processing costs dropped 18% in the first month. The service has not had a single payment outage since.
+
+## Why Single-Provider Is a Risk, Not an Architecture
+
+Most teams start with one payment provider. Stripe, or Midtrans, or whatever serves their primary market. This works until the provider has an outage, changes pricing tiers, or rejects transactions that a competitor would accept. A single provider means each transaction depends on one company's uptime, one company's fraud rules, and one company's fee schedule.
+
+The business case for multiple providers is redundancy, competitive pricing pressure, and broader payment method coverage. The engineering challenge is routing transactions to the right provider at the right time.
+
+## The Routing Decision Matrix
+
+A payment router needs to make a decision in milliseconds. That decision depends on several factors.
+
+**Transaction amount and currency.** Providers have different fee structures. Provider A charges 2.9% + $0.30 per domestic card transaction. Provider B charges 2.5% + $0.50. For a $10 transaction, Provider A costs $0.59 and Provider B costs $0.75. Provider A wins. For a $500 transaction, Provider A costs $14.80 and Provider B costs $13.00. Provider B wins. The crossover point shifts with each transaction.
+
+**Payment method.** Some providers handle e-wallets better. Others specialize in bank transfers. A QRIS payment in Indonesia goes to the provider with the strongest QRIS integration. A Visa card from Singapore goes to the provider with the lowest cross-border card fees. The router maintains a lookup table that maps payment methods to preferred providers.
+
+**Historical success rate.** Provider A might have a 96% acceptance rate for Mastercard transactions from Indonesia, while Provider B sits at 89%. These rates shift over time as providers update their fraud models. The router tracks success rates per provider, per card network, per geography, and adjusts routing weights to match.
+
+**Provider health.** If Provider A's API latency spiked to 8 seconds in the last five minutes, the router redirects traffic to Provider B until health recovers. This requires a circuit breaker pattern with real-time health checks.
+
+## Architecture of the Router
+
+The router sits between the application and the payment providers. It receives a payment request, evaluates routing rules, selects a provider, and forwards the request. The application does not know which provider handled the transaction.
+
+The core of the router is a scoring function. Each eligible provider receives a score based on weighted factors:
+
+- **Cost score** (40% weight): Estimated fee for this transaction based on the provider's pricing tier and transaction parameters.
+- **Success score** (30% weight): Historical acceptance rate for this payment method and card network from the last 7 days.
+- **Latency score** (15% weight): Current API response time, measured from the last 10 transactions.
+- **Health score** (15% weight): Circuit breaker state. Healthy providers get full score. Providers in half-open state get reduced score. Open circuit breakers get zero.
+
+The provider with the highest score handles the transaction. If that provider fails, the router retries with the next-highest-scoring provider. This fallback chain ensures that a single provider failure does not block the transaction.
+
+## Cost Optimization in Practice
+
+The cost savings come from three areas.
+
+**Dynamic fee routing.** Instead of sending all card transactions to one provider, the router compares estimated fees and picks the cheapest option. With two providers, this alone can save 10-15% on processing fees. The math is straightforward: look up each provider's fee schedule, calculate the cost for the transaction amount, and pick the cheaper one.
+
+**Volume-based routing.** Some providers offer volume discounts. Once you cross 10,000 transactions per month, Provider B drops their rate by 0.3%. The router can prefer Provider B for transactions where the volume threshold is close, accelerating the path to the discount tier.
+
+**Currency conversion savings.** Cross-border transactions carry a currency conversion fee. Provider A charges 2% on FX. Provider B charges 1.5%. For a $1,000 international payment, that is a $5 difference per transaction. The router accounts for FX fees in the cost score, routing international transactions to the provider with the best conversion rates.
+
+## The Circuit Breaker Pattern
+
+Provider health monitoring uses circuit breakers. Each provider has a circuit breaker that tracks recent failures. When failures exceed a threshold, say 5 failures in 60 seconds, the circuit opens and the router stops sending traffic to that provider. After a cooldown period of 30 seconds, the circuit enters a half-open state and sends one test transaction. If the test succeeds, the circuit closes and traffic resumes. If the test fails, the cooldown restarts.
+
+I learned the importance of this pattern the hard way. Without circuit breakers, the router keeps sending transactions to a failing provider, accumulating timeouts and failed charges. Customers see errors. The failing provider's support team gets flooded. With circuit breakers, the router detects the failure within seconds and redirects traffic. The customers see no disruption.
+
+## Reconciliation and Record Keeping
+
+A multi-provider setup adds complexity to reconciliation. Each provider has its own reporting format, its own settlement schedule, and its own transaction ID scheme. The router maintains its own transaction ledger that maps each internal transaction ID to the provider that handled it, the provider's transaction ID, the fees charged, and the settlement status.
+
+This ledger becomes the source of truth for reconciliation. When Provider A's settlement report arrives, you match it against the router's ledger. Discrepancies surface at once: a transaction that succeeded on the router's side but shows as failed on the provider's report, or a fee that does not match the expected rate.
+
+## What I Would Do Differently
+
+The first version of my router used static routing rules. If amount > $100, use Provider B. If payment method is QRIS, use Provider C. This worked for a week, then edge cases accumulated. The rules grew into a tangled decision tree that no engineer on the team wanted to maintain.
+
+The scoring function replaced the decision tree. Instead of hardcoded rules, the scoring function evaluates each provider based on live data. Adding a new provider means adding its fee schedule and health monitor. No rule changes needed. The scoring function handles the rest.
+
+The other change I would make: start with cost routing from day one. I built the router for redundancy alone, treating cost optimization as a nice-to-have. That was backwards. Cost routing paid for the engineering effort within the first month. The redundancy was a bonus that justified the architecture.
+
+## The Takeaway
+
+A multi-provider payment router is the minimum architecture for any payment system that processes more than a handful of transactions per day. The cost savings justify the effort on their own. The redundancy is insurance that pays for itself. The routing intelligence, even a simple scoring function, turns a multi-provider setup from a maintenance burden into a competitive advantage.
+
+Start with two providers. Build the scoring function. Track success rates. Add circuit breakers. The rest follows from the data.
+
+![Multi-Provider Payment Routing](/images/blog/multi-provider-payment-routing.png)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
