@@ -5497,6 +5497,47 @@ Start with two providers. Build the scoring function. Track success rates. Add c
 
 ![Multi-Provider Payment Routing](/images/blog/multi-provider-payment-routing.png)`,
   },
+  {
+    slug: "npm-dependency-tree-liability",
+    title: "The npm Dependency Tree Is a Liability",
+    description:
+      "347 packages in a payment service, 335 of them transitive. Three had critical CVEs. If you are not auditing your dependency tree, you are shipping packages you have never heard of to production.",
+    date: "2026-06-11",
+    tags: ["nodejs", "security", "devops"],
+    content: `I ran \`npm ls\` on a payment service that had been shipping for eight months. 347 packages. The direct dependencies numbered 12. The remaining 335 were transitive, pulled in by libraries I hand-picked and the libraries those libraries chose without asking me. Three had critical CVEs. Two had a single maintainer who had not pushed a commit in over a year. One was a left-pad situation waiting to happen.
+
+That audit took an afternoon. The next week I found a dependency pulling in a package with a known prototype pollution vulnerability. It sat in production for two months because no one on the team knew it existed.
+
+## The Scale of the Problem
+
+A typical Node.js service pulls in hundreds of transitive dependencies. Your \`package.json\` lists the packages you chose. Your \`package-lock.json\` lists the packages those packages chose. You trust your direct dependencies. You also trust their judgment about their dependencies, and their dependencies' judgment about theirs. The trust chain extends three, four, five levels deep.
+
+Most teams do not look past the first level.
+
+The npm ecosystem rewards small, composable packages. This design philosophy produces elegant APIs and enormous dependency trees. A date formatting library, a color utility, a string validator, each pulls two or three transitive packages. Twelve direct dependencies become three hundred total packages. You ship all three hundred to production.
+
+## The Three Risks
+
+Security vulnerabilities spread through transitive dependencies. A critical CVE in a package three levels deep in your tree affects you the same as a CVE in a package you installed yourself. \`npm audit\` catches known vulnerabilities. It does not catch abandoned packages with no maintainer, packages with suspicious publish patterns, or packages that introduce breaking changes in patch versions.
+
+Supply chain attacks target popular transitive dependencies because they reach thousands of projects with a single compromise. The attacker does not need to infiltrate your repository. They need to infiltrate any package in your tree.
+
+Bundle bloat compounds over time. Each transitive dependency adds to your deployment artifact, your cold start time, and your container image size. In a microservices architecture with twenty services, redundant transitive dependencies waste gigabytes of storage and minutes of build time across CI runs.
+
+## What I Do Now
+
+I run three checks on each project, enforced in CI.
+
+\`npm audit --audit-level=high\` fails the build on known vulnerabilities above a severity threshold. No exceptions, no suppressions without a ticket and a timeline.
+
+\`npx depcheck\` flags unused dependencies. Dead packages in \`package.json\` still resolve their transitive tree. Removing them trims the attack surface.
+
+\`npx npm-check --no-emoji\` catches outdated and unmaintained packages. I review the output weekly and flag anything without a commit in six months for replacement.
+
+For new dependencies, I check four things before adding the package: the maintainer count (more than one), the commit frequency (active in the last three months), the download count (consistent usage, not a spike), and the transitive dependency count (fewer is better).
+
+A lean dependency tree is not about paranoia. It is about reducing the surface area for problems you cannot predict. The eight minutes spent auditing a new dependency beats the eight hours spent debugging a production issue caused by a package you did not know you shipped.`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
