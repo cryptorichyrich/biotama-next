@@ -5297,6 +5297,124 @@ The decision comes down to state shape. If your state is a single coherent objec
 
 I now run both in the same project without guilt. Zustand handles the session and global config. Jotai handles the form fields and UI toggles. Each tool handles the shape it targets.`,
   },
+  {
+    slug: "structured-output-json-schema",
+    title: "Structured Output from LLMs: Why JSON Schema Wins",
+    description:
+      "Free-form LLM output breaks in production pipelines. JSON Schema enforcement replaces 200 lines of defensive parsing with a compile-time guarantee on data shape.",
+    date: "2026-06-11",
+    tags: ["ai", "llm", "api-design"],
+    content: `# Structured Output from LLMs: Why JSON Schema Beats Free-Form Generation
+
+I spent a week debugging a data pipeline that broke every time the LLM decided to wrap a number in quotes. The field should have been an integer. The model knew it should have been an integer. But every few hundred calls, it returned \`"amount": "15000"\` instead of \`"amount": 15000\`. Downstream code treated it as a string, concatenating amounts instead of adding them. The finance team noticed before I did.
+
+That bug cost me a week. It also convinced me that free-form LLM output is a liability in any system that feeds into code.
+
+## The Problem With "Just Parse It"
+
+The standard approach to getting structured data from an LLM goes something like this: write a prompt that says "return JSON," hope the model complies, then parse the result. When parsing fails, add a retry. When retries fail, add a regex to strip markdown code fences. When the regex breaks on edge cases, add a fallback parser. You end up with a fragile chain of hopeful parsing and defensive code.
+
+I built that chain once. It had six retry attempts, three regex patterns, and a JSON repair function that handled missing closing braces. It worked 97% of the time. The other 3% of the time, it produced silent data corruption that took days to track down.
+
+The root issue: you are asking a text completion engine to produce syntactically valid structured data, then acting surprised when it occasionally produces text instead.
+
+## JSON Schema as a Contract
+
+Most major LLM providers now support structured output through JSON Schema. OpenAI has \`response_format\` with \`json_schema\`. Anthropic supports tool use with defined input schemas. Google's Gemini has \`responseMimeType\` with schema enforcement. At the token level, the model can only produce output that validates against the schema you provide.
+
+This is not prompting. This is not "please return JSON." This is a compile-time guarantee (as close as one gets with probabilistic systems) that the output will conform to the shape you defined.
+
+\`\`\`json
+{
+  "type": "object",
+  "properties": {
+    "transactions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "amount": { "type": "integer" },
+          "currency": { "type": "string", "enum": ["USD", "EUR", "IDR"] }
+        },
+        "required": ["id", "amount", "currency"]
+      }
+    }
+  },
+  "required": ["transactions"]
+}
+\`\`\`
+
+With this schema enforced, \`"amount": "15000"\` becomes impossible. The token generation logic restricts output to integers in that position. No amount of creative interpretation can produce a string where the schema demands a number.
+
+## Where Free-Form Fails in Production
+
+Free-form output breaks in predictable ways, but the timing is unpredictable. In a payment reconciliation pipeline I maintain, the LLM categorizes transactions and returns structured data. During low load, the free-form approach worked fine. Under high concurrency, with slight variations in prompt context length, the model started producing:
+
+- Nested objects where the schema expected a flat string
+- Enum values that were "close" but not matching (e.g., \`"pending"\` vs \`"PENDING"\`)
+- Extra fields that the parser didn't expect but didn't reject
+- Missing closing braces on long outputs, producing invalid JSON
+
+Each of these is a parsing problem you can handle with defensive code. But each defensive handler adds complexity, and complexity adds surface area for bugs. After switching to schema-enforced output, I deleted 200 lines of parsing, retry, and repair code. The pipeline became simpler and more reliable at the same time.
+
+## Practical Implementation
+
+The implementation differs by provider, but the pattern is the same.
+
+With OpenAI's API, you define the schema and pass it through \`response_format\`:
+
+\`\`\`python
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[{"role": "user", "content": "Extract transactions from this email"}],
+    response_format={
+        "type": "json_schema",
+        "json_schema": {
+            "name": "transactions",
+            "strict": True,
+            "schema": transaction_schema
+        }
+    }
+)
+\`\`\`
+
+The \`strict: True\` parameter forces the model to follow the schema with no deviation. No extra fields, no type mismatches, no missing required properties. The output parses with \`json.loads()\` on the first attempt, every time.
+
+With Anthropic, you use tool use with an empty tool name and a defined input schema. The model fills in the tool input according to the schema, which gives you the same structural guarantee through a different API surface.
+
+The pattern extends beyond single calls. In multi-step agent workflows, each step can define its expected input and output schemas. If step A produces data that step B consumes, the schema contract replaces any implicit assumptions about data shape. When step A changes its output format, the schema mismatch surfaces immediately instead of causing runtime errors three steps downstream.
+
+## What You Give Up
+
+Schema enforcement has costs. The model loses flexibility in how it structures responses. If your schema is too rigid, the model may produce technically correct but semantically poor output, cramming nuanced information into fields that don't fit well.
+
+Schema enforcement also adds latency. Constrained decoding requires more computation per token than unconstrained generation. In my benchmarks, schema-enforced output adds 10-20% latency per call. For batch processing, this is negligible. For real-time interactive features, it is worth measuring.
+
+Some models handle complex schemas poorly. Nested objects beyond two or three levels, large enum lists, and conditional logic (oneOf, anyOf) can confuse the constraint engine and produce lower-quality output than a simpler schema would. Keep schemas flat and direct when possible.
+
+## When to Use Each Approach
+
+Use schema-enforced structured output when:
+
+- The output feeds into code that expects a specific data shape
+- You process more than 100 calls per day and cannot manually inspect failures
+- The pipeline runs without human supervision (cron jobs, background workers, agents)
+- Data integrity matters (financial data, configuration, API payloads)
+
+Free-form output is fine when:
+
+- A human reads the output before it matters
+- You need creative, unstructured responses (marketing copy, summaries, explanations)
+- The volume is low enough that occasional parsing failures are acceptable
+- You are prototyping and schema design would slow you down
+
+## The Takeaway
+
+Free-form LLM output treats structure as a polite request. Schema enforcement treats it as a contract. In any system where the output feeds into code, contracts beat polite requests. The 200 lines of defensive parsing I deleted were not making the system smarter. They were compensating for a lack of structural guarantees at the source. Remove that need, and the system gets simpler and more reliable at the same time.
+
+![Structured Output from LLMs](/images/blog/structured-output-json-schema.png)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
