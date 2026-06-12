@@ -5646,6 +5646,126 @@ Stop asking your message broker for exactly-once guarantees. It cannot provide t
 
 ![Background Jobs at Scale](/images/blog/background-jobs-exactly-once-lie.jpg)`,
   },
+  {
+    slug: "testing-ai-agent-outputs",
+    title: "Testing AI Agent Outputs Without Losing Your Mind",
+    description:
+      "Traditional tests break with AI outputs. The strategy I use in production: validate structure, set content boundaries, and test behavior, not exact strings.",
+    date: "2026-06-12",
+    tags: ["ai", "testing", "developer-tools"],
+    content: `# Testing AI Agent Outputs Without Losing Your Mind
+
+The first time I put an AI agent in a production pipeline, I wrote a test that checked the output for an exact string match. It passed once. The next dozen runs all failed.
+
+Same prompt, same model, same temperature setting set to zero. The output shifted between runs. A word changed here. A paragraph reordered there. The JSON structure stayed valid, but the string comparison failed on whitespace differences I could not predict.
+
+This is the core challenge of testing AI systems. Traditional tests assume determinism: given input X, assert output Y. LLMs violate that assumption by design. You still need confidence that your agent produces useful, correct, safe output. The solution is not to abandon testing. It is to change what you test.
+
+## Stop Testing Strings, Start Testing Structure
+
+The first layer of defense is schema validation. If your agent returns JSON, validate that JSON against a schema before checking anything else. This catches the most common failure mode: the model invents a field name, nests data one level too deep, or returns a string where you expect a number.
+
+\`\`\`typescript
+import Ajv from "ajv";
+
+const responseSchema = {
+  type: "object",
+  required: ["action", "params"],
+  properties: {
+    action: { type: "string", enum: ["transfer", "refund", "void"] },
+    params: { type: "object" },
+    confidence: { type: "number", minimum: 0, maximum: 1 },
+  },
+};
+
+const validate = new Ajv().compile(responseSchema);
+
+function assertValidStructure(output: unknown) {
+  const valid = validate(output);
+  if (!valid) {
+    throw new Error(\`Schema violation: \${JSON.stringify(validate.errors)}\`);
+  }
+}
+\`\`\`
+
+Schema validation is cheap, fast, and catches entire categories of errors. I run it as the first check on any agent output before downstream processing touches it. Invalid structure causes deserialization errors that cascade into failures you discover at runtime. Schema checks move those failures into a controlled path.
+
+## Test Content, Not Words
+
+Once structure checks pass, validate content. Not exact strings. Semantic boundaries.
+
+For classification tasks, assert that the output belongs to an allowed set. The agent can phrase its reasoning however it wants, as long as the final classification lands in the right bucket.
+
+For extraction tasks, check that key entities appear in the output. If the agent processes a payment dispute email and should extract the transaction ID, amount, and reason, check for the presence of each field against known values from the input. Do not assert the full sentence matches.
+
+For generative tasks, the bar shifts. I use a combination of keyword presence and absence checks. The output must contain terms from set A and must not contain terms from set B. This is coarse, but it catches regressions: if an agent that summarizes financial reports starts including investment advice, the "must not contain" list flags it.
+
+\`\`\`typescript
+function assertContentBounds(
+  output: string,
+  mustInclude: string[],
+  mustExclude: string[]
+) {
+  const lower = output.toLowerCase();
+  for (const term of mustInclude) {
+    if (!lower.includes(term.toLowerCase())) {
+      throw new Error(\`Missing required term: "\${term}"\`);
+    }
+  }
+  for (const term of mustExclude) {
+    if (lower.includes(term.toLowerCase())) {
+      throw new Error(\`Forbidden term found: "\${term}"\`);
+    }
+  }
+}
+\`\`\`
+
+This approach has caught real regressions in my agent pipelines. One agent started wrapping JSON output in markdown code fences after a model update. The schema validator passed because the model included valid JSON inside the fences. The content boundary check caught it because the output now contained backtick characters outside the expected character set.
+
+## Behavior Testing: Does the Agent Complete the Task?
+
+Structure and content checks validate output format. Behavior testing validates that the agent accomplished its goal.
+
+For tool-using agents, this means verifying the tool calls. Did the agent call the right tools? Did it pass valid parameters? Did it respect the constraints you set? I test this by running the agent against a mock environment where I control the tool responses, then asserting on the sequence of tool calls.
+
+\`\`\`typescript
+const mockEnv = createMockEnvironment({
+  tools: {
+    getBalance: () => ({ amount: 1000, currency: "USD" }),
+    transfer: (params) => ({ status: "success", id: "txn_123" }),
+  },
+});
+
+const result = await agent.run("Transfer $50 to account ACC_456", mockEnv);
+
+expect(mockEnv.callLog).toEqual([
+  { tool: "getBalance", params: {} },
+  { tool: "transfer", params: { amount: 50, destination: "ACC_456" } },
+]);
+\`\`\`
+
+Behavior tests are the most valuable and the most expensive to write. They require setting up mock environments and defining expected call sequences. They catch the failures that structure and content checks miss: the agent that checks the balance but forgets to transfer, or the agent that transfers without confirming sufficient funds.
+
+In one production incident, a model update caused an agent to call a notification service before the transfer completed instead of after. The notification told users their transfer succeeded before the payment gateway confirmed it. Behavior tests would have caught this by asserting the ordering of tool calls.
+
+## Golden Examples and Regression Locks
+
+The testing strategy I settled on combines all three layers into a snapshot system. I curate a set of golden examples: representative inputs where I have manual confirmation the output is correct. Each golden example includes the input, the expected structure, content boundaries, and expected tool call sequence.
+
+When I change the model, the prompt, or the agent's tools, I run the golden example suite. Failures fall into two categories. The output changed but is still correct: update the snapshot. The output changed and is incorrect: fix the agent.
+
+The discipline of sorting failures into these two buckets prevents two problems. Updating snapshots without review lets regressions slip through. Fixing the agent for each individual change bakes the model's quirks into your test suite. The snapshot review is the human judgment step that neither automated testing nor the model itself can replace.
+
+## The Testing Loop
+
+Run the agent. Validate structure. Validate content bounds. Validate behavior. If all pass, the output enters the snapshot for future regression checks. If any fail, sort the failure into "correct but different" or "wrong" and act on it.
+
+This is not as clean as \`assertEqual(expected, actual)\`. Testing non-deterministic systems requires accepting that correctness is a region, not a point. Define the boundaries of that region through structure, content, and behavior checks. Maintain golden examples to catch regressions. Review failures with human judgment.
+
+The first time a schema validation catches a model returning \`null\` instead of an object in your production pipeline at 2 AM, the investment pays for itself.
+
+![Testing AI Agent Outputs](/images/blog/testing-ai-agent-outputs.jpg)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
