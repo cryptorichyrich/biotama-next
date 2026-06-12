@@ -5823,6 +5823,53 @@ Soft deletes are a convenience pattern that works well in content systems and us
 
 ![Soft Deletes in Financial Systems](/images/blog/soft-deletes-financial-systems.jpg)`,
   },
+  {
+    slug: "env-vars-not-secret",
+    title: "Your Environment Variables Are Not Secret",
+    description:
+      "Why .env files are not a secrets manager, the configuration vs. secrets split, and three concrete changes I made to stop leaking credentials.",
+    date: "2026-06-12",
+    tags: ["security", "devops", "configuration"],
+    content: `# Your Environment Variables Are Not Secret
+
+Last month I found database credentials sitting in a \`.env\` file committed to a repository. Not in \`.gitignore\`. Not in a secrets manager. Just sitting there in plaintext, one \`git clone\` away from anyone with repo access. The team assumed \`.env\` meant "environment" and "environment" meant "safe." It doesn't.
+
+Environment variables solve one problem: separating configuration from code. They do not solve the secrets problem. Conflating the two gets teams into trouble, and I have seen this pattern in three out of four projects I've reviewed this year.
+
+## What Environment Variables Do
+
+The twelve-factor app methodology popularized env vars as a way to configure applications across environments without changing code. Database host, port, log level, feature flag endpoints. These are configuration values. Some of them happen to be sensitive.
+
+The problem starts when teams treat \`.env\` as a secrets vault. It isn't. \`.env\` files sit on disk in plaintext. They get logged in debugging output. They leak into error tracking tools, CI build logs, and Docker inspect output. I once traced a production credential leak to a Next.js build that printed \`NEXT_PUBLIC_\` prefixed variables into the client bundle. The developer prefixed a Stripe key with \`NEXT_PUBLIC_\` to access it in a component, and the build system exposed that variable to the browser as designed.
+
+## The Configuration vs. Secrets Split
+
+Configuration values change between environments but are not dangerous if exposed. Database host names, API base URLs, log verbosity levels. These belong in env vars.
+
+Secrets are credentials that grant access to something. API keys, database passwords, signing keys, OAuth client secrets. These need different handling because exposure means an attacker gains access to a system, not just information about how the system works.
+
+I separate these two categories at the infrastructure level. Configuration goes into environment variables or a config service. Secrets go into a secrets manager: AWS Secrets Manager, HashiCorp Vault, or even a CI/CD platform's encrypted secrets store. The application code doesn't know the difference. It reads from the same interface. But the operational security posture is different because secrets get rotated, audited, and access-controlled at the storage layer.
+
+## The .env File Anti-Pattern
+
+\`.env\` files work for local development because your laptop is a single-tenant environment. The anti-pattern is committing them to version control, sharing them over Slack, or copying them between environments.
+
+I follow a rule: \`.env\` files contain non-secret local configuration only. Database connection strings point to localhost. API keys point to sandbox environments with no production access. Real secrets come from the CI/CD pipeline or a secrets manager, injected at deploy time. If a developer needs production credentials for debugging, they use temporary credentials with an expiry window, not a shared \`.env.production\` file passed around the team.
+
+## What I Changed in My Own Projects
+
+Three concrete changes I made after one too many credential leak scares.
+
+First, I added a pre-commit hook that scans for patterns matching private keys, connection strings with passwords, and known secret prefixes. It catches the obvious stuff before it reaches the remote.
+
+Second, I moved all production secrets to AWS Secrets Manager and wired the deploy pipeline to inject them as environment variables at runtime. The application still reads \`process.env.DATABASE_URL\`, but the value comes from an encrypted, rotated, access-audited source instead of a file on disk.
+
+Third, I stopped using \`NEXT_PUBLIC_\` for anything that shouldn't appear in a browser bundle. Client-side code gets public configuration. Server-side code gets secrets. The boundary is the server/client component split in Next.js, and crossing it requires an API route, not a different env var prefix.
+
+Configuration and secrets serve different purposes. Treat them differently, and you eliminate an entire class of incidents that start with "someone pushed credentials to GitHub."
+
+![Your Environment Variables Are Not Secret](/images/blog/env-vars-not-secret.jpg)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
