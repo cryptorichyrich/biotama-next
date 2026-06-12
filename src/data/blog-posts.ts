@@ -5766,6 +5766,63 @@ The first time a schema validation catches a model returning \`null\` instead of
 
 ![Testing AI Agent Outputs](/images/blog/testing-ai-agent-outputs.jpg)`,
   },
+  {
+    slug: "soft-deletes-financial-systems",
+    title: "Soft Deletes in Financial Systems: A Regulatory Risk",
+    description:
+      "Why soft deletes create state ambiguity, break audit trails, and trigger compliance incidents in financial systems, and what to use instead.",
+    date: "2026-06-12",
+    tags: ["fintech", "database", "compliance"],
+    content: `# Soft Deletes in Financial Systems: When Logical Deletion Creates Regulatory Risk
+
+A junior engineer on my team soft-deleted a disputed transaction record during a refund flow last quarter. The record disappeared from the UI. The ledger still balanced. Two weeks later, our compliance officer flagged a gap in the transaction audit trail during a routine review. The "deleted" record had broken the chain of custody for that payment, and reconstructing what happened required digging through application logs, database timestamps, and the support ticket that triggered the deletion. What should have been a five-minute compliance check turned into a three-day investigation.
+
+Soft deletes feel safe. You keep the data, you add a column, you filter it out of queries. The record is "gone" from the user's perspective but recoverable if something goes wrong. In a social media app or a content management system, this pattern works fine. In a financial system, soft deletes introduce a category of risk that most teams don't recognize until an auditor points it out.
+
+## The Core Problem: State Ambiguity
+
+Financial regulators don't care about your \`deleted_at\` column. They care about whether your system can produce a complete, unbroken record of every transaction from creation to settlement. When you soft-delete a transaction, you create an ambiguity: does this record exist or not? Your application says no. Your database says yes. Your ledger says the money moved. The regulatory answer: the record exists and auditors expect to find it in every query.
+
+I learned this distinction the hard way. A payment gateway I maintained used soft deletes on merchant configuration records. A merchant was "deleted" from the system during an offboarding flow, but their transaction history remained in the payments table. Six months later, during a PCI-DSS audit, the auditor found transactions linked to a merchant that "didn't exist" in the system. The compliance team spent a week explaining that the merchant was soft-deleted, not hard-deleted, and that the transaction records were still valid. The auditor accepted the explanation, but the finding appeared in the audit report as a deficiency in data integrity controls.
+
+## Where Soft Deletes Break Down in Finance
+
+Three specific scenarios where soft deletes create problems in financial systems.
+
+**Transaction records.** Deleting a transaction breaks the audit chain. Even if you keep the row, the \`deleted_at\` timestamp introduces a question: was this transaction reversed, voided, or removed? Each of those has a different regulatory meaning. A reversal creates an offsetting entry. A void cancels the transaction before settlement. A soft delete does neither of these things but hides the record from operational views. Regulators want to see explicit state transitions, not implicit ones driven by a timestamp column.
+
+**Account and ledger entries.** In a double-entry ledger, soft-deleting one side of an entry creates an immediate imbalance. The system might handle this by filtering deleted records from balance calculations, but then your reported balances depend on which filter the reporting query uses. I have seen two different balance reports for the same account because one query filtered on \`deleted_at IS NULL\` and the other didn't. When those numbers appear in regulatory filings, the discrepancy becomes a compliance incident.
+
+**Customer and merchant records.** Soft-deleting a customer record while their transaction history persists creates orphaned data. Anti-money laundering checks that trace transaction patterns across customer relationships break when the customer record vanishes from the result set. KYC data that regulators ordered purged under GDPR retention rules lingers because the soft-deleted record still occupies storage and remains queryable by anyone with database access.
+
+## The Immutability Contract
+
+Financial systems operate under an implicit contract: once a record is written, its state changes through explicit events, not through deletion. A payment moves from \`pending\` to \`completed\` to \`settled\`. A refund creates a new record that references the original transaction. An account closure sets a status flag and timestamps the closure. None of these operations remove data. They add state.
+
+This immutability contract serves two purposes. First, it satisfies regulators who need to reconstruct the timeline of any transaction. Second, it protects the system from itself. Financial logic depends on the existence of records. Deleting records, even softly, risks breaking invariants that the rest of the system assumes are permanent.
+
+## What to Do Instead
+
+Replace soft deletes with explicit state machines. A transaction record has states: \`pending\`, \`completed\`, \`failed\`, \`voided\`, \`reversed\`. Each state transition creates a corresponding audit log entry. A customer record has states: \`active\`, \`suspended\`, \`closed\`. Closure triggers a cascade: disable the account, retain transaction history for the mandatory retention period, and schedule the personal data for hard deletion once the retention window expires.
+
+For records that must be hidden from operational views, use a \`visibility\` or \`status\` field with named states, not a boolean or timestamp deletion flag. This makes the reason for the record's absence explicit and queryable. An auditor can ask "show me all voided transactions" and get a meaningful result. They cannot ask "show me all soft-deleted records" and understand what business event caused the deletion.
+
+For data that regulators require you to remove, such as GDPR right-to-erasure requests, use a two-phase approach. First, anonymize the personal identifiable information fields while retaining the financial record. Then hard-delete the PII from all replicas and backups within the compliance window. Soft-deleting PII does not satisfy GDPR requirements because the data is still present and accessible.
+
+## The Performance Question
+
+One argument for soft deletes in high-volume systems is performance: hard deletes are expensive on large tables, and the cascade operations they trigger can lock rows. I understand the concern. On a payments table with 200 million rows, deleting records in batches during off-peak hours is a valid operational strategy.
+
+But this is an operational concern, not a data modeling one. Partition your financial tables by date range and drop old partitions once the retention period expires. This is a hard delete at the storage level, it's fast, and it satisfies both performance requirements and regulatory retention schedules. PostgreSQL's table partitioning makes this straightforward. Create monthly partitions, set a retention policy, and drop partitions older than the required window. No soft deletes needed.
+
+## The Rule I Follow
+
+In financial systems, I follow one rule: if a record participated in a financial calculation or appeared in a regulatory filing, it stays permanent. It cannot be soft-deleted, hard-deleted, or modified without a corresponding audit trail entry. The only records eligible for deletion are transient ones: session data, draft entries that no one submitted, cached calculation results. Anything that touched the ledger stays.
+
+Soft deletes are a convenience pattern that works well in content systems and user-facing applications. Financial systems do not have the luxury of convenient ambiguity. Regulators expect clarity, auditors expect completeness, and the system expects consistency. A \`deleted_at\` column provides none of these. Explicit state transitions, audit trails, and partition-based retention do.
+
+![Soft Deletes in Financial Systems](/images/blog/soft-deletes-financial-systems.jpg)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
