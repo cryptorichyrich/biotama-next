@@ -5538,6 +5538,114 @@ For new dependencies, I check four things before adding the package: the maintai
 
 A lean dependency tree is not about paranoia. It is about reducing the surface area for problems you cannot predict. The eight minutes spent auditing a new dependency beats the eight hours spent debugging a production issue caused by a package you did not know you shipped.`,
   },
+  {
+    slug: "background-jobs-exactly-once-lie",
+    title: "Background Jobs at Scale: Why Exactly-Once Processing Is a Lie",
+    description:
+      "Message brokers cannot guarantee exactly-once delivery. The correct response is idempotent processing with deduplication tables and conditional writes.",
+    date: "2026-06-12",
+    tags: ["architecture", "backend", "distributed-systems"],
+    content: `Our system sent a payment confirmation email twice. The customer saw two identical charges on their bank statement. Support fielded the call at 11 PM on a Friday night. The root cause sat in a background job processor whose documentation promised "exactly-once delivery."
+
+The promise was false. Most vendors, frameworks, and architecture documents that claim exactly-once processing are either misrepresenting deduplication as delivery semantics or hoping you will not test the failure scenarios. I tested them. They failed.
+
+## Why Exactly-Once Is Impossible
+
+Distributed message delivery faces a fundamental constraint. A worker process picks up a job, executes the business logic, and sends an acknowledgment back to the queue. Three things can fail: the worker crashes before processing, the worker crashes after processing but before acknowledgment, or the network drops the acknowledgment.
+
+If the queue resends on missing acknowledgment, you get at-least-once delivery. Jobs run twice when the first execution succeeded but the acknowledgment missed its window. If the queue does not resend, you get at-most-once delivery. Jobs disappear when the acknowledgment drops.
+
+Exactly-once requires the queue to know whether the worker processed the job before the crash. The queue cannot know this. The worker's internal state died with the process. The acknowledgment stayed in the network buffer. The queue has two choices: resend and risk duplication, or drop and risk data loss. There is no third option.
+
+This is not a limitation of specific message brokers. It is a consequence of distributed systems fundamentals. The two generals problem proved in 1975 that reliable communication over unreliable channels cannot guarantee simultaneous agreement. Message delivery across process boundaries inherits this constraint.
+
+## What Vendors Mean by "Exactly-Once"
+
+Kafka claims "exactly-once semantics." What Kafka delivers is transactional writes combined with consumer deduplication. The broker ensures that a message appears in the topic once. The consumer still needs idempotent processing because the consumer can crash after processing and before committing the offset.
+
+SQS FIFO queues offer "exactly-once processing" within a five-second deduplication window. If your consumer takes longer than five seconds to process and acknowledge, duplicates appear. If your consumer crashes and restarts after six seconds, duplicates appear.
+
+The vendor documentation is describing a specific technical guarantee at the broker level that does not extend to your application's business logic. The broker guarantees that it delivers the message once to the consumer. Your application still needs to handle the case where it processes the same message twice because the acknowledgment was lost.
+
+## The Real Solution: Idempotent Processing
+
+Idempotency means processing the same job twice produces the same result as processing it once. This is the correct architectural response to at-least-once delivery. You accept that duplicates will arrive under failure conditions, and you design your processing to handle them.
+
+The implementation pattern depends on the operation.
+
+For state mutations that create new records (sending an email, charging a payment), use an idempotency key. Generate a unique key from the job payload. Before processing, check a deduplication table for that key. If the key exists, skip processing and return the cached result. If the key does not exist, process the job and write the key to the table.
+
+\`\`\`python
+async def process_payment_job(job: PaymentJob) -> PaymentResult:
+    idempotency_key = f"payment:{job.transaction_id}:{job.attempt}"
+
+    existing = await db.fetch_one(
+        "SELECT result FROM job_dedup WHERE key = $1", idempotency_key
+    )
+    if existing:
+        return PaymentResult.parse(existing["result"])
+
+    result = await charge_payment(job.transaction_id, job.amount)
+
+    await db.execute(
+        "INSERT INTO job_dedup (key, result, created_at) VALUES ($1, $2, NOW())",
+        idempotency_key, result.json()
+    )
+    return result
+\`\`\`
+
+For state transitions (updating order status, marking a record as processed), use conditional writes with version checks. The UPDATE succeeds only if the current state matches the expected precondition. A duplicate job sees the updated state and becomes a no-op.
+
+\`\`\`sql
+UPDATE orders
+SET status = 'confirmed', version = version + 1
+WHERE id = $1 AND status = 'pending'
+\`\`\`
+
+Two workers pick up the same job and both attempt this update. One succeeds and one affects zero rows. The worker that affected zero rows knows the job was already processed. No deduplication table needed.
+
+## The Deduplication Table Design
+
+The deduplication table needs three properties: uniqueness, expiration, and durability.
+
+Uniqueness comes from a primary key on the idempotency key column. A duplicate insert fails with a constraint violation. Catch that violation and return the cached result.
+
+Expiration prevents the table from growing without bound. Idempotency guarantees have a business-defined window. A payment retry stays idempotent for 24 hours. A notification send stays idempotent for the lifetime of the notification target. Add a \`created_at\` column and run a periodic cleanup job.
+
+Durability matters because the deduplication table must survive process crashes. If the table lives in the same database as your business data, wrap the deduplication insert and the business logic in the same transaction. This couples them: if the transaction rolls back, the deduplication key rolls back too, and the next retry processes cleanly.
+
+If the table lives in a separate store (Redis, for instance), you accept a smaller window of risk. Redis persistence is not transactional with your database writes. A crash between the business write and the Redis key set produces a duplicate on retry. For financial operations, keep the deduplication table in the same database.
+
+## Monitoring What Matters
+
+Track two metrics for background job reliability: duplicate processing rate and acknowledgment latency.
+
+Duplicate processing rate measures how often your idempotency layer catches retries. This number should stay close to zero under normal operation. A spike indicates downstream slowness causing acknowledgment timeouts, which causes the queue to resend. I set alerts at 0.1% of total throughput.
+
+Acknowledgment latency measures the gap between job completion and acknowledgment receipt. High latency means your workers take too long to acknowledge, which makes the queue more likely to resend. Keep this under 100 milliseconds.
+
+Do not track "exactly-once compliance." That metric does not exist. Track the rate at which your idempotency layer catches duplicates. That number tells you whether your design handles reality.
+
+## The Friday Night Incident
+
+I debugged the double-charge incident I mentioned at the top. It traced back to a Celery worker that processed a payment job in 4.7 seconds. The Redis broker had a visibility timeout of 5 seconds. The worker acknowledged the job in 4.9 seconds, just under the timeout. The next week, a database migration increased processing time to 5.2 seconds. The broker re-queued the job at the 5-second mark. The original worker finished and acknowledged, but the broker had already delivered the job to a second worker. Two charges. One upset customer.
+
+The fix was not to increase the visibility timeout. That just moves the failure window. The fix was idempotent processing with a deduplication table in the same PostgreSQL database as the payment records. The second worker attempts the same charge, hits the deduplication table, sees the idempotency key, and returns the cached result. One charge. Customer has no idea. Support sleeps through the night.
+
+## What the Tutorials Skip About Job Retry Design
+
+Most background job tutorials cover retry with exponential backoff. Few mention that retries compound the duplicate problem. If a job runs three times (original plus two retries) and each attempt carries a 1% chance of a lost acknowledgment, your duplicate probability is not 1%. It is closer to 3%, compounded by the fact that retries cluster during outages when acknowledgment loss rates spike.
+
+Design your retry logic with three rules. First, make each retry carry its own idempotency key that maps to the same deduplication record. The key should derive from the business identifier (transaction ID, order ID), not from the job attempt number. Second, cap retries at a reasonable number and push failures to a dead letter queue for manual inspection. Infinite retries with idempotency protection mask upstream problems that need human attention. Third, log the deduplication hit rate per retry attempt. If your second retry has a 50% deduplication hit rate, your first attempt is failing at an alarming rate and the root cause needs investigation.
+
+## The Takeaway
+
+Design for at-least-once delivery. Implement idempotent processing. Use deduplication tables for operations that create side effects, and conditional writes for state transitions. Monitor duplicate processing rate as your reliability metric.
+
+Stop asking your message broker for exactly-once guarantees. It cannot provide them. Your application code can provide the equivalent through idempotency. That is the engineering solution, not a vendor feature.
+
+![Background Jobs at Scale](/images/blog/background-jobs-exactly-once-lie.jpg)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
