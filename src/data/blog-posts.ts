@@ -5870,6 +5870,107 @@ Configuration and secrets serve different purposes. Treat them differently, and 
 
 ![Your Environment Variables Are Not Secret](/images/blog/env-vars-not-secret.jpg)`,
   },
+  {
+    slug: "circuit-breaker-payment-provider",
+    title: "When Your Payment Provider Goes Down: Circuit Breakers in Production",
+    description:
+      "How circuit breaker patterns prevent payment provider outages from cascading into system-wide failures, with per-provider configuration strategies and fallback patterns for fintech systems.",
+    date: "2026-06-13",
+    tags: ["Fintech", "Architecture", "Resilience"],
+    content: `# When Your Payment Provider Goes Down: Circuit Breakers in Production
+
+A payment provider went offline during peak hours. Our system kept retrying. Each request tied up a connection, a thread, and a database transaction. After ninety seconds, the connection pool ran dry. The checkout page stopped responding. Users refreshed. The load balancer saw healthy instances and routed more traffic. Six minutes later, the entire service collapsed because we refused to stop knocking on a locked door.
+
+That incident made me treat circuit breakers as mandatory infrastructure.
+
+## Why Payment Provider Failures Hit Different
+
+Most third-party API failures are annoying. Payment provider failures are expensive. When a product catalog service times out, you show a spinner. When a payment gateway stops responding, users submit duplicate charges, transactions hang in limbo, reconciliation breaks, and support tickets pile up.
+
+Payment calls have three properties that make them hazardous:
+
+1. They hold state. A payment request creates a charge on the provider side even if your system fails to receive the response. Each retry risks creating a duplicate charge.
+
+2. They tie up resources. A payment call holds a database transaction open (you need to update the order status), consumes a connection from your pool, and blocks a worker thread.
+
+3. They cascade. A failed payment blocks order confirmation. The blocked order holds inventory. The held inventory prevents other users from purchasing. One slow provider call can back up your entire order pipeline.
+
+I have seen a single provider's 500ms latency spike cause a 30-second checkout time across the platform because nothing stopped the calls from piling up.
+
+## The Circuit Breaker, Applied to Payments
+
+The circuit breaker pattern has three states: Closed, Open, and Half-Open. The textbook explanation sounds clean. The production implementation is where it gets interesting.
+
+**Closed state:** Requests flow to the provider. The breaker counts failures and tracks response times in a sliding window. Nothing unusual happens. This is normal operation.
+
+**Open state:** Failures exceed the threshold. The breaker stops sending requests to the provider. Instead of waiting for a timeout, it returns a fallback response or an error without delay. The provider gets breathing room. Your system frees resources.
+
+**Half-Open state:** After a cooldown period, the breaker lets a small number of test requests through. If they succeed, the circuit closes and traffic resumes. If they fail, the circuit stays open for another cooldown cycle.
+
+The half-open state is where most teams misconfigure their breakers. Set the cooldown too short and you flood a recovering provider with test traffic. Set it too long and you reject transactions that could have succeeded. In payment systems, I start with 30 seconds and adjust based on the provider's historical recovery time.
+
+## Per-Provider Circuits, Not Global Breakers
+
+One mistake I see in fintech systems: a single circuit breaker wrapping all outbound payment calls. This defeats the purpose.
+
+If you integrate with three payment providers (a card processor, an e-wallet aggregator, and a bank transfer gateway), each one needs its own circuit. Provider A's outage should not block Provider B's transactions. Each provider has distinct failure modes: the card processor might timeout, the e-wallet might return 503 errors, and the bank transfer gateway might accept requests but fail to confirm them.
+
+Configure separate breakers with provider-specific thresholds. Card processors tend to recover fast from rate-limited bursts, so a shorter cooldown works. Bank transfer gateways have longer recovery cycles, so a 60-second cooldown is safer.
+
+## Fallback Strategies That Keep Money Moving
+
+When the circuit opens, you need a fallback. For payments, "fail fast" is not enough. You need one of these strategies:
+
+**Queue for retry.** Accept the payment request, persist it, and return a "processing" status to the user. A background worker retries when the provider recovers. This works for non-time-sensitive payments like bank transfers. It does not work for card authorizations where the user expects instant confirmation.
+
+**Route to an alternate provider.** If you have redundant providers, the fallback routes the charge elsewhere. This requires provider-agnostic payment abstractions. I have built payment routing layers that normalize charge requests across providers so the caller does not need to know which provider handles the transaction.
+
+**Return a controlled error.** Sometimes the right move is to tell the user the payment service is unavailable and ask them to retry in a few minutes. A clear error beats a hung request or a duplicate charge. Display a message with context ("Payment services are experiencing delays. Please retry in 2 minutes.") and log the event for monitoring.
+
+**Serve from cache.** For read operations like balance checks and transaction history, serve stale data from cache with a disclaimer. For write operations like charges, caching is dangerous and I avoid it.
+
+## Configuration: The Numbers That Matter
+
+Getting the threshold wrong undoes the pattern. I tune four values for production payment systems:
+
+**Failure rate threshold:** 50% over a sliding window of 20 calls. Five consecutive failures is too sensitive to intermittent errors. A 100% threshold is too slow to react. Half the calls failing in the last 20 attempts means something is broken, not flaky.
+
+**Slow call threshold:** Any call exceeding 5 seconds counts as a failure, even if it succeeds. In payment systems, a 10-second response is worse than a fast error. Your user's session times out, your connection pool drains, and you gain nothing from the late success.
+
+**Cooldown duration:** 30 seconds for fast-recovery providers, 60 seconds for slower gateways. Start conservative and reduce based on observed recovery patterns.
+
+**Half-open test calls:** 3 to 5 requests, not one. A single success does not mean the provider is healthy. Three consecutive successes is a stronger signal.
+
+## Monitoring: What to Watch
+
+A circuit breaker that trips without alerting anyone is a silent failure in a different direction. Track these metrics:
+
+**Circuit state transitions per provider.** A provider's circuit opening more than twice in an hour signals a systemic problem, not a transient blip.
+
+**Time spent in open state.** A circuit that stays open for 10 minutes means your fallback is absorbing significant traffic. Check whether the fallback can handle the load.
+
+**Fallback invocation rate.** If 40% of your payment calls hit the fallback, your primary provider has a reliability problem. Time to activate the alternate provider or renegotiate SLAs.
+
+**Rejected request count during open state.** This is your revenue impact number. Combine it with average transaction value to quantify what provider downtime costs.
+
+I wire circuit state changes into the alerting system. Each state transition fires an event. Open circuits trigger page-level alerts. Half-open transitions log at info level. Closed transitions after an incident log at warning level because the provider recovered, but the pattern deserves tracking.
+
+## The Anti-Pattern: Retry Without a Breaker
+
+Retries and circuit breakers solve different problems. Retries handle transient failures (network hiccups, temporary rate limits). Circuit breakers handle sustained failures (provider outages, degraded performance).
+
+Using retries without a circuit breaker is dangerous. If the provider is down, all failed requests get retried N times. That multiplies the load on your system and the provider. I have seen a payment service send 300 retry requests to a provider in 5 minutes because the retry backoff was too aggressive and nothing stopped the cycle.
+
+The correct pattern: wrap the retry in a circuit breaker. The retry handles transient blips within the closed state. When the breaker opens, retries stop. The combination gives you resilience for both failure types without the retry storm risk.
+
+## The Takeaway
+
+Circuit breakers are the difference between "our payment provider had issues" and "our entire checkout went down." Implement them per-provider. Tune the thresholds for your specific traffic patterns. Wire them into your monitoring. And test them. Chaos engineering tools can simulate provider failures. Run a game day, trip the circuit, and verify your fallback works under load.
+
+The provider will go down. The question is whether your system degrades or collapses.
+
+![Circuit Breaker for Payment Providers](/images/blog/circuit-breaker-payment-provider.jpg)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
