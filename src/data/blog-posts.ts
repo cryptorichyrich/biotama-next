@@ -6100,6 +6100,67 @@ Before adding another index, read your slow query log, run \`EXPLAIN ANALYZE\`, 
 
 ![Database Indexing Strategy](/images/blog/database-indexing-strategy-composite-covering-partial.jpg)`,
   },
+  {
+    slug: "monitoring-autonomous-agents-production",
+    title: "Monitoring Autonomous Agents in Production",
+    description:
+      "Uptime and error rate reveal nothing about agent health. Four metrics that matter, how to trace an agent's reasoning chain, and when to halt a run.",
+    date: "2026-06-14",
+    tags: ["AI", "Agents", "Engineering", "Observability"],
+    content: `# Monitoring Autonomous Agents in Production
+
+Last month one of my cron jobs reported perfect health for six hours. Green dashboards, zero errors, latency under a second. It had also been producing the wrong output for each task in that window. Uptime monitoring caught none of it.
+
+That gap is the central problem with autonomous agents in production. A web service either responds or it does not. An agent can respond with a 200, consume your token budget, call all the right tools in the right order, and still deliver a wrong answer stated as fact. Traditional APM tools answer binary questions by design: is the service up, and how fast is it? They offer no semantic layer to judge whether the response was correct.
+
+The failure moves from mechanism to meaning. Infrastructure monitors have no view into meaning. That is why an agent can post 99 percent uptime on your dashboard while it fabricates facts and ships them as truth in the other requests.
+
+## Why Standard Monitoring Breaks Down
+
+I run several autonomous pipelines, including the one that drafts and publishes these articles. Each one makes a handful of LLM calls, runs a dozen tool invocations, and writes to a database. Early on I trusted the same metrics I use for any backend service: request latency, error rate, status codes. Those numbers told me the pipeline executed. They said nothing about whether the output was worth shipping.
+
+Production data tells a harsher story. Across large-scale agent logs, around 78 percent of failures leave no trace at all. No crash, no error code, no latency spike. The downstream system just receives a wrong or useless answer. On a standard infrastructure monitor, the service looks healthy. The actual failure stays invisible, because this failure mode has no analogue in conventional software. A wrong answer stated as fact arrives as a 200 OK, and your dashboard records it as success.
+
+## The Four Metric Families That Matter
+
+I track four metric families for each autonomous system I run. None of them come from a default Datadog dashboard.
+
+**Quality signals.** Task success rate answers one question: the share of runs that produced a usable result. The second signal matters more in practice. Human override rate counts how often a person stepped in to fix or reject the output. Override rate is the most honest quality metric you have, because it measures the gap between what the agent produced and what a human considered acceptable. If my override rate creeps above ten percent on a stable pipeline, something drifted. The prompt changed, the source data shifted, or the model received an update I did not audit.
+
+**Cost signals.** Tokens per task is a vanity metric. Cost per successful task is the number that controls your runway. If an agent burns 40,000 tokens on a task it then fails, your spend rises while your success rate falls. That compounds. One of my pipelines had a regression that doubled token usage for three days before I noticed. The failure rate stayed low, and the per-task token count looked normal on a moving average. Tracking cost per successful task would have caught it in hours.
+
+**Latency signals.** Skip the average. Track the p95 and p99. Agent latency varies by an order of magnitude based on reasoning path. A task that takes two seconds when the agent picks the direct route takes twenty when it loops through retries. The average hides the slow tail. The slow tail is where users abandon.
+
+**Reliability signals.** Error rate is the easy one. The hard one is partial failure rate: the agent completed the task but skipped a step. I weight partial failures heavier than crashes, because a crash is loud and a skipped step ships into production with no alarm.
+
+## Trace the Reasoning Chain
+
+An agent needs more than input and output logs. You need the full reasoning trace: each LLM call, each tool invocation, each decision point, with the input, output, duration, and token cost for each span.
+
+A trace from one of my article pipelines looks like a tree. The root span is the cron trigger. Under it, a research span, a drafting span, a quality gate span, a publish span. Each of those breaks into LLM calls and tool calls. A published article came out wrong last month. I opened the trace and found the quality gate span had returned a pass on a draft that contained fabricated source attribution. The fix lived in the gate, not in the monitoring. I found it because the trace existed.
+
+I structure traces with OpenTelemetry and the GenAI semantic conventions, and ship them to a purpose-built store. Generic time-series databases miss the query patterns agents produce: random access on individual runs, full-text search across trace bodies, trajectory queries that ask which runs called a given tool twice. A specialized trace store pays for itself the first time you debug a regression at two in the morning.
+
+## Knowing When to Intervene
+
+Full autonomy is a myth in production. Each autonomous system I run has a kill switch, a budget cap, and an escalation path. The real question is when to intervene, and on what signal.
+
+I treat three signals as mandatory human checkpoints.
+
+1. **Cost spikes.** A single run that exceeds the historical p99 token spend by two times halts the pipeline and pages me.
+2. **Repeated retries.** An agent that calls the same tool more than twice is stuck, and a stuck agent drains your budget fast.
+3. **Override rate crossing a threshold.** Human corrections on a stable pipeline that cross my daily limit stop the shipping line until I review the last batch.
+
+Treat each correction as labeled data. Each one sharpens the prompt, tightens the guardrails, and trims the need for the next intervention. The loop grows quieter week over week. The compounding is the whole point.
+
+## Start With One Pipeline
+
+If you run an agent in production today and your only monitoring is uptime and error rate, you are flying blind. Pick one change. Take your most important agent, and track three numbers this week: task success rate, human override rate, and cost per successful task. Wire up full traces on that one pipeline. Set a budget cap that halts the run before it spends ten times the median cost. Decide the three signals that should page you, and automate the kill switch on them.
+
+The agents that survive in production share three traits: tight instrumentation, tight guardrails, and a human who knows when to step in.
+
+![Autonomous Agent Monitoring](/images/blog/monitoring-autonomous-agents-production.jpg)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
