@@ -6025,6 +6025,81 @@ Skip the debugging library. The console methods you have ignored since the first
 
 ![JavaScript Console Methods](/images/blog/javascript-console-methods-youre-not-using.png)`,
   },
+  {
+    slug: "database-indexing-strategy-composite-covering-partial",
+    title: "Database Indexing Strategy: Composite vs Covering vs Partial",
+    description:
+      "Three index patterns dominate production query optimization: composite for multi-column filters, covering for index-only scans, partial for small subsets.",
+    date: "2026-06-14",
+    tags: ["Database", "PostgreSQL", "Performance"],
+    content: `# Database Indexing Strategy: Composite vs Covering vs Partial
+
+A payments dashboard took 11 seconds to load pending transactions. The team had added three single-column indexes: one on \`status\`, one on \`created_at\`, one on \`customer_id\`. Each index worked. The query stayed slow. PostgreSQL scanned each index separately, ran a bitmap AND across the results, fetched rows from the heap, and sorted them in memory. Every step cost milliseconds. They multiplied.
+
+I replaced those three indexes with one composite index on \`(status, created_at)\`. Query time dropped to 4 milliseconds. The three indexes were not wrong. They were the wrong tool. Indexing strategy is about matching the index structure to the query shape, and most teams reach for single-column B-trees by default without considering the alternatives.
+
+Three index patterns cover 90% of production query optimization work: composite, covering, and partial. Each solves a different problem. Knowing which to reach for separates a database that scales from one that accumulates indexes without improving performance.
+
+## Composite Indexes: When You Filter on Multiple Columns
+
+A composite index spans multiple columns in a defined order. The order matters because a B-tree can only use a contiguous prefix from the left. An index on \`(status, created_at, customer_id)\` serves queries that filter on \`status\`, on \`status\` and \`created_at\`, or on all three. It does not serve a query that filters on \`created_at\` alone, because \`created_at\` sits behind \`status\` in the ordering.
+
+The rule I follow for column ordering: put equality columns first, range columns last. A query like \`WHERE status = 'pending' AND created_at > '2026-06-01'\` benefits from \`(status, created_at)\`. The equality on \`status\` narrows the range. \`created_at\` stays sorted within that range for the comparison. Reverse the order and the planner cannot use the index for the equality condition.
+
+I once inherited a payments table where someone had built a composite index on \`(created_at, status)\`. The dashboard queried by \`status\` then sorted by \`created_at\`. The index helped with the sort but not the filter. Reordering to \`(status, created_at)\` cut the query from 800ms to 12ms. Same columns, same index size, different order. Column ordering carries that kind of impact.
+
+## Covering Indexes: When You Want to Skip the Heap
+
+A covering index adds non-key columns so the query retrieves all its data without visiting the table. PostgreSQL 11 introduced the \`INCLUDE\` clause for this purpose:
+
+\`\`\`sql
+CREATE INDEX idx_payments_status_created
+ON payments (status, created_at)
+INCLUDE (amount, currency, customer_id);
+\`\`\`
+
+This index serves a query like \`SELECT amount, currency, customer_id FROM payments WHERE status = 'pending' ORDER BY created_at\` with an index-only scan. The database reads the index entries and returns results without fetching heap pages. On a table with hundreds of millions of rows, skipping the heap fetch can mean the difference between a query that fits in cache and one that pages from disk.
+
+The distinction between a key column and an included column matters. Key columns participate in the B-tree structure and remain sortable. Included columns sit as payload in the leaf nodes. This means included columns do not affect the B-tree depth, so the index stays compact even when it carries extra data. It also means uniqueness constraints apply only to the key columns, not the included ones.
+
+I use covering indexes for hot read paths where the same columns get selected on each request. A transaction history view that filters by account and returns amount, date, and status is the canonical case. The covering index turns a multi-second scan into a sub-millisecond lookup. The trade-off is write cost. Each insert and update maintains the index, and wider indexes mean more work per write. Reserve covering indexes for queries that run thousands of times per day, not the occasional report.
+
+## Partial Indexes: When You Query a Small Slice
+
+A partial index covers only the rows that match a \`WHERE\` clause:
+
+\`\`\`sql
+CREATE INDEX idx_payments_pending
+ON payments (created_at)
+WHERE status IN ('pending', 'processing');
+\`\`\`
+
+This index ignores the 94% of rows with a completed or failed status. It stays small, stays hot in cache, and updates cheaply because most inserts skip it.
+
+The trigger condition for reaching for a partial index: you query a small, stable subset of a large table. Status flag columns are the classic case. In one system I maintained, a payments table had 60 million rows, and the operational dashboard queried only pending and processing transactions. A full index on \`status\` maintained entries for all 60 million rows. The partial index covered 1.8 million. Same query, same logic, a fraction of the storage and maintenance cost.
+
+The constraint to remember: a stable predicate in your index must match the predicate in your query for the planner to use it. If the index filters on \`status IN ('pending', 'processing')\` and your query filters on \`status = 'pending'\`, the planner recognizes the subset and uses the index. Drop the status filter from your query and the planner ignores the partial index and falls back to a full scan.
+
+## How I Choose Between Them
+
+These three patterns combine. A composite partial covering index is valid and sometimes the right answer. Most queries need one, not all three.
+
+Reach for **composite** when you filter or sort on multiple columns in the same query. Column order is the single most important decision.
+
+Reach for **covering** when your query selects columns beyond its filter, the query runs at high volume, and the heap fetch is the bottleneck. Add only the columns you select. Each extra included column increases write cost.
+
+Reach for **partial** when you query a small subset of a large table and a stable predicate defines that subset. The index stays small and fast because it ignores the rows you do not query.
+
+The mistake I see most often: teams add single-column indexes to each column that appears in a \`WHERE\` clause, then wonder why queries stay slow and writes degrade. Five single-column indexes cannot do what one well-ordered composite index does. They also cost five times the write maintenance. Indexing is about matching structure to access pattern, not about quantity.
+
+## The Takeaway
+
+Index type follows query shape. Composite handles multi-column filters. Covering eliminates heap fetches for hot reads. Partial shrinks the index to the rows you query. Get the access pattern right, and the index choice becomes obvious.
+
+Before adding another index, read your slow query log, run \`EXPLAIN ANALYZE\`, and identify which step dominates. A sequential scan suggests a missing index. A heap fetch dominating the runtime suggests a covering index. A bitmap scan combining multiple indexes suggests a composite replacement. The query plan tells you which index type to build. You just have to read it.
+
+![Database Indexing Strategy](/images/blog/database-indexing-strategy-composite-covering-partial.jpg)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
