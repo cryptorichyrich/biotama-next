@@ -6161,6 +6161,64 @@ The agents that survive in production share three traits: tight instrumentation,
 
 ![Autonomous Agent Monitoring](/images/blog/monitoring-autonomous-agents-production.jpg)`,
   },
+  {
+    slug: "bullmq-vs-temporal-nodejs-workflows",
+    title: "BullMQ vs Temporal for Node.js Production Workflows",
+    description:
+      "BullMQ handles fire-and-forget jobs. Temporal handles crash-safe, stateful workflows. I picked the wrong one and it cost me a weekend. Here is how I choose.",
+    date: "2026-06-15",
+    tags: ["nodejs", "architecture", "backend"],
+    content: `# BullMQ vs Temporal for Node.js Production Workflows
+
+A worker process died halfway through a payment flow. It had charged the card, reserved the inventory, and stopped before writing the fulfillment record. The job retried from the top. The customer got charged twice.
+
+That is the moment most teams discover that a job queue and a workflow engine are different tools. I learned this the hard way, and it cost me a weekend of reconciliation work. The choice between BullMQ and Temporal comes down to one question: do your jobs have memory of what they already did?
+
+## Where BullMQ Wins
+
+BullMQ is a Redis-backed job queue. It is fast, mature, and handles the most common background work without ceremony. Send the welcome email. Generate the PDF report. Resize the uploaded image. You enqueue a job, a worker picks it up, and you move on.
+
+I reach for BullMQ when the work is independent and short-lived. A job that takes two seconds and has no relationship to the job behind it in the queue. BullMQ gives you priority queues, rate limiting, delayed jobs, and retry with backoff. For ninety percent of background work in a typical Node.js service, that covers everything you need.
+
+The operational footprint is one Redis instance. Most teams already run Redis for caching or sessions, so BullMQ rides on top of existing infrastructure. Deployment stays simple. Monitoring stays simple. There is no separate cluster to provision, back up, or upgrade.
+
+## Where BullMQ Breaks Down
+
+The cracks appear when your jobs start depending on each other. Consider a payment flow that charges the card, waits for fraud screening, reserves inventory, then sends confirmation. BullMQ has a flows feature for parent-child dependencies, but coordinating multi-step state across retries is work you take on yourself.
+
+The failure I described at the top came from a setup like this. I had chained four BullMQ jobs. When the third job's worker crashed, the retry replayed from the first job. The charge step had no memory of completing. Redis knew the job failed. It did not know which sub-steps had already succeeded.
+
+You can build around this. Idempotency keys on each step. A state table in PostgreSQL that each job checks before acting. Retry policies tuned to avoid compounding. I have built all of it. At some point you realize you are constructing a workflow engine on top of a queue, and the engine you are building is worse than the ones that already exist.
+
+## What Temporal Gives You
+
+Temporal is a durable execution engine. You write a workflow as an ordinary-looking function, and Temporal guarantees it runs to completion even if workers restart, the network partitions, or the process dies mid-execution.
+
+The mechanism is event sourcing. Each step in your workflow emits an event. When a worker recovers, Temporal replays the event history and resumes from the last completed step. The charge step does not re-run because Temporal has a record that it completed. The workflow continues from the inventory reservation.
+
+This is the property that matters for money-moving flows. Durable execution means a crash mid-workflow produces a clean resume, not a full re-run. For payment pipelines, KYC verification chains, and order fulfillment with human-in-the-loop delays, that guarantee changes how you sleep at night.
+
+## The Cost of Temporal
+
+Temporal is not free to adopt. You run a Temporal server cluster alongside your application. That is more infrastructure to deploy, monitor, and keep online. Self-hosted means operating the persistence layer yourself. Temporal Cloud removes the operational burden but moves you to a managed-service cost model.
+
+There is also a learning curve. Temporal workflows must be deterministic. You cannot call \`Date.now()\` or generate a random UUID inside a workflow body. Side effects and external calls happen in activities. Violate these rules and replay produces inconsistent state. I have seen a team wedge their workflows by calling \`Math.random()\` inside a workflow, then watched the replay take a different branch than the original run. Temporal catches most of these violations at runtime, but the mental model takes time to internalize.
+
+## The Decision
+
+I use both, and I use them for different things. The split looks like this in my services:
+
+- BullMQ for fire-and-forget work: email sends, image processing, notification dispatch, scheduled cleanups. Independent jobs, short execution time, Redis already in the stack.
+- Temporal for stateful workflows: payment orchestration across providers, multi-step KYC with third-party delays, reconciliation pipelines that span hours or days.
+
+A useful heuristic: if a job can fail and retry without needing to know what came before it, use a queue. If a job must remember its own history to avoid double-charging a customer, use a workflow engine.
+
+The teams that get burned are the ones who pick BullMQ for a complex payment flow because it is the tool they know, then spend months bolting on state tracking and idempotency. The teams who over-engineer are the ones who pull in Temporal for sending transactional emails because someone read a post about durable execution. Match the tool to the failure mode you are protecting against.
+
+Architecture is about trade-offs, not silver bullets. BullMQ optimizes for simplicity and throughput on independent work. Temporal optimizes for correctness on stateful, long-running processes. The job that taught me this difference cost a customer a duplicate charge and cost me a weekend. Pick the right tool before you learn the same lesson.
+
+![BullMQ vs Temporal](/images/blog/bullmq-vs-temporal-nodejs-workflows.jpg)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
