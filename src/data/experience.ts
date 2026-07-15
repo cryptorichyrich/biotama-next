@@ -26,7 +26,7 @@ export const experiences: Experience[] = [
   },
   {
     id: "citt-services",
-    role: "Senior Web Developer",
+    role: "Head of Technology and Trading Operations",
     company: "CITT Services",
     location: "Dallas, USA",
     startDate: "Jan 2014",
