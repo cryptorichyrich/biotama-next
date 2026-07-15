@@ -33,6 +33,8 @@ export const experiences: Experience[] = [
     endDate: "Dec 2025",
     highlights: [
       "Delivered consulting for Pepperstone, TitanFX, BaxiaMarkets, Funded Prop BX, Traderscolo, Liquidity Connect",
+      "Administered MT4/MT5 platforms: symbol/group/leverage configuration, margin and swap settings, trading sessions, plugin management, and data feed oversight",
+      "Managed oneZero bridge for risk management, order routing, and execution flow across multiple broker environments",
       "Built web apps with React, Vue, WordPress, Laravel, HubSpot CMS",
       "Architected backend systems, automated data sync with n8n, Python, Flask",
       "Docker deployment on DigitalOcean & Google Cloud",
