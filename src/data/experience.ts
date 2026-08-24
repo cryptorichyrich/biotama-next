@@ -26,14 +26,14 @@ export const experiences: Experience[] = [
   },
   {
     id: "citt-services",
-    role: "Head of Technology and Trading Operations",
+    role: "Senior Technology and Trading Operations Manager",
     company: "CITT Services",
     location: "Dallas, USA",
     startDate: "Jan 2014",
     endDate: "Dec 2025",
     highlights: [
       "Delivered consulting for Pepperstone, TitanFX, BaxiaMarkets, Funded Prop BX, Traderscolo, Liquidity Connect",
-      "Head of Trading Operations: managed risk exposure, executed hedging strategies, monitored market volatility, and balanced A/B-book positions across MT4/MT5 and oneZero platforms",
+      "Led trading operations: managed risk exposure, executed hedging strategies, monitored market volatility, and balanced A/B-book positions across MT4/MT5 and oneZero platforms",
       "Analyzed client trading patterns to detect adverse behavior, protect firm capital, and optimize risk-adjusted returns in real-time trading environments",
       "Built web apps with React, Vue, WordPress, Laravel, HubSpot CMS",
       "Architected backend systems, automated data sync with n8n, Python, Flask",
