@@ -50,6 +50,20 @@ export const skillGroups: SkillGroup[] = [
     ],
   },
   {
+    category: "Support Operations",
+    skills: [
+      { name: "Technical Support", level: 5 },
+      { name: "Team Leadership", level: 5 },
+      { name: "SLA Management", level: 4 },
+      { name: "Escalation Management", level: 4 },
+      { name: "Incident Response", level: 4 },
+      { name: "Root Cause Analysis", level: 4 },
+      { name: "KPI Reporting", level: 4 },
+      { name: "Training & Coaching", level: 4 },
+      { name: "AML/KYC Compliance", level: 4 },
+    ],
+  },
+  {
     category: "CMS",
     skills: [
       { name: "WordPress", level: 5 },
