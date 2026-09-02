@@ -54,6 +54,9 @@ export const skillGroups: SkillGroup[] = [
     skills: [
       { name: "Technical Support", level: 5 },
       { name: "Team Leadership", level: 5 },
+      { name: "Zendesk", level: 4 },
+      { name: "Jira", level: 4 },
+      { name: "Tawk.to", level: 4 },
       { name: "SLA Management", level: 4 },
       { name: "Escalation Management", level: 4 },
       { name: "Incident Response", level: 4 },
