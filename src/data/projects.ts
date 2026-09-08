@@ -46,9 +46,25 @@ export const projects: Project[] = [
   {
     id: "srabutan",
     name: "Srabutan.com",
-    description: "Indonesia's next freelance marketplace — full-stack platform with AI-powered matching, real-time collaboration, and secure payments.",
+    description: "Indonesia's next freelance marketplace: full-stack platform with AI-powered matching, real-time collaboration, and secure payments.",
     tech: ["React", "Vue", "Python", "Docker"],
     featured: true,
+  },
+  {
+    id: "umkm-st-servatius",
+    name: "UMKM St. Servatius",
+    description: "Community commerce platform for a parish micro-business ecosystem: business directory with multi-role verification workflow, tender and bazar management with a 3-layer contribution guard (UI, consent checkbox, database RLS), and paper SOP forms digitized into auto-numbered PDF permits with digital signatures. 68 static pages hardened with Row-Level Security across 25 SQL migrations.",
+    tech: ["Astro", "React", "TypeScript", "Supabase", "PostgreSQL"],
+    url: "https://umkm.servatius.id",
+    featured: true,
+  },
+  {
+    id: "healer-path",
+    name: "Healer Path",
+    description: "Personal coaching brand site (healerpath.id) for a counselor and healer: service catalogue, blog, and testimonials with editorial typography. Built on Jekyll static output with a git-based CMS so the non-technical owner edits all content through a friendly admin UI, deployed to the edge on Cloudflare Pages.",
+    tech: ["Jekyll", "Pages CMS", "Cloudflare Pages"],
+    url: "https://healerpath.id",
+    featured: false,
   },
   {
     id: "damai-kasih",
