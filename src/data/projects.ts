@@ -53,7 +53,7 @@ export const projects: Project[] = [
   {
     id: "umkm-st-servatius",
     name: "UMKM St. Servatius",
-    description: "Community commerce platform for a parish micro-business ecosystem: business directory with multi-role verification workflow, tender and bazar management with a 3-layer contribution guard (UI, consent checkbox, database RLS), and paper SOP forms digitized into auto-numbered PDF permits with digital signatures. 68 static pages hardened with Row-Level Security across 25 SQL migrations.",
+    description: "Community commerce platform for a parish micro-business ecosystem (umkm.servatius.id): business directory with multi-role verification workflow, tender and bazar management with a 3-layer contribution guard (UI, consent checkbox, database RLS), and paper SOP forms digitized into auto-numbered PDF permits with digital signatures. 68 static pages hardened with Row-Level Security across 25 SQL migrations.",
     tech: ["Astro", "React", "TypeScript", "Supabase", "PostgreSQL"],
     url: "https://umkm.servatius.id",
     featured: true,
