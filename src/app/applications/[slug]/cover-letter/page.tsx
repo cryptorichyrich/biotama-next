@@ -38,6 +38,7 @@ export default async function CoverLetterPage({ params }: { params: Promise<{ sl
     customSummary: app.tailoring_custom_summary || "",
     keyAchievements: parseArr(app.tailoring_key_achievements),
     highlightProjects: parseArr(app.tailoring_highlight_projects),
+    fullLetter: app.tailoring_cover_letter || "",
   } : null;
 
   const displayTitle = tailoring && tailoring.customTitle ? tailoring.customTitle : profile.role;
@@ -65,9 +66,9 @@ export default async function CoverLetterPage({ params }: { params: Promise<{ sl
         {app && <><p className="text-sm text-slate-700 mb-1">{contact?.name || "Hiring Manager"}</p><p className="text-sm text-slate-700 mb-1">{contact?.title || "Hiring Team"}</p><p className="text-sm text-slate-700 mb-8">{app.company_name}</p></>}
         <p className="text-sm text-slate-700 mb-6">Dear {app && contact?.name ? contact.name.split(" ")[0] : "Hiring Team"},</p>
         <div className="text-sm text-slate-700 leading-relaxed space-y-4">
-          {tailoring && <><p>{tailoring.coverLetterHook}</p><p>{tailoring.customSummary}</p><p>Key achievements I'd bring to this role:</p><ul className="space-y-1.5 ml-4">{tailoring.keyAchievements.map((a: string, i: number) => <li key={i} className="pl-2 relative"><span className="absolute left-0 top-[0.45em] w-1 h-1 rounded-full bg-slate-400"/>{a}</li>)}</ul><p>I'm particularly excited about the opportunity to work on {(tailoring.highlightProjects[0] || "").toLowerCase() || "projects that push the boundaries of what's possible with modern web technologies"}. My architecture philosophy centers on the fact that there are no right answers in architecture, only tradeoffs, and I make those tradeoffs deliberately, documented, and reversible.</p></>}
+          {tailoring && tailoring.fullLetter ? tailoring.fullLetter.split(/\n{2,}/).map((p: string, i: number) => <p key={i}>{p}</p>) : tailoring && <><p>{tailoring.coverLetterHook}</p><p>{tailoring.customSummary}</p><p>Key achievements I'd bring to this role:</p><ul className="space-y-1.5 ml-4">{tailoring.keyAchievements.map((a: string, i: number) => <li key={i} className="pl-2 relative"><span className="absolute left-0 top-[0.45em] w-1 h-1 rounded-full bg-slate-400"/>{a}</li>)}</ul><p>I'm particularly excited about the opportunity to work on {(tailoring.highlightProjects[0] || "").toLowerCase() || "projects that push the boundaries of what's possible with modern web technologies"}. My architecture philosophy centers on the fact that there are no right answers in architecture, only tradeoffs, and I make those tradeoffs deliberately, documented, and reversible.</p></>}
           {!tailoring && <p>I am writing to express my interest in joining your team. With 10+ years of experience architecting fintech, e-commerce, and SaaS platforms, I bring deep expertise in React, Next.js, TypeScript, Node.js, and modern cloud infrastructure.</p>}
-          <p>I would welcome the opportunity to discuss how my background aligns with your team's needs. Thank you for your time and consideration.</p>
+          {!(tailoring && tailoring.fullLetter) && <p>I would welcome the opportunity to discuss how my background aligns with your team's needs. Thank you for your time and consideration.</p>}
         </div>
         <div className="mt-10">
           <p className="text-sm text-slate-700">Warm regards,</p>
