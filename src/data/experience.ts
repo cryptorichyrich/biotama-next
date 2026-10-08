@@ -66,7 +66,7 @@ export const experiences: Experience[] = [
     endDate: "Dec 2013",
     highlights: [
       "Engineered payment gateway integrations at Wirecard subsidiary",
-      "Connected Prisma Gateway with banking systems for 14,000+ corporate clients across 69 countries",
+      "Connected Prisma Gateway with banking systems for corporate payment flows",
       "PCI-DSS compliance across all payment implementations",
     ],
     tech: ["Java", "HTML5", "CSS3", "Spring", "Spring Boot", "Hibernate"],
