@@ -50,6 +50,13 @@ export const skillGroups: SkillGroup[] = [
     ],
   },
   {
+    category: "ERP",
+    skills: [
+      { name: "Odoo 19 Development", level: 3 },
+      { name: "PostgreSQL", level: 4 },
+    ],
+  },
+  {
     category: "Support Operations",
     skills: [
       { name: "Technical Support", level: 5 },

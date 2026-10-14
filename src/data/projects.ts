@@ -9,6 +9,14 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    id: "mallops-suite",
+    name: "MallOps Suite",
+    description: "Mall operations ERP on Odoo 19 Community built end-to-end: leasing contracts with state machine, automated monthly billing (rent + service charge + IoT meter readings), staged payment reminders, DOKU VA/QRIS payments with signed idempotent webhooks, 18-endpoint REST API hub with scoped API keys and rate limiting, Astro tenant portal with per-tenant login tokens, Telegram ops bot, procurement-to-PO flow, and DJP-format e-Faktur XML export. 60+ tests green on fresh databases; documented engineering log of 27 real debugging lessons.",
+    tech: ["Odoo 19", "Python", "PostgreSQL", "Astro", "React", "REST API", "Telegram Bot API"],
+    url: "https://github.com/cryptorichyrich/mallops-suite",
+    featured: true,
+  },
+  {
     id: "toko-vavelle",
     name: "Toko Vavelle",
     description: "Vietnam Coffee E-Commerce platform built with AstroJS, Tailwind, and SEO-optimized architecture. Features automated AI image generation pipeline for commercial product photography.",
