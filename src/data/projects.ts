@@ -2,6 +2,8 @@ export interface Project {
   id: string;
   name: string;
   description: string;
+  /** Short blurb for the resume page (falls back to description when absent). */
+  short?: string;
   tech: string[];
   url?: string;
   featured: boolean;
@@ -12,6 +14,7 @@ export const projects: Project[] = [
     id: "mallops-suite",
     name: "MallOps Suite",
     description: "Mall operations ERP on Odoo 19 Community built end-to-end: leasing contracts with state machine, automated monthly billing (rent + service charge + IoT meter readings), staged payment reminders, DOKU VA/QRIS payments with signed idempotent webhooks, 18-endpoint REST API hub with scoped API keys and rate limiting, Astro tenant portal with per-tenant login tokens, Telegram ops bot, procurement-to-PO flow, and DJP-format e-Faktur XML export. 60+ tests green on fresh databases; documented engineering log of 27 real debugging lessons.",
+    short: "Mall operations ERP on Odoo 19: leasing contracts, automated billing with IoT meter readings, DOKU VA/QRIS payments with signed webhooks, 18-endpoint API hub, Telegram ops bot. 60+ tests green on fresh databases.",
     tech: ["Odoo 19", "Python", "PostgreSQL", "Astro", "React", "REST API", "Telegram Bot API"],
     url: "https://github.com/cryptorichyrich/mallops-suite",
     featured: true,
@@ -41,6 +44,7 @@ export const projects: Project[] = [
     id: "crossyncorder",
     name: "CrosSyncOrder",
     description: "Forex trade synchronization SaaS platform with real-time WebSocket communication, ZeroMQ messaging, and Kubernetes orchestration.",
+    short: "Real-time forex trade synchronization across MetaTrader 4/5 and cTrader with WebSocket and ZeroMQ messaging, containerized with Docker.",
     tech: ["Node.js", "Express", "WebSocket", "ZeroMQ", "Docker", "K8s"],
     featured: true,
   },
@@ -55,6 +59,7 @@ export const projects: Project[] = [
     id: "srabutan",
     name: "Srabutan.com",
     description: "Indonesia's next freelance marketplace: full-stack platform with AI-powered matching, real-time collaboration, and secure payments.",
+    short: "Indonesia's freelance marketplace, built from zero: AI-powered matching, real-time collaboration, secure payments, and full CI/CD with Docker.",
     tech: ["React", "Vue", "Python", "Docker"],
     featured: true,
   },
@@ -62,6 +67,7 @@ export const projects: Project[] = [
     id: "umkm-st-servatius",
     name: "UMKM St. Servatius",
     description: "Community commerce platform for a parish micro-business ecosystem (umkm.servatius.id): business directory with multi-role verification workflow, tender and bazar management with a 3-layer contribution guard (UI, consent checkbox, database RLS), and paper SOP forms digitized into auto-numbered PDF permits with digital signatures. 68 static pages hardened with Row-Level Security across 25 SQL migrations.",
+    short: "Community commerce platform: multi-role verification, tender and bazar management, digitized permits with digital signatures, Row-Level Security across 68 pages.",
     tech: ["Astro", "React", "TypeScript", "Supabase", "PostgreSQL"],
     url: "https://umkm.servatius.id",
     featured: true,

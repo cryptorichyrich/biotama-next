@@ -5,6 +5,7 @@ import { profile } from "@/data/profile";
 import { experiences } from "@/data/experience";
 import { skillGroups } from "@/data/skills";
 import QRCode from "@/components/QRCode";
+import { projects } from "@/data/projects";
 
 const socialLinks = [
   { platform: "LinkedIn", url: profile.socials.find((s) => s.platform === "LinkedIn")?.url ?? "" },
@@ -17,6 +18,12 @@ const linkLabels: Record<string, string> = {
   GitHub: "https://github.com/cryptorichyrich",
   Website: "https://biotama.cv",
 };
+
+/* Curated master-resume projects, rendered from the master project data. */
+const RESUME_PROJECT_IDS = ["mallops-suite", "srabutan", "umkm-st-servatius", "crossyncorder"];
+const resumeProjects = RESUME_PROJECT_IDS.map((id) => projects.find((p) => p.id === id)).filter(
+  (p): p is NonNullable<typeof p> => Boolean(p)
+);
 
 function formatDate(dateStr: string): string {
   return dateStr;
@@ -49,12 +56,21 @@ export default function ResumePage() {
 
       {/* Screen-only controls */}
       <div className="no-print max-w-[210mm] mx-auto px-4 pt-6 pb-4 flex items-center justify-between">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 transition-colors"
-        >
-          ← Back to Home
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 transition-colors"
+          >
+            ← Back to Home
+          </Link>
+          <span className="text-slate-300">·</span>
+          <Link
+            href="/portfolio"
+            className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-slate-800 transition-colors"
+          >
+            Portfolio
+          </Link>
+        </div>
         <button
           onClick={() => window.print()}
           className="no-print inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-slate-700 rounded-md hover:bg-slate-800 transition-colors cursor-pointer shadow-sm"
@@ -68,7 +84,7 @@ export default function ResumePage() {
       <div className="resume-content p-[15mm] print:p-0">
         {/* ── HEADER ── */}
         <header className="pb-4 mb-5 flex items-center gap-5" style={{ borderBottom: "1px solid #e5e5e5" }}>
-          {/* Profile photo — circle 80mm print / 80px screen */}
+          {/* Profile photo: circle 80mm print / 80px screen */}
           <div className="shrink-0">
             <div
               className="w-[80px] h-[80px] rounded-full overflow-hidden border-2 border-[#c9a84c]"
@@ -88,7 +104,7 @@ export default function ResumePage() {
               {profile.name}
             </h1>
             <p className="mt-1 text-sm font-semibold uppercase tracking-widest" style={{ color: "#666666" }}>
-              System Architect
+              {profile.role}
             </p>
             <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1" style={{ fontSize: "12px", color: "#666666" }}>
               <span>{profile.phone}</span>
@@ -125,7 +141,7 @@ export default function ResumePage() {
                   <p style={{ fontSize: "11px", fontWeight: 600, color: "#555555" }}>{exp.company}</p>
                 </div>
                 <span style={{ fontSize: "10px", color: "#888888", whiteSpace: "nowrap" }}>
-                  {formatDate(exp.startDate)} — {formatDate(exp.endDate)}
+                  {formatDate(exp.startDate)} - {formatDate(exp.endDate)}
                 </span>
               </div>
               <ul className="mt-1.5 space-y-1">
@@ -149,30 +165,14 @@ export default function ResumePage() {
         <section className="mb-5">
           <h2 className="section-title">Key Projects</h2>
           <div className="mt-3 grid grid-cols-2 gap-x-5 gap-y-3">
-            <div>
-              <h3 style={{ fontSize: "11px", fontWeight: 700, color: "#222222" }}>Srabutan.com — Freelance Marketplace</h3>
-              <p style={{ fontSize: "10px", lineHeight: "1.5", color: "#555555", marginTop: "2px" }}>
-                Architected Indonesia&apos;s freelance marketplace with AI-powered matching, microservices architecture, and real-time collaboration. Full-stack development with CI/CD pipelines.
-              </p>
-            </div>
-            <div>
-              <h3 style={{ fontSize: "11px", fontWeight: 700, color: "#222222" }}>BaxiaMarkets — Financial Platform</h3>
-              <p style={{ fontSize: "10px", lineHeight: "1.5", color: "#555555", marginTop: "2px" }}>
-                Built a 5-year fintech platform serving global traders with WordPress/Laravel/React stack, SumSub KYC compliance, multi-PSP payment processing, and responsive client portal.
-              </p>
-            </div>
-            <div>
-              <h3 style={{ fontSize: "11px", fontWeight: 700, color: "#222222" }}>CrosSyncOrder — Forex Trade Copier SaaS</h3>
-              <p style={{ fontSize: "10px", lineHeight: "1.5", color: "#555555", marginTop: "2px" }}>
-                Designed a real-time trade synchronization system across MetaTrader 4/5 and cTrader using WebSocket + ZeroMQ, containerized with Docker/Kubernetes on Railway.
-              </p>
-            </div>
-            <div>
-              <h3 style={{ fontSize: "11px", fontWeight: 700, color: "#222222" }}>AI-Powered Sales Dashboard</h3>
-              <p style={{ fontSize: "10px", lineHeight: "1.5", color: "#555555", marginTop: "2px" }}>
-                Full-stack dashboard with Next.js + FastAPI backend, integrating Google Gemini AI for natural language sales insights with markdown rendering and data visualization.
-              </p>
-            </div>
+            {resumeProjects.map((p) => (
+              <div key={p.id}>
+                <h3 style={{ fontSize: "11px", fontWeight: 700, color: "#222222" }}>{p.name}</h3>
+                <p style={{ fontSize: "10px", lineHeight: "1.5", color: "#555555", marginTop: "2px" }}>
+                  {p.short ?? p.description}
+                </p>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -198,10 +198,10 @@ export default function ResumePage() {
             {profile.education.map((edu, i) => (
               <div key={i} className="flex items-baseline justify-between">
                 <div>
-                  <h3 style={{ fontSize: "11px", fontWeight: 700, color: "#222222" }}>{edu.degree} — {edu.institution}</h3>
+                  <h3 style={{ fontSize: "11px", fontWeight: 700, color: "#222222" }}>{edu.degree} - {edu.institution}</h3>
                   <p style={{ fontSize: "10px", color: "#555555" }}>Specialization in Software Development • GPA {edu.gpa}</p>
                 </div>
-                <span style={{ fontSize: "10px", color: "#888888" }}>{edu.startYear} — {edu.endYear}</span>
+                <span style={{ fontSize: "10px", color: "#888888" }}>{edu.startYear} - {edu.endYear}</span>
               </div>
             ))}
             <div className="mt-3" style={{ fontSize: "10px", color: "#555555" }}>
@@ -210,7 +210,7 @@ export default function ResumePage() {
                 {profile.certifications.map((cert, i) => (
                   <div key={i} className="flex items-baseline gap-1">
                     <span style={{ color: "#aaaaaa" }}>▸</span>
-                    <span><strong style={{ color: "#444444" }}>{cert.title}</strong> — {cert.institution} ({cert.date})</span>
+                    <span><strong style={{ color: "#444444" }}>{cert.title}</strong> - {cert.institution} ({cert.date})</span>
                   </div>
                 ))}
               </div>

@@ -106,6 +106,21 @@ export function Navbar() {
             ))}
             <li>
               <a
+                href="/portfolio"
+                className={cn(
+                  "inline-flex items-center gap-2 px-5 py-2 text-sm font-[family-name:var(--font-mono)] cursor-pointer",
+                  "rounded-lg border border-[var(--color-gold)]/50",
+                  "text-[var(--color-gold)]",
+                  "transition-all duration-300",
+                  "hover:bg-[var(--color-gold-subtle)]",
+                  "hover:shadow-[0_0_16px_var(--color-gold-glow)]"
+                )}
+              >
+                Portfolio
+              </a>
+            </li>
+            <li>
+              <a
                 href="/resume"
                 className={cn(
                   "inline-flex items-center gap-2 px-5 py-2 text-sm font-[family-name:var(--font-mono)] cursor-pointer",
@@ -180,6 +195,27 @@ export function Navbar() {
               </a>
             </li>
           ))}
+          <li className="mt-2 overflow-hidden">
+            <a
+              href="/portfolio"
+              className={cn(
+                "inline-flex items-center gap-2 px-8 py-3 text-base font-[family-name:var(--font-mono)] cursor-pointer",
+                "rounded-lg border border-[var(--color-gold)]/50",
+                "text-[var(--color-gold)]",
+                "transition-all duration-300",
+                "hover:bg-[var(--color-gold-subtle)]",
+                menuOpen
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-8 opacity-0",
+                "transition-[transform,opacity] duration-500 ease-out"
+              )}
+              style={{
+                transitionDelay: menuOpen ? `${(NAV_ITEMS.length + 1) * 60}ms` : "0ms",
+              }}
+            >
+              Portfolio
+            </a>
+          </li>
           <li className="mt-2 overflow-hidden">
             <a
               href="/resume"
