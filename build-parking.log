@@ -1,0 +1,49 @@
+▲ Next.js 16.2.6 (Turbopack)
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 9.3s
+  Running TypeScript ...
+  Finished TypeScript in 9.7s ...
+  Collecting page data using 5 workers ...
+  Generating static pages using 5 workers (0/1532) ...
+  Generating static pages using 5 workers (383/1532) 
+  Generating static pages using 5 workers (766/1532) 
+  Generating static pages using 5 workers (1149/1532) 
+✓ Generating static pages using 5 workers (1532/1532) in 25.7s
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /applications
+├ ● /applications/[slug]
+│ ├ /applications/8x8-solution-engineer-cpaas
+│ ├ /applications/a-team-senior-independent-ai-engineer-architect-1919266
+│ ├ /applications/a-team-senior-independent-software-developer-1919265
+│ └ [+472 more paths]
+├ ● /applications/[slug]/cover-letter
+│ ├ /applications/8x8-solution-engineer-cpaas/cover-letter
+│ ├ /applications/a-team-senior-independent-ai-engineer-architect-1919266/cover-letter
+│ ├ /applications/a-team-senior-independent-software-developer-1919265/cover-letter
+│ └ [+472 more paths]
+├ ● /applications/[slug]/resume
+│ ├ /applications/8x8-solution-engineer-cpaas/resume
+│ ├ /applications/a-team-senior-independent-ai-engineer-architect-1919266/resume
+│ ├ /applications/a-team-senior-independent-software-developer-1919265/resume
+│ └ [+472 more paths]
+├ ○ /applications/preview
+├ ○ /blog
+├ ● /blog/[slug]
+│ ├ /blog/financial-audit-logs
+│ ├ /blog/postgresql-partial-indexes
+│ ├ /blog/coding-agents-wont-replace-you
+│ └ [+93 more paths]
+├ ○ /portfolio
+├ ○ /resume
+├ ○ /robots.txt
+└ ○ /sitemap.xml
+
+
+○  (Static)  prerendered as static content
+●  (SSG)     prerendered as static HTML (uses generateStaticParams)
+

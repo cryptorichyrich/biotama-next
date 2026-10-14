@@ -210,8 +210,8 @@ export default function MallopsLandingPage() {
             <div>
               <h3 className="font-semibold text-[#d9b64a]">Dibangun engineer, bukan reseller</h3>
               <p className="mt-2 text-white/85">
-                Kode teruji dengan ratusan pengujian otomatis, terbuka untuk diaudit
-                teknisi Anda, dan dikembangkan sendiri dari nol.
+                Kode teruji dengan puluhan pengujian otomatis, dapat diaudit teknisi
+                Anda saat proses kerja, dan dikembangkan sendiri dari nol.
               </p>
             </div>
             <div>

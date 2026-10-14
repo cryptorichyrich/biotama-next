@@ -16,7 +16,7 @@ export const projects: Project[] = [
     description: "Mall operations ERP on Odoo 19 Community built end-to-end: leasing contracts with state machine, automated monthly billing (rent + service charge + IoT meter readings), staged payment reminders, DOKU VA/QRIS payments with signed idempotent webhooks, 18-endpoint REST API hub with scoped API keys and rate limiting, Astro tenant portal with per-tenant login tokens, Telegram ops bot, procurement-to-PO flow, and DJP-format e-Faktur XML export. 60+ tests green on fresh databases; documented engineering log of 27 real debugging lessons.",
     short: "Mall operations ERP on Odoo 19: leasing contracts, automated billing with IoT meter readings, DOKU VA/QRIS payments with signed webhooks, 18-endpoint API hub, Telegram ops bot. 60+ tests green on fresh databases.",
     tech: ["Odoo 19", "Python", "PostgreSQL", "Astro", "React", "REST API", "Telegram Bot API"],
-    url: "https://github.com/cryptorichyrich/mallops-suite",
+    url: "https://github.com/cryptorichyrich/mallops-showcase",
     featured: true,
   },
   {
@@ -24,7 +24,7 @@ export const projects: Project[] = [
     name: "MallOps Leasing & Billing",
     description: "Odoo 19 leasing engine for malls and office towers: unit and tenant registry, contract state machine with overlap guards, automated monthly invoicing (rent, service charge, metered utilities) with prorata, yearly rent escalation and rent-free windows, staged reminders with auto penalties, and contract, aging and occupancy PDF reports.",
     tech: ["Odoo 19", "Python", "PostgreSQL", "QWeb"],
-    url: "https://github.com/cryptorichyrich/mallops-suite/tree/main/custom/mall_leasing",
+    url: "https://github.com/cryptorichyrich/mallops-showcase",
     featured: true,
   },
   {
@@ -32,7 +32,7 @@ export const projects: Project[] = [
     name: "MallOps API Hub",
     description: "REST API hub exposing 18 endpoints over the ERP: scoped API keys, per-key rate limiting, full request logging, maintenance ticket workflows, IoT meter push, and a tenant-scoped portal API where cross-tenant access returns 404 by design.",
     tech: ["Odoo 19", "Python", "REST API", "HMAC"],
-    url: "https://github.com/cryptorichyrich/mallops-suite/tree/main/custom/api_hub",
+    url: "https://github.com/cryptorichyrich/mallops-showcase",
     featured: true,
   },
   {
@@ -40,7 +40,7 @@ export const projects: Project[] = [
     name: "MallOps Payments (DOKU)",
     description: "DOKU payment integration for Indonesian VA and QRIS: transaction state machine, signed idempotent webhooks, automatic invoice reconciliation, mock mode for offline demos and a sandbox mode verified against the real DOKU API.",
     tech: ["Odoo 19", "Python", "DOKU API", "Webhooks"],
-    url: "https://github.com/cryptorichyrich/mallops-suite/tree/main/custom/payment_doku",
+    url: "https://github.com/cryptorichyrich/mallops-showcase",
     featured: true,
   },
   {
@@ -48,7 +48,7 @@ export const projects: Project[] = [
     name: "MallOps Tenant Portal",
     description: "Tenant self-service portal on Astro 5 SSR with React islands and skeleton loading: per-tenant login tokens, invoice list with payment initiation, maintenance ticket creation, and a server-side proxy that keeps API keys and tokens out of the browser. Cookie sessions are httpOnly with SameSite protection.",
     tech: ["Astro", "React", "TypeScript", "SSR"],
-    url: "https://github.com/cryptorichyrich/mallops-suite/tree/main/satellites/tenant-portal",
+    url: "https://github.com/cryptorichyrich/mallops-showcase/tree/main/satellites/tenant-portal",
     featured: true,
   },
   {
@@ -56,7 +56,7 @@ export const projects: Project[] = [
     name: "MallOps IoT Meter Gateway",
     description: "IoT meter gateway for tenant utilities: push API for sub-meter readings, an ESP32 firmware sketch (Modbus RS485 and pulse input) and a Python simulator. Readings flow into monthly billing automatically, with a guard that rejects backward meter pushes.",
     tech: ["ESP32", "Python", "Modbus", "Odoo 19"],
-    url: "https://github.com/cryptorichyrich/mallops-suite/tree/main/satellites/iot-gateway",
+    url: "https://github.com/cryptorichyrich/mallops-showcase/tree/main/satellites/iot-gateway",
     featured: true,
   },
   {
@@ -64,7 +64,7 @@ export const projects: Project[] = [
     name: "MallOps Telegram Ops Bot",
     description: "Telegram operations bot for mall staff: occupancy, revenue, overdue invoices and expiring contracts on demand, with chat allowlisting and a dry-run mode for offline demonstration.",
     tech: ["Python", "Telegram Bot API"],
-    url: "https://github.com/cryptorichyrich/mallops-suite/tree/main/satellites/telegram-bot",
+    url: "https://github.com/cryptorichyrich/mallops-showcase/tree/main/satellites/telegram-bot",
     featured: true,
   },
   {
@@ -72,7 +72,7 @@ export const projects: Project[] = [
     name: "MallOps Procurement & e-Faktur",
     description: "Procurement and Indonesian tax compliance for the ERP: purchase requests with tiered approval that generate per-vendor PO drafts automatically, plus a DJP-shape e-Faktur export with 16-digit NSFP uniqueness, selling and buying NPWP validation, and per-line details.",
     tech: ["Odoo 19", "Python", "e-Faktur", "XML"],
-    url: "https://github.com/cryptorichyrich/mallops-suite/tree/main/custom/mall_operations",
+    url: "https://github.com/cryptorichyrich/mallops-showcase",
     featured: true,
   },
   {
@@ -80,7 +80,7 @@ export const projects: Project[] = [
     name: "MallOps Parking",
     description: "Indonesian parking operations system (Secure-Parking-style) on Odoo 19: progressive tariff engine with grace windows and daily caps, gate flow with idempotent exit confirmation, five entry modes (paper ticket, QR, member smartcard, bank e-money tap like Flazz, ticketless LPR), QRIS and auto-debit payments with minimum-balance guards, tenant validation vouchers with monthly quota and chargeback reporting, monthly members with automated invoicing, cashier shifts with variance detection, and a real-time SISA availability board fed by per-slot bay sensors or loop counters. ESP32 firmware sketches and an API simulator reproduce the production device path.",
     tech: ["Odoo 19", "Python", "IoT Sensors", "ESP32", "REST API", "PostgreSQL"],
-    url: "https://github.com/cryptorichyrich/mallops-suite/tree/main/custom/mall_parking",
+    url: "https://github.com/cryptorichyrich/mallops-showcase",
     featured: true,
   },
   {
