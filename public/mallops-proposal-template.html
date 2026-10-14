@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>MallOps Suite - Proposal Sistem Operasional Gedung</title>
+<style>
+  @page { size: A4; margin: 16mm; }
+  * { box-sizing: border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; color: #1a2e22; font-size: 12px; line-height: 1.55; }
+  h1 { font-size: 22px; color: #14532d; margin: 0 0 4px; }
+  h2 { font-size: 14px; color: #14532d; border-bottom: 2px solid #d9b64a; padding-bottom: 3px; margin: 22px 0 8px; }
+  h3 { font-size: 12.5px; margin: 12px 0 4px; }
+  .sub { color: #4b5a50; }
+  .gold { color: #8a7229; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+  th, td { border: 1px solid #d9d2bd; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #f2eddc; font-size: 11px; }
+  .pill { display: inline-block; background: #14532d; color: #fff; border-radius: 10px; padding: 2px 10px; font-size: 10px; letter-spacing: 1px; }
+  .box { border: 1px solid #d9d2bd; background: #fdfbf6; border-radius: 8px; padding: 10px 12px; margin: 8px 0; }
+  .koenig { page-break-before: always; }
+  .footer { margin-top: 26px; padding-top: 8px; border-top: 1px solid #d9d2bd; font-size: 10px; color: #4b5a50; }
+  .num { text-align: right; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<p class="pill">PROPOSAL KOMERSIAL</p>
+<h1>MallOps Suite</h1>
+<p class="sub">Sistem Operasional Gedung: Parkir Berbasis Sensor, Meter IoT, dan Billing Otomatis</p>
+<p class="sub">Disusun untuk: <b>[NAMA GEDUNG / PERUSAHAAN]</b> &nbsp;&middot;&nbsp; Tanggal: <b>[TANGGAL]</b> &nbsp;&middot;&nbsp; Berlaku 30 hari</p>
+
+<h2>1. Ringkasan Untuk Pengambil Keputusan</h2>
+<p>[NAMA GEDUNG] saat ini mengalami kebocoran pendapatan dan biaya operasional
+akibat proses manual: tiket parkir yang dapat dipalsukan, pencatatan meter
+tenant secara manual, dan penagihan sewa/IPL yang bergantung ingatan.
+Berdasarkan survey tanggal <b>[TANGGAL SURVEY]</b>, estimasi kerugian/inefisiensi
+yang dapat dihentikan: <b>[Rp ____ / bulan]</b>.</p>
+<div class="box">
+<b>MallOps Suite</b> adalah sistem terpadu yang menggabungkan: (1) sistem parkir
+dengan sensor lahan real-time dan lima mode akses, (2) pembacaan meter listrik
+dan air tenant secara otomatis, (3) penagihan sewa, IPL, dan utilitas otomatis
+dengan faktur pajak, (4) portal tenant, dan (5) monitoring perangkat 24/7.
+Seluruh data tersimpan di milik gedung, tanpa bagi-hasil ke operator pihak ketiga.
+</div>
+
+<h2>2. Temuan Survey dan Angka Dasar</h2>
+<table>
+<tr><th>Poin</th><th>Kondisi saat ini</th><th>Estimasi dampak</th></tr>
+<tr><td>Kapasitas parkir</td><td>[mis. 120 slot, tanpa data okupansi]</td><td>[Rp ____ /bln kebocoran tiket]</td></tr>
+<tr><td>Gate / akses</td><td>[mis. 2 pintu, manual]</td><td>antrean jam sibuk</td></tr>
+<tr><td>Meter tenant</td><td>[mis. 24 unit, catat manual]</td><td>[Rp ____ /bln selisih tagihan]</td></tr>
+<tr><td>Penagihan</td><td>[mis. Excel + WhatsApp]</td><td>[rata-rata telat ____ hari]</td></tr>
+</table>
+<p class="sub">Angka di atas wajib diisi dari data riil hasil survey; proposal
+tanpa angka klien tidak akan kami kirim.</p>
+
+<h2>3. Ruang Lingkup Paket yang Diusulkan</h2>
+<table>
+<tr><th style="width:30%">Komponen</th><th>Spesifikasi</th><th style="width:18%">Qty</th></tr>
+<tr><td>Gate + palang</td><td>Barrier komersial, kontrol dry-contact, surat daya terpasang</td><td>[x] unit</td></tr>
+<tr><td>Kamera LPR</td><td>ANPR [merk/model], push event ke sistem, snapshot plat</td><td>[x] unit</td></tr>
+<tr><td>Sensor lahan</td><td>Ultrasonic per slot (indoor) / loop induktor (outdoor), LED indikator</td><td>[x] titik</td></tr>
+<tr><td>LED display</td><td>Papan "SISA xx" outdoor, update real-time</td><td>[x] unit</td></tr>
+<tr><td>Pos kasir</td><td>PC + printer thermal + scanner + aplikasi kasir (shift, variance)</td><td>[x] set</td></tr>
+<tr><td>Server sistem</td><td>Mini PC + UPS (sistem tetap jalan saat listrik/internet mati)</td><td>1 set</td></tr>
+<tr><td>Software</td><td>MallOps Suite: parkir, billing, portal, bot, laporan (lisensi sewa)</td><td>1 lokasi</td></tr>
+<tr><td>Instalasi + commissioning</td><td>Pemasangan, konfigurasi, kalibrasi, pelatihan petugas</td><td>1 paket</td></tr>
+</table>
+
+<h2>4. Investasi</h2>
+<table>
+<tr><th>Komponen</th><th class="num">Nilai</th></tr>
+<tr><td>A. Hardware sesuai tabel lingkup di atas</td><td class="num">Rp [____]</td></tr>
+<tr><td>B. Instalasi, kalibrasi, commissioning</td><td class="num">Rp [____]</td></tr>
+<tr><td>C. Lisensi &amp; setup software tahun pertama</td><td class="num">Rp [____]</td></tr>
+<tr><td><b>Total investasi awal</b></td><td class="num"><b>Rp [____]</b></td></tr>
+<tr><td>Termin 1 - DP pesanan (50%)</td><td class="num">Rp [____]</td></tr>
+<tr><td>Termin 2 - selesai instalasi (30%)</td><td class="num">Rp [____]</td></tr>
+<tr><td>Termin 3 - BAST / commissioning (20%)</td><td class="num">Rp [____]</td></tr>
+</table>
+
+<div class="koenig"></div>
+<h2>5. Layanan Berlangganan (AMC)</h2>
+<table>
+<tr><th>Item</th><th class="num">Nilai</th></tr>
+<tr><td>Support + update + backup + monitoring, per bulan</td><td class="num">Rp [____]/bln</td></tr>
+<tr><td>Diskon pembayaran setahun dimuka (gratis 1 bulan)</td><td class="num">-Rp [____]</td></tr>
+<tr><td><b>AMC per tahun (jika dimuka)</b></td><td class="num"><b>Rp [____]</b></td></tr>
+</table>
+<p>Termasuk: respon gangguan P1 (gate mati) &lt; 4 jam kerja, kunjungan site
+terjadwal, update software dan firmware, backup harian terenkripsi, laporan
+kesehatan perangkat bulanan. Tidak termasuk: penggantian perangkat rusak
+oleh salah guna / petir / banjir (dikutip terpisah, harga khusus pelanggan AMC).</p>
+
+<h2>6. Perhitungan Balik Modal</h2>
+<table>
+<tr><th>Sumber penghematan</th><th class="num">Per bulan</th></tr>
+<tr><td>Kebocoran parkir yang dihentikan</td><td class="num">Rp [____]</td></tr>
+<tr><td>Selisih tagihan listrik/air tenant yang tertagih</td><td class="num">Rp [____]</td></tr>
+<tr><td>Denda &amp; penagihan tepat waktu (sewa/IPL)</td><td class="num">Rp [____]</td></tr>
+<tr><td>Penghematan jam kerja manual</td><td class="num">Rp [____]</td></tr>
+<tr><td><b>Total penghematan/bulan</b></td><td class="num"><b>Rp [____]</b></td></tr>
+</table>
+<p class="box"><b>Estimasi payback: [__] bulan.</b> Setelah itu, sistem menjadi
+penghasilan bersih: penghematan berjalan terus, biaya tinggal AMC.</p>
+
+<h2>7. Jadwal Pelaksanaan</h2>
+<table>
+<tr><th>Pekan</th><th>Kegiatan</th><th>Output</th></tr>
+<tr><td>1-2</td><td>Survey teknis detail + finalisasi desain</td><td>Gambar titik instalasi, BOQ final</td></tr>
+<tr><td>2-4</td><td>Pengadaan hardware + pra-konfigurasi di workshop</td><td>Perangkat siap pasang</td></tr>
+<tr><td>4-6</td><td>Instalasi lapangan + integrasi</td><td>Sistem berjalan paralel</td></tr>
+<tr><td>7</td><td>Pelatihan petugas + uji bersama</td><td>Berita acara uji</td></tr>
+<tr><td>8</td><td>Go-live + monitoring intensif</td><td>BAST + serah terima dokumen</td></tr>
+</table>
+
+<h2>8. Jaminan, SLA, dan Syarat</h2>
+<ul>
+<li>Garansi instalasi 12 bulan (koreksi pekerjaan tanpa biaya).</li>
+<li>SLA P1 gate mati: respon &lt; 4 jam kerja, on-site &lt; 24 jam dalam kota.</li>
+<li>Perangkat spare N+1 wajib tersimpan di site (bagian lingkup).</li>
+<li>Kepemilikan data 100% klien; kami sebagai operator data sesuai UU PDP,
+dengan Perjanjian Pemrosesan Data (DPA) sebagai lampiran kontrak.</li>
+<li>Lisensi software berupa hak pakai berlangganan; kode sumber tetap milik penyedia.</li>
+<li>Harga belum termasuk pekerjaan sipil/listrik daya besar oleh partner bersertifikat (jika diperlukan, dikutip terpisah).</li>
+<li>Proposal berlaku 30 hari sejak tanggal di atas.</li>
+</ul>
+
+<h2>9. Mengapa MallOps</h2>
+<ul>
+<li>Dibangun engineer: kode teruji otomatis, bisa diaudit teknisi Anda.</li>
+<li>Tanpa bagi-hasil: pendapatan parkir penuh milik gedung.</li>
+<li>Satu sistem untuk parkir + meter + sewa/IPL + portal: laporan kepemilikan real-time.</li>
+<li>Siap UU PDP sejak desain: retensi data, akses berjenjang, jejak audit.</li>
+</ul>
+
+<div class="footer">
+MallOps Suite &middot; disusun oleh Agustinus Biotamalo Lumbantoruan &middot;
+fxwisdom1@gmail.com &middot; biotama.cv<br>
+Lampiran tersedia: spesifikasi teknis, demo video, referensi arsitektur
+(github.com/cryptorichyrich/mallops-suite)
+</div>
+
+</body>
+</html>
