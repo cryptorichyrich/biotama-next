@@ -76,6 +76,14 @@ export const projects: Project[] = [
     featured: true,
   },
   {
+    id: "mallops-parking",
+    name: "MallOps Parking",
+    description: "Indonesian parking operations system (Secure-Parking-style) on Odoo 19: progressive tariff engine with grace windows and daily caps, gate flow with idempotent exit confirmation, five entry modes (paper ticket, QR, member smartcard, bank e-money tap like Flazz, ticketless LPR), QRIS and auto-debit payments with minimum-balance guards, tenant validation vouchers with monthly quota and chargeback reporting, monthly members with automated invoicing, cashier shifts with variance detection, and a real-time SISA availability board fed by per-slot bay sensors or loop counters. ESP32 firmware sketches and an API simulator reproduce the production device path.",
+    tech: ["Odoo 19", "Python", "IoT Sensors", "ESP32", "REST API", "PostgreSQL"],
+    url: "https://github.com/cryptorichyrich/mallops-suite/tree/main/custom/mall_parking",
+    featured: true,
+  },
+  {
     id: "toko-vavelle",
     name: "Toko Vavelle",
     description: "Vietnam Coffee E-Commerce platform built with AstroJS, Tailwind, and SEO-optimized architecture. Features automated AI image generation pipeline for commercial product photography.",
