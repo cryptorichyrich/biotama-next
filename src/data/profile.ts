@@ -18,9 +18,15 @@ export interface Certification {
   date: string;
 }
 
+export interface Principle {
+  title: string;
+  body: string;
+}
+
 export interface Profile {
   name: string;
   role: string;
+  positioning: string;
   tagline: string;
   email: string;
   phone: string;
@@ -28,6 +34,7 @@ export interface Profile {
   bio: string;
   photoUrl: string;
   summary: string;
+  principles: Principle[];
   metrics: {
     label: string;
     value: string;
@@ -40,6 +47,8 @@ export interface Profile {
 export const profile: Profile = {
   name: "Bio Lumbantoruan",
   role: "System Architect",
+  positioning:
+    "I design systems where failure is expensive: payment rails, product platforms, and the teams that keep them running.",
   tagline:
     "\u201cThere are no right answers in architecture \u2014 only tradeoffs.\u201d \u2014 Mark Richards",
   email: "fxwisdom1@gmail.com",
@@ -47,7 +56,25 @@ export const profile: Profile = {
   location: "Jakarta, Indonesia",
   bio: "",
   photoUrl: "/photo.jpg",
-  summary: "Senior fullstack architect with 10+ years of experience building high-performance web applications across fintech, e-commerce, and SaaS domains. Proven track record of architecting scalable systems — from PCI-DSS compliant payment integrations to AI-powered freelance marketplaces. Deep expertise in React, Next.js, Astro, Node.js, NestJS, FastAPI and modern cloud infrastructure. Built automated AI image generation pipelines for commercial product photography using fal.ai and Nano Banana. Combines engineering excellence with business acumen to deliver solutions that satisfy both C-level stakeholders and end-users while maintaining strict regulatory compliance.",
+  summary: "System architect with 14+ years in fintech delivery and platform engineering, working where failure is expensive: payment integrations under PCI-DSS discipline, ERP implementations end to end, and AI systems in production. I design boundaries, contracts, and failure modes before code, choose boring technology where it protects the business, and keep the trade-offs explicit in writing. Still hands-on: React, Next.js, Astro, Node, Python, SQL, Docker, CI/CD. A good architecture is measured by one thing: how cheaply the team can change it.",
+  principles: [
+    {
+      title: "Systems over features",
+      body: "Model boundaries, data flows, and failure modes before code. Features are easy to add; bad seams are expensive to remove.",
+    },
+    {
+      title: "Trade-offs over hype",
+      body: "Every choice has a cost. I make the cost explicit and pick what fits the business, not what is trending.",
+    },
+    {
+      title: "Strategy first",
+      body: "Invest where the business differentiates, buy or borrow the rest. Architecture follows the win condition.",
+    },
+    {
+      title: "Built to change",
+      body: "Reversible decisions, recorded rationale, boring technology where it counts. The system should get cheaper to evolve, not more expensive.",
+    },
+  ],
   metrics: [
     { label: "Years Live", value: "10" },
     { label: "Brokers Supported", value: "6" },

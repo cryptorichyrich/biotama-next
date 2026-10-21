@@ -90,7 +90,9 @@ export function Hero() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    setVisible(true);
+    // Wait one frame so the initial (hidden) state paints before the boot animation starts.
+    const frame = requestAnimationFrame(() => setVisible(true));
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   const handleScrollTo = useCallback((selector: string) => {
@@ -159,9 +161,18 @@ export function Hero() {
               {profile.role}
             </p>
 
+            {/* Positioning */}
+            <p
+              className={`mt-4 text-base md:text-lg font-[family-name:var(--font-mono)] text-[var(--color-text-body)] leading-relaxed max-w-lg transition-all duration-1000 delay-200 ${
+                visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+              }`}
+            >
+              {profile.positioning}
+            </p>
+
             {/* Tagline — amber dim */}
             <p
-              className={`mt-4 text-base md:text-lg font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)] leading-relaxed max-w-lg transition-all duration-1000 delay-300 ${
+              className={`mt-3 text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)] leading-relaxed max-w-lg transition-all duration-1000 delay-300 ${
                 visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
               }`}
             >

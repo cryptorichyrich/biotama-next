@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     template: "%s | Bio Lumbantoruan",
   },
   description:
-    "Architect of payment systems, microservices, and scalable fintech infrastructure. 14+ years designing systems that move money reliably and securely.",
+    "System architect for systems where failure is expensive: payments, platforms, and AI in production. Trade-offs over hype; decisions recorded.",
   keywords: [
     "System Architect",
     "Fintech Engineer",
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
     siteName: "Bio Lumbantoruan",
     title: "Bio Lumbantoruan — System Architect & Fintech Engineer",
     description:
-      "Architect of payment systems, microservices, and scalable fintech infrastructure. 14+ years designing systems that move money reliably and securely.",
+      "System architect for systems where failure is expensive: payments, platforms, and AI in production. Trade-offs over hype; decisions recorded.",
     url: "https://biotama.cv",
     images: [
       {
@@ -83,7 +83,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Bio Lumbantoruan — System Architect & Fintech Engineer",
     description:
-      "Architect of payment systems, microservices, and scalable fintech infrastructure. 14+ years designing systems that move money reliably and securely.",
+      "System architect for systems where failure is expensive: payments, platforms, and AI in production. Trade-offs over hype; decisions recorded.",
     images: ["/og-image.svg"],
     creator: "@biolumbantoruan",
   },
@@ -134,7 +134,7 @@ export default function RootLayout({
                 familyName: "Lumbantoruan",
                 jobTitle: "System Architect & Fintech Engineer",
                 description:
-                  "Architect of payment systems, microservices, and scalable fintech infrastructure. 14+ years designing systems that move money reliably and securely.",
+                  "System architect for systems where failure is expensive: payments, platforms, and AI in production. Trade-offs over hype; decisions recorded.",
                 url: "https://biotama.cv",
                 sameAs: [
                   "https://linkedin.com/in/biolumbantoruan",

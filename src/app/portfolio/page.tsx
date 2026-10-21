@@ -128,7 +128,8 @@ export default function PortfolioPage() {
             >
               Fourteen years of fintech engineering: payment infrastructure held to PCI-DSS discipline, ERP
               implementations end to end, and AI products running in production. I like problems where the cost of
-              failure is real, because that is where careful work shows.
+              failure is real, because that is where careful work shows. I choose systems by the trade-offs they
+              make, not by the frameworks they use.
             </motion.p>
 
             <motion.div className="mt-10 flex flex-wrap items-center gap-4" {...fadeProps(reduce, 0.24)}>
@@ -324,6 +325,33 @@ export default function PortfolioPage() {
                       </li>
                     ))}
                   </ul>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ══ OPERATING PRINCIPLES ══ */}
+        <section className="px-4 sm:px-6 lg:px-8 py-24 border-t border-[var(--color-border)]">
+          <div className="max-w-[1200px] mx-auto">
+            <motion.p className={`${MONO} section-label mb-4`} {...fadeProps(reduce, 0)}>
+              <span className="text-[var(--color-green-term)]">$</span> cat principles.md
+            </motion.p>
+            <motion.h2
+              className={`${DISPLAY} text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight gradient-text mb-16`}
+              {...fadeProps(reduce, 0.06)}
+            >
+              Operating principles
+            </motion.h2>
+
+            <div className="grid sm:grid-cols-2 gap-x-16 gap-y-12">
+              {profile.principles.map((principle, i) => (
+                <motion.div key={principle.title} {...fadeProps(reduce, 0.05 * i)}>
+                  <div className={`${MONO} text-xs text-[var(--color-gold)] mb-3`}>{String(i + 1).padStart(2, "0")}</div>
+                  <h3 className={`${DISPLAY} text-xl font-semibold text-[var(--color-text-heading)] mb-3`}>
+                    {principle.title}
+                  </h3>
+                  <p className={`${MONO} text-sm leading-relaxed text-[var(--color-text-body)]`}>{principle.body}</p>
                 </motion.div>
               ))}
             </div>
