@@ -13,6 +13,11 @@ export function About() {
         How I think about systems
       </h2>
 
+      <p className="mb-8 text-sm font-[family-name:var(--font-mono)] italic text-[var(--color-amber-dim)] leading-relaxed max-w-3xl">
+        Arsitektur adalah keputusan yang mahal untuk diubah. Tugas saya membuat biaya itu terlihat, lalu memilih
+        dengan sadar.
+      </p>
+
       <div className="space-y-5 max-w-3xl mb-12">
         <p className="text-[var(--color-text-body)] leading-relaxed font-[family-name:var(--font-mono)] text-sm md:text-base">
           I am a system architect. For more than a decade I have worked where money moves and downtime is not

@@ -9,6 +9,7 @@ import { projects } from "@/data/projects";
 import { experiences } from "@/data/experience";
 import { profile } from "@/data/profile";
 import { testimonials } from "@/data/testimonials";
+import { decisions } from "@/data/decisions";
 
 /* ═══════════════════════════════════════════════════════════════
    PORTFOLIO — Editorial case-study page
@@ -354,6 +355,76 @@ export default function PortfolioPage() {
                   <p className={`${MONO} text-sm leading-relaxed text-[var(--color-text-body)]`}>{principle.body}</p>
                 </motion.div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ══ SELECTED DECISIONS (ADR) ══ */}
+        <section id="decisions" className="scroll-mt-24 px-4 sm:px-6 lg:px-8 py-24 border-t border-[var(--color-border)]">
+          <div className="max-w-[1200px] mx-auto">
+            <motion.p className={`${MONO} section-label mb-4`} {...fadeProps(reduce, 0)}>
+              <span className="text-[var(--color-green-term)]">$</span> cat decisions/*.md
+            </motion.p>
+            <motion.h2
+              className={`${DISPLAY} text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight gradient-text mb-4`}
+              {...fadeProps(reduce, 0.06)}
+            >
+              Selected decisions
+            </motion.h2>
+            <motion.p
+              className={`${MONO} text-[var(--color-text-body)] max-w-2xl mb-4 leading-relaxed`}
+              {...fadeProps(reduce, 0.12)}
+            >
+              Architecture is judged by the calls that are expensive to reverse. Four of mine, with the cost left
+              visible.
+            </motion.p>
+
+            <div>
+              {decisions.map((d, i) => (
+                <motion.article
+                  key={d.id}
+                  className="grid md:grid-cols-[180px_1fr] gap-6 md:gap-10 py-10 border-t border-[var(--color-border)]"
+                  {...fadeProps(reduce, 0.05 * i)}
+                >
+                  <div>
+                    <div className={`${MONO} text-xs text-[var(--color-gold)]`}>{d.id}</div>
+                    <div className={`${MONO} mt-1 text-[11px] text-[var(--color-text-muted)]`}>{d.domain}</div>
+                  </div>
+                  <div>
+                    <h3 className={`${DISPLAY} text-xl sm:text-2xl font-semibold text-[var(--color-text-heading)]`}>
+                      {d.title}
+                    </h3>
+                    <div className="mt-5 grid sm:grid-cols-2 gap-x-10 gap-y-5">
+                      <div>
+                        <div className={`${MONO} text-[10px] tracking-[0.25em] uppercase text-[var(--color-gold)] mb-1.5`}>
+                          Context
+                        </div>
+                        <p className={`${MONO} text-sm leading-relaxed text-[var(--color-text-body)]`}>{d.context}</p>
+                      </div>
+                      <div>
+                        <div className={`${MONO} text-[10px] tracking-[0.25em] uppercase text-[var(--color-gold)] mb-1.5`}>
+                          Decision
+                        </div>
+                        <p className={`${MONO} text-sm leading-relaxed text-[var(--color-text-body)]`}>{d.decision}</p>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <div className={`${MONO} text-[10px] tracking-[0.25em] uppercase text-[var(--color-amber-dim)] mb-1.5`}>
+                          Trade-off
+                        </div>
+                        <p className={`${MONO} text-sm leading-relaxed text-[var(--color-amber-dim)]`}>{d.tradeoff}</p>
+                      </div>
+                    </div>
+                    <div className="mt-5 flex flex-wrap gap-1.5">
+                      {d.tags.map((t) => (
+                        <span key={t} className={`${MONO} glass-legend text-[11px] text-[var(--color-green-term)]`}>
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </motion.article>
+              ))}
+              <div className="border-t border-[var(--color-border)]" />
             </div>
           </div>
         </section>
