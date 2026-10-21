@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowUpRight, ArrowRight, Mail } from "lucide-react";
+import { ArrowUpRight, ArrowRight, Mail, FileText } from "lucide-react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { projects } from "@/data/projects";
@@ -148,6 +148,13 @@ export default function PortfolioPage() {
                 <span className="text-[var(--color-green-term)]">$</span>
                 Resume
               </Link>
+              <a
+                href="#decisions"
+                className={`${MONO} inline-flex items-center gap-2 px-4 py-3.5 text-sm text-[var(--color-amber-dim)] transition-colors duration-300 hover:text-[var(--color-amber-text)]`}
+              >
+                <FileText size={15} />
+                Selected decisions
+              </a>
               <a
                 href={`mailto:${profile.email}`}
                 className={`${MONO} inline-flex items-center gap-2 px-4 py-3.5 text-sm text-[var(--color-amber-dim)] transition-colors duration-300 hover:text-[var(--color-amber-text)]`}

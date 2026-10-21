@@ -171,6 +171,11 @@ export default function ResumePage() {
                 <p style={{ fontSize: "10px", lineHeight: "1.5", color: "#555555", marginTop: "2px" }}>
                   {p.short ?? p.description}
                 </p>
+                {p.decision && (
+                  <p style={{ fontSize: "9px", lineHeight: "1.45", color: "#666666", marginTop: "2px" }}>
+                    <span style={{ fontWeight: 600, color: "#444444" }}>Decision:</span> {p.decision}
+                  </p>
+                )}
               </div>
             ))}
           </div>
