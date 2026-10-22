@@ -28,7 +28,7 @@ const METRICS = [
 
 /* Curated case studies, resolved from the master project data. */
 const FEATURED_IDS = ["mallops-suite", "srabutan", "umkm-st-servatius"];
-const MORE_IDS = ["crossyncorder", "baxiamarkets", "toko-vavelle", "healer-path", "damai-kasih", "sales-dashboard"];
+const MORE_IDS = ["travel-bali", "crossyncorder", "baxiamarkets", "toko-vavelle", "healer-path", "damai-kasih", "sales-dashboard"];
 
 const featured = FEATURED_IDS.map((id) => projects.find((p) => p.id === id)).filter(
   (p): p is NonNullable<typeof p> => Boolean(p)

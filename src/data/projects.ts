@@ -102,9 +102,11 @@ export const projects: Project[] = [
   },
   {
     id: "travel-bali",
-    name: "Travel to Bali Paradise",
-    description: "Travel and booking platform for Bali tourism experiences with responsive design and booking integration.",
-    tech: ["AstroJS", "Tailwind"],
+    name: "Travel To Bali Paradise",
+    description:
+      "Bali tourism site (traveltobaliparadise.com) with curated tour packages, vehicle rentals, destination pages and a blog. Package pricing is published in USD and IDR, and every booking path funnels into a tracked WhatsApp handoff instead of an abandoned form. Astro 5 static output with Tailwind.",
+    tech: ["Astro 5", "Tailwind", "GA4", "WhatsApp API"],
+    url: "https://traveltobaliparadise.com",
     featured: true,
   },
   {
