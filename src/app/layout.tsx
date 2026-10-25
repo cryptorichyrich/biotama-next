@@ -164,7 +164,7 @@ export default function RootLayout({
                   "API Design",
                 ],
                 alumniOf: [
-                  { "@type": "CollegeOrUniversity", name: "Universitas Indonesia" },
+                  { "@type": "CollegeOrUniversity", name: "Swiss German University" },
                 ],
               },
               {
