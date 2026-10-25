@@ -46,7 +46,7 @@ export interface Profile {
 
 export const profile: Profile = {
   name: "Bio Lumbantoruan",
-  role: "System Architect",
+  role: "Solutions Architect",
   positioning:
     "I design systems where failure is expensive: payment rails, product platforms, and the teams that keep them running.",
   tagline:
@@ -56,7 +56,7 @@ export const profile: Profile = {
   location: "Jakarta, Indonesia",
   bio: "",
   photoUrl: "/photo.jpg",
-  summary: "System architect with 14+ years in fintech delivery and platform engineering, working where failure is expensive: payment integrations under PCI-DSS discipline, ERP implementations end to end, and AI systems in production. I design boundaries, contracts, and failure modes before code, choose boring technology where it protects the business, and keep the trade-offs explicit in writing. Still hands-on: React, Next.js, Astro, Node, Python, SQL, Docker, CI/CD. A good architecture is measured by one thing: how cheaply the team can change it.",
+  summary: "Solutions architect with 15 years in fintech delivery and platform engineering, working where failure is expensive: payment integrations under PCI-DSS discipline, ERP implementations end to end, and AI systems in production. I work from discovery to delivery: translating business requirements into solution designs, integration contracts, and explicit trade-offs, choosing boring technology where it protects the business, and keeping the rationale in writing. Still hands-on: React, Next.js, Astro, Node, Python, SQL, Docker, CI/CD. A good solution is measured by one thing: how cheaply the team can change it.",
   principles: [
     {
       title: "Systems over features",
@@ -76,7 +76,7 @@ export const profile: Profile = {
     },
   ],
   metrics: [
-    { label: "Years Live", value: "10" },
+    { label: "Years Live", value: "15" },
     { label: "Brokers Supported", value: "6" },
     { label: "ERP Rollouts", value: "2" },
     { label: "Projects Shipped", value: "20+" },

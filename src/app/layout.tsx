@@ -21,13 +21,13 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://biotama.cv"),
   title: {
-    default: "Bio Lumbantoruan — System Architect & Fintech Engineer",
+    default: "Bio Lumbantoruan — Solutions Architect & Fintech Engineer",
     template: "%s | Bio Lumbantoruan",
   },
   description:
-    "System architect for systems where failure is expensive: payments, platforms, and AI in production. Trade-offs over hype; decisions recorded.",
+    "Solutions architect for systems where failure is expensive: payments, platforms, and AI in production. Trade-offs over hype; decisions recorded.",
   keywords: [
-    "System Architect",
+    "Solutions Architect",
     "Fintech Engineer",
     "Payment Gateway Architecture",
     "PCI-DSS Compliance",
@@ -66,24 +66,24 @@ export const metadata: Metadata = {
     locale: "en_US",
     alternateLocale: "id_ID",
     siteName: "Bio Lumbantoruan",
-    title: "Bio Lumbantoruan — System Architect & Fintech Engineer",
+    title: "Bio Lumbantoruan — Solutions Architect & Fintech Engineer",
     description:
-      "System architect for systems where failure is expensive: payments, platforms, and AI in production. Trade-offs over hype; decisions recorded.",
+      "Solutions architect for systems where failure is expensive: payments, platforms, and AI in production. Trade-offs over hype; decisions recorded.",
     url: "https://biotama.cv",
     images: [
       {
         url: "/og-image.svg",
         width: 1200,
         height: 630,
-        alt: "Bio Lumbantoruan — System Architect & Fintech Engineer",
+        alt: "Bio Lumbantoruan — Solutions Architect & Fintech Engineer",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Bio Lumbantoruan — System Architect & Fintech Engineer",
+    title: "Bio Lumbantoruan — Solutions Architect & Fintech Engineer",
     description:
-      "System architect for systems where failure is expensive: payments, platforms, and AI in production. Trade-offs over hype; decisions recorded.",
+      "Solutions architect for systems where failure is expensive: payments, platforms, and AI in production. Trade-offs over hype; decisions recorded.",
     images: ["/og-image.svg"],
     creator: "@biolumbantoruan",
   },
@@ -132,9 +132,9 @@ export default function RootLayout({
                 name: "Bio Lumbantoruan",
                 givenName: "Bio",
                 familyName: "Lumbantoruan",
-                jobTitle: "System Architect & Fintech Engineer",
+                jobTitle: "Solutions Architect & Fintech Engineer",
                 description:
-                  "System architect for systems where failure is expensive: payments, platforms, and AI in production. Trade-offs over hype; decisions recorded.",
+                  "Solutions architect for systems where failure is expensive: payments, platforms, and AI in production. Trade-offs over hype; decisions recorded.",
                 url: "https://biotama.cv",
                 sameAs: [
                   "https://linkedin.com/in/biolumbantoruan",
@@ -148,6 +148,7 @@ export default function RootLayout({
                 },
                 knowsAbout: [
                   "System Architecture",
+                  "Solution Architecture",
                   "Fintech Engineering",
                   "Payment Gateways",
                   "PCI-DSS Compliance",
@@ -172,7 +173,7 @@ export default function RootLayout({
                 name: "Bio Lumbantoruan",
                 url: "https://biotama.cv",
                 description:
-                  "Portfolio and blog of Bio Lumbantoruan — System Architect & Fintech Engineer",
+                  "Portfolio and blog of Bio Lumbantoruan — Solutions Architect & Fintech Engineer",
                 inLanguage: "en-US",
                 publisher: {
                   "@type": "Person",

@@ -16,7 +16,7 @@ export const aboutCopy: { en: AboutCopy; id: AboutCopy } = {
     epigraph:
       "Architecture is the set of decisions that are expensive to change. My job is to make that cost visible, then choose deliberately.",
     paragraphs: [
-      "I am a system architect. For more than a decade I have worked where money moves and downtime is not abstract: payment integrations under PCI-DSS discipline, brokerage platforms and trading operations, ERP rollouts, and AI systems that run in production.",
+      "I am a solutions architect. For more than a decade I have worked where money moves and downtime is not abstract: payment integrations under PCI-DSS discipline, brokerage platforms and trading operations, ERP rollouts, and AI systems that run in production.",
       "Architecture is not a diagram or a stack. It is the set of decisions that are expensive to reverse: where the boundaries sit, which contracts the parts speak, how data flows, and what happens when something fails. My job is to make those decisions explicit, choose the set that fits the business, and write down why.",
       "I stay hands-on, because a design the team cannot build is not a design. React, Next.js, Astro, Node, Python, SQL, Docker, CI/CD. And I measure architecture the only way that matters: by how cheaply the team can change it.",
     ],
@@ -44,7 +44,7 @@ export const aboutCopy: { en: AboutCopy; id: AboutCopy } = {
     epigraph:
       "Arsitektur adalah keputusan yang mahal untuk diubah. Tugas saya membuat biaya itu terlihat, lalu memilih dengan sadar.",
     paragraphs: [
-      "Saya seorang arsitek sistem. Lebih dari satu dekade saya bekerja di tempat uang bergerak dan downtime bukan hal abstrak: integrasi pembayaran dengan disiplin PCI-DSS, platform brokerage dan operasi trading, rollout ERP, serta sistem AI yang berjalan di produksi.",
+      "Saya seorang arsitek solusi. Lebih dari satu dekade saya bekerja di tempat uang bergerak dan downtime bukan hal abstrak: integrasi pembayaran dengan disiplin PCI-DSS, platform brokerage dan operasi trading, rollout ERP, serta sistem AI yang berjalan di produksi.",
       "Arsitektur bukan diagram atau stack. Arsitektur adalah kumpulan keputusan yang mahal untuk dibalik: di mana batas sistem berada, kontrak apa yang dipakai antar bagian, bagaimana data mengalir, dan apa yang terjadi ketika sesuatu gagal. Tugas saya adalah membuat keputusan itu eksplisit, memilih set yang cocok dengan bisnis, dan menuliskan alasannya.",
       "Saya tetap hands-on, karena desain yang tidak bisa dibangun oleh tim bukanlah desain. React, Next.js, Astro, Node, Python, SQL, Docker, CI/CD. Dan saya mengukur arsitektur dengan satu cara: seberapa murah tim bisa mengubahnya.",
     ],

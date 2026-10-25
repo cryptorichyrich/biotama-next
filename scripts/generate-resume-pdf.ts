@@ -2,7 +2,6 @@ import { execSync } from "node:child_process";
 import * as http from "node:http";
 import * as path from "node:path";
 import * as puppeteer from "puppeteer";
-import { pdfPage } from "puppeteer-report";
 import * as fs from "node:fs";
 import type { Server } from "node:http";
 
@@ -116,12 +115,23 @@ const main = async () => {
     });
 
     console.log("Generating Resume PDF (ATS-friendly)...");
-    await pdfPage(page, {
-      path: path.join(__dirname, "..", "public", "resume.pdf"),
-      format: "A4",
+    // ponytail: raw CDP with ReturnAsBase64. page.pdf() crashes with
+    // "Protocol error (IO.read)" on this Windows setup; base64 avoids the stream.
+    const cdp = await page.createCDPSession();
+    const { data } = await cdp.send("Page.printToPDF", {
       printBackground: true,
-      margin: { top: "12mm", right: "12mm", bottom: "12mm", left: "12mm" },
+      paperWidth: 8.27,
+      paperHeight: 11.69,
+      marginTop: 0.4724,
+      marginBottom: 0.4724,
+      marginLeft: 0.4724,
+      marginRight: 0.4724,
+      transferMode: "ReturnAsBase64",
     });
+    fs.writeFileSync(
+      path.join(__dirname, "..", "public", "resume.pdf"),
+      Buffer.from(data, "base64")
+    );
 
     console.log("✅ Resume PDF generated: public/resume.pdf");
 

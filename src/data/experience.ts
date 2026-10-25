@@ -12,7 +12,7 @@ export interface Experience {
 export const experiences: Experience[] = [
   {
     id: "srabutan",
-    role: "System Design & Architect",
+    role: "Founder & Solutions Architect",
     company: "Srabutan.com",
     location: "Indonesia",
     startDate: "Jan 2026",
@@ -32,6 +32,8 @@ export const experiences: Experience[] = [
     startDate: "Jan 2014",
     endDate: "Dec 2025",
     highlights: [
+      "Ran technical discovery and solution design for six international brokerage platforms, producing proposals, architecture diagrams, and RFP responses",
+      "Defined integration designs across PSPs, KYC providers (Sumsub), payment rails, and trading platforms (MT4/MT5, oneZero)",
       "Delivered consulting for Pepperstone, TitanFX, BaxiaMarkets, Funded Prop BX, Traderscolo, Liquidity Connect",
       "Served TitanFX, FXCM, LiquidityConnect, Traderscolo VPS, BaxiaMarkets, and Pepperstone as frontend and technical support",
       "Managed multiple teams, delivered training, and built a continuous improvement system",

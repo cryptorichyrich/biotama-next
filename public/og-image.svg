@@ -36,8 +36,8 @@
   <text x="80" y="150" font-family="'Courier New', monospace" font-size="20" fill="#00ff41">$ whoami</text>
   <text x="100" y="185" font-family="'Spectral', Georgia, serif" font-size="28" font-weight="bold" fill="#c7a04d">Bio Lumbantoruan</text>
 
-  <!-- System Architect -->
-  <text x="100" y="225" font-family="'Courier New', monospace" font-size="18" fill="#c7a04d">System Architect · Fintech Engineer</text>
+  <!-- Solutions Architect -->
+  <text x="100" y="225" font-family="'Courier New', monospace" font-size="18" fill="#c7a04d">Solutions Architect · Fintech Engineer</text>
 
   <!-- Terminal commands -->
   <text x="80" y="280" font-family="'Courier New', monospace" font-size="16" fill="#00ff41">$ systemctl status payment-gateway</text>
@@ -48,7 +48,7 @@
 
   <!-- Terminal prompt -->
   <text x="80" y="420" font-family="'Courier New', monospace" font-size="16" fill="#00ff41">$ cat /var/log/impact.log</text>
-  <text x="100" y="455" font-family="'Courier New', monospace" font-size="14" fill="rgba(201,168,76,0.6)">Designing systems that move money across 69 countries.</text>
+  <text x="100" y="455" font-family="'Courier New', monospace" font-size="14" fill="rgba(201,168,76,0.6)">Designing payment and trading systems where failure is expensive.</text>
 
   <!-- Blinking cursor -->
   <rect x="260" y="403" width="10" height="18" fill="#00ff41" opacity="0.7">
