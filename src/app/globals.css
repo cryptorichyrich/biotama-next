@@ -589,15 +589,18 @@ body {
 
 
 /* Service landing reveal */
-@keyframes svcRise {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: none; }
-}
 .svc-reveal {
-  animation: svcRise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+  will-change: opacity, transform;
+}
+.svc-reveal.in {
+  opacity: 1;
+  transform: none;
 }
 @media (prefers-reduced-motion: reduce) {
-  .svc-reveal { animation: none; }
+  .svc-reveal { opacity: 1; transform: none; transition: none; }
 }
 
 .svc2 h1, .svc2 h2 { text-wrap: balance; }
@@ -606,3 +609,182 @@ body {
   outline-offset: 3px;
 }
 .svc2 summary::-webkit-details-marker { display: none; }
+
+
+/* ── Device showcase ── */
+.device-stage {
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 10px 0 58px;
+  perspective: 1600px;
+}
+.device-glow {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: 18%;
+  bottom: 20%;
+  border-radius: 999px;
+  filter: blur(90px);
+  opacity: 0.22;
+  transform: translate3d(var(--mx, 0px), var(--my, 0px), 0);
+  transition: transform 0.5s ease-out;
+  pointer-events: none;
+}
+.macbook-wrap {
+  width: 84%;
+  margin: 0 auto;
+  opacity: 0;
+  transform: translateY(40px) scale(0.985);
+  transition: opacity 1s cubic-bezier(0.2, 0.7, 0.2, 1), transform 1s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.device-stage.is-in .macbook-wrap {
+  opacity: 1;
+  transform: none;
+}
+.macbook {
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transform-style: preserve-3d;
+  transition: transform 0.25s ease-out;
+  will-change: transform;
+}
+.macbook-lid {
+  background: linear-gradient(145deg, #46464d, #1b1b1f 55%, #101013);
+  border-radius: 18px;
+  padding: 10px 10px 14px;
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.35), 0 2px 0 rgba(255, 255, 255, 0.14) inset;
+}
+.macbook-cam {
+  display: block;
+  width: 5px;
+  height: 5px;
+  margin: 0 auto 7px;
+  border-radius: 50%;
+  background: #0a0a0a;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.macbook-screen {
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 9px;
+  background: #000;
+}
+.macbook-screen img,
+.iphone-screen img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+.macbook-base {
+  position: relative;
+  width: 104%;
+  margin-left: -2%;
+  height: 14px;
+  background: linear-gradient(#d8d8dc, #9a9aa0 55%, #6e6e74);
+  border-radius: 0 0 14px 14px;
+  box-shadow: 0 22px 36px rgba(0, 0, 0, 0.28);
+}
+.macbook-base span {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 14%;
+  height: 5px;
+  transform: translateX(-50%);
+  background: #5d5d63;
+  border-radius: 0 0 8px 8px;
+}
+.iphone-wrap {
+  position: absolute;
+  right: 3%;
+  bottom: 42px;
+  width: 19%;
+  min-width: 88px;
+  max-width: 168px;
+  animation: deviceFloat 7s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
+.iphone {
+  position: relative;
+  aspect-ratio: 390 / 844;
+  border: 5px solid #1c1c1f;
+  border-radius: 32px;
+  background: #000;
+  box-shadow: 0 40px 70px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.25s ease-out;
+  overflow: hidden;
+}
+.iphone-screen {
+  position: absolute;
+  inset: 3px;
+  border-radius: 27px;
+  overflow: hidden;
+  background: #000;
+}
+.iphone-island {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  width: 32%;
+  height: 12px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: #000;
+  z-index: 2;
+}
+.device-caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 26px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  opacity: 0.6;
+}
+.device-caption a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+@keyframes deviceFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+@media (max-width: 640px) {
+  .device-stage { padding-bottom: 46px; }
+  .macbook-wrap { width: 94%; }
+  .iphone-wrap { width: 23%; min-width: 72px; right: 1%; bottom: 30px; }
+  .macbook-lid { border-radius: 13px; padding: 7px 7px 10px; }
+  .macbook-screen { border-radius: 6px; }
+  .device-caption { font-size: 9px; margin-top: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .macbook-wrap { opacity: 1; transform: none; transition: none; }
+  .iphone-wrap { animation: none; }
+  .macbook, .iphone { transition: none; transform: none; }
+}
+
+.macbook-screen { position: relative; }
+.macbook-screen::after {
+  content: "";
+  position: absolute;
+  inset: -45%;
+  background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.22) 50%, transparent 58%);
+  transform: translateX(-120%) rotate(8deg);
+  transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+  pointer-events: none;
+}
+.device-stage:hover .macbook-screen::after {
+  transform: translateX(120%) rotate(8deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .macbook-screen::after { display: none; }
+}

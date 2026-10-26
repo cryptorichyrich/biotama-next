@@ -3,6 +3,8 @@ import { brand, waLink } from "@/data/services";
 import type { ServicePage, VariantId } from "@/data/service-pages";
 import ServiceVisual from "./ServiceVisual";
 import ServiceDetail from "./ServiceDetail";
+import DeviceShowcase, { type DeviceShot } from "./DeviceShowcase";
+import RevealObserver from "./RevealObserver";
 
 type Props = { service: ServicePage; variant: VariantId; index: number };
 
@@ -26,6 +28,13 @@ export default function ServiceLanding({ service, variant, index }: Props) {
   const headingCase = mod === 3 ? "uppercase tracking-[-0.02em]" : "";
   const buttonShape = mod === 1 ? "rounded-full" : "rounded-md";
   const patternType = index % 5;
+  const showcases: DeviceShot[] = [
+    { desktop: "/assets/shots/vavelle-desktop.webp", mobile: "/assets/shots/vavelle-mobile.webp", name: "Toko Vavelle", href: "/portfolio" },
+    { desktop: "/assets/shots/srabutan-desktop.webp", mobile: "/assets/shots/srabutan-mobile.webp", name: "Srabutan", href: "/portfolio" },
+    { desktop: "/assets/shots/dharmakarsa-desktop.webp", mobile: "/assets/shots/dharmakarsa-mobile.webp", name: "Dharmakarsa", href: "/dharmakarsa" },
+    { desktop: "/assets/shots/mallops-desktop.webp", mobile: "/assets/shots/mallops-mobile.webp", name: "MallOps Suite", href: "/mallops" },
+  ];
+  const shot = showcases[index % showcases.length];
 
   const style = {
     "--bg": p.bg, "--ink": p.ink, "--muted": p.muted,
@@ -418,6 +427,7 @@ export default function ServiceLanding({ service, variant, index }: Props) {
 
   return (
     <div className="svc2 min-h-screen pb-24 md:pb-0" style={{ ...style, backgroundColor: p.bg, color: p.ink }}>
+      <RevealObserver />
       <header className={`sticky top-0 z-50 ${borderWidth} border-x-0 border-t-0 backdrop-blur-xl`} style={{ borderColor: line, backgroundColor: `${p.bg}e6` }}>
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-4">
           <a href="/layanan" className="flex items-center gap-2 text-sm font-semibold">
@@ -501,6 +511,26 @@ export default function ServiceLanding({ service, variant, index }: Props) {
 
         <section className="mx-auto max-w-6xl px-5 py-14 sm:py-20">
           <div className="svc-reveal">{authority}</div>
+        </section>
+
+        <section className="border-y" style={{ borderColor: softLine }}>
+          <div className="mx-auto max-w-6xl px-5 py-14 sm:py-20">
+            <div className="grid gap-4 lg:grid-cols-[.9fr_1.1fr] lg:items-end">
+              <div>
+                {sectionLabel("Antarmuka")}
+                <h2 className={`${font} mt-4 max-w-xl text-3xl leading-tight tracking-tight sm:text-4xl ${headingCase}`}>
+                  Dibangun sampai layar terkecil.
+                </h2>
+              </div>
+              <p className="max-w-md text-sm leading-relaxed lg:justify-self-end" style={{ color: p.muted }}>
+                Screenshot dari produk yang berjalan, bukan mockup template. Desktop dan mobile
+                memakai sistem desain yang sama.
+              </p>
+            </div>
+            <div className="mt-10">
+              <DeviceShowcase shot={shot} accent={p.accent} />
+            </div>
+          </div>
         </section>
 
         <div className="mx-auto max-w-6xl px-5">
