@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { services, brand, waLink } from "@/data/services";
+import { brand, waLink } from "@/data/services";
+import { servicePages, variantMeta } from "@/data/service-pages";
 
-const title = "Layanan — AI, Software, Infrastruktur & Pertumbuhan";
+const title = "Layanan — 20 layanan, 3 sudut pandang, 60 halaman";
 const description =
-  "11 layanan Biotama: chatbot AI, aplikasi mobile, sistem kasir POS, data analytics, managed IT, keamanan siber, CCTV, digital marketing, marketplace, dan bootcamp coding.";
+  "Katalog layanan Biotama: chatbot AI, POS, aplikasi mobile, data analytics, cybersecurity, CCTV, digital marketing, IT consulting, website, marketplace, bootcamp, cloud, jaringan, PC, game, arsip, animasi, smart home, IT support, dan drone.";
 const canonical = `https://${brand.domain}/layanan/`;
 
 export const metadata: Metadata = {
@@ -28,52 +28,34 @@ export const metadata: Metadata = {
   },
 };
 
-const tracks = [
-  {
-    href: "/layanan/ai",
-    label: "AI & Automation",
-    desc: "Chatbot, otomasi, data, dan produk digital. Untuk tim yang ingin mengurangi kerja berulang.",
-    accent: "#3AE2B4",
-  },
-  {
-    href: "/layanan/enterprise",
-    label: "Enterprise",
-    desc: "Managed IT, keamanan siber, dan tata kelola teknologi dengan SLA yang bisa diaudit.",
-    accent: "#0E6B5C",
-  },
-  {
-    href: "/layanan/growth",
-    label: "Growth",
-    desc: "Kasir, website, iklan, dan operasional marketplace. Untuk bisnis yang butuh hasil cepat.",
-    accent: "#FF5A1F",
-  },
-];
+const variantTone: Record<string, string> = {
+  v1: "border-[#0E6B5C]/60 text-[#7FD3C2] hover:bg-[#0E6B5C]/15",
+  v2: "border-[#FF5A1F]/60 text-[#FF9A73] hover:bg-[#FF5A1F]/15",
+  v3: "border-[#35D0C6]/60 text-[#8BE9E3] hover:bg-[#35D0C6]/10",
+};
 
 export default function LayananPage() {
+  const categories = Array.from(new Set(servicePages.map((s) => s.category)));
+
   return (
-    <div className="min-h-screen bg-[#070B12] text-[#E7EDF5]">
+    <div className="layanan-hub min-h-screen bg-[#070B12] text-[#E7EDF5]">
       <header className="border-b border-white/10">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
-          <Link href="/" className="flex items-center gap-2 font-bold tracking-tight">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-5">
+          <a href="/" className="flex items-center gap-2 font-bold tracking-tight">
             <span className="grid h-8 w-8 place-items-center rounded-lg bg-[#3AE2B4] text-[#04110D]">
               B
             </span>
             <span className="text-lg">
               biotama<span className="text-[#3AE2B4]">.</span>
             </span>
-          </Link>
-          <nav className="flex items-center gap-3 text-sm text-white/70 sm:gap-5">
-            <div className="hidden items-center gap-5 sm:flex">
-              <Link href="/layanan/ai" className="hover:text-white">
-                AI
-              </Link>
-              <Link href="/layanan/enterprise" className="hover:text-white">
-                Enterprise
-              </Link>
-              <Link href="/layanan/growth" className="hover:text-white">
-                Growth
-              </Link>
-            </div>
+          </a>
+          <nav className="flex items-center gap-4 text-sm text-white/65">
+            <a href="/portfolio" className="hidden hover:text-white sm:block">
+              Portofolio
+            </a>
+            <a href="/llms.txt" className="hidden hover:text-white sm:block">
+              llms.txt
+            </a>
             <a
               href={waLink()}
               target="_blank"
@@ -86,67 +68,84 @@ export default function LayananPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-5 py-16">
-        <p className="font-mono text-xs uppercase tracking-[0.18em] text-[#3AE2B4]">
-          Layanan · Biotama
+      <main className="mx-auto max-w-6xl px-5 py-14">
+        <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#3AE2B4]">
+          Katalog · {servicePages.length} layanan · {servicePages.length * 3} halaman
         </p>
         <h1 className="mt-4 max-w-3xl text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">
-          Sebelas layanan, satu tim yang bertanggung jawab.
+          Setiap layanan punya tiga cara bercerita.
         </h1>
-        <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/65">
-          Pilih jalur yang paling dekat dengan masalah Anda. Setiap jalur memuat
-          layanan lengkap, proses kerja, dan cara menghubungi tim.
+        <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/60">
+          Versi <strong className="text-white/80">Editorial</strong> untuk presentasi ke manajemen,
+          <strong className="text-white/80"> Poster</strong> untuk kampanye yang berani, dan
+          <strong className="text-white/80"> Terminal</strong> untuk tim teknis. Isi dan penawarannya
+          sama, sudut pandangnya berbeda.
         </p>
 
-        <div className="mt-12 grid gap-4 md:grid-cols-3">
-          {tracks.map((track) => (
-            <Link
-              key={track.href}
-              href={track.href}
-              className="group rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition hover:border-white/25 hover:bg-white/[0.05]"
-            >
-              <span
-                className="mb-5 block h-1 w-10 rounded-full"
-                style={{ backgroundColor: track.accent }}
-              />
-              <h2 className="text-xl font-semibold">{track.label}</h2>
-              <p className="mt-3 text-sm leading-relaxed text-white/60">{track.desc}</p>
-              <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#3AE2B4]">
-                Buka halaman
-                <span aria-hidden="true">→</span>
-              </span>
-            </Link>
+        <div className="mt-8 grid gap-3 sm:grid-cols-3">
+          {variantMeta.map((v) => (
+            <div key={v.id} className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+              <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#3AE2B4]">
+                {v.id} · {v.label}
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-white/60">{v.angle}</p>
+            </div>
           ))}
         </div>
 
-        <section className="mt-20 border-t border-white/10 pt-12">
-          <h2 className="text-2xl font-semibold">Semua layanan</h2>
-          <div className="mt-8 grid gap-x-10 gap-y-6 sm:grid-cols-2">
-            {services.map((service) => (
-              <Link
-                key={service.id}
-                href={`/layanan/enterprise/#${service.id}`}
-                className="group flex gap-4 border-b border-white/10 pb-4"
-              >
-                <span className="font-mono text-xs text-[#3AE2B4]">{service.no}</span>
-                <span>
-                  <span className="block text-sm font-semibold group-hover:text-[#3AE2B4]">
-                    {service.name}
+        <div className="mt-14 space-y-12">
+          {categories.map((category) => {
+            const items = servicePages.filter((s) => s.category === category);
+            return (
+              <section key={category}>
+                <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
+                  <h2 className="text-lg font-semibold">{category}</h2>
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-white/35">
+                    {items.length} layanan
                   </span>
-                  <span className="mt-1 block text-xs leading-relaxed text-white/50">
-                    {service.short}
-                  </span>
-                </span>
-              </Link>
-            ))}
-          </div>
-        </section>
+                </div>
+                <div>
+                  {items.map((service) => {
+                    const number = servicePages.findIndex((s) => s.slug === service.slug) + 1;
+                    return (
+                      <div
+                        key={service.slug}
+                        className="grid gap-3 border-b border-white/5 py-5 md:grid-cols-[40px_1fr_auto] md:items-center"
+                      >
+                        <span className="font-mono text-xs text-white/35">
+                          {String(number).padStart(2, "0")}
+                        </span>
+                        <div>
+                          <h3 className="text-base font-semibold">{service.name}</h3>
+                          <p className="mt-1 text-xs leading-relaxed text-white/50">
+                            {service.tagline}
+                          </p>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {variantMeta.map((v) => (
+                            <a
+                              key={v.id}
+                              href={`/layanan/${service.slug}/${v.id}`}
+                              className={`rounded-md border px-3 py-1.5 font-mono text-[10px] uppercase tracking-wide transition ${variantTone[v.id]}`}
+                            >
+                              {v.label}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            );
+          })}
+        </div>
 
-        <section className="mt-16 rounded-2xl border border-white/10 bg-gradient-to-br from-[#3AE2B4]/10 to-transparent p-8">
-          <h2 className="text-2xl font-semibold">Belum yakin mulai dari mana?</h2>
-          <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/65">
-            Ceritakan masalah operasional Anda. Kami bantu memetakan prioritas
-            dalam sesi 30 menit, tanpa biaya dan tanpa kewajiban lanjut.
+        <div className="mt-16 rounded-2xl border border-white/10 bg-gradient-to-br from-[#3AE2B4]/10 to-transparent p-8">
+          <h2 className="text-2xl font-semibold">Bingung pilih layanan atau sudut pandang?</h2>
+          <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/60">
+            Ceritakan masalah operasionalnya. Kami bantu pilih layanan dan format yang paling
+            relevan dalam sesi 30 menit, tanpa biaya.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <a
@@ -159,26 +158,26 @@ export default function LayananPage() {
             </a>
             <a
               href={`mailto:${brand.email}`}
-              className="rounded-lg border border-white/20 px-5 py-3 text-sm font-semibold text-white"
+              className="rounded-lg border border-white/20 px-5 py-3 text-sm font-semibold"
             >
               {brand.email}
             </a>
           </div>
-        </section>
+        </div>
       </main>
 
       <footer className="border-t border-white/10">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-5 py-8 text-xs text-white/50">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-7 text-xs text-white/45">
           <span>
             © {new Date().getFullYear()} {brand.name}. Seluruh hak cipta dilindungi.
           </span>
           <div className="flex gap-5">
-            <Link href="/" className="hover:text-white">
+            <a href="/" className="hover:text-white">
               Beranda
-            </Link>
-            <Link href="/portfolio" className="hover:text-white">
+            </a>
+            <a href="/portfolio" className="hover:text-white">
               Portofolio
-            </Link>
+            </a>
             <a href="/llms.txt" className="hover:text-white">
               llms.txt
             </a>

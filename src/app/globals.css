@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Halaman layanan mengatur warnanya sendiri; jangan ikut aturan section terang. */
+
+
 /* ═══════════════════════════════════════════════════════════════
    THE VAULT TERMINAL — Design System
    Dark mode: Amber CRT + Gold + Terminal Green + iPhone OS Glass
@@ -584,4 +587,11 @@ body {
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
   font-weight: 600;
+}
+
+
+/* Landing/service pages: jangan ikuti aturan section terang global. */
+.lp section:nth-child(2n),
+.layanan-hub section:nth-child(2n) {
+  background-color: transparent !important;
 }

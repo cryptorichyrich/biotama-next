@@ -1,4 +1,5 @@
 import { blogPosts } from "../data/blog-posts";
+import { servicePages, variantMeta } from "../data/service-pages";
 import type { MetadataRoute } from "next";
 
 export const dynamic = "force-static";
@@ -37,24 +38,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.95,
     },
-    {
-      url: `${siteUrl}/layanan/ai/`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.9,
-    },
-    {
-      url: `${siteUrl}/layanan/enterprise/`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.9,
-    },
-    {
-      url: `${siteUrl}/layanan/growth/`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.9,
-    },
   ];
 
   const blogEntries = blogPosts.map((post) => ({
@@ -64,5 +47,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...blogEntries];
+  const serviceEntries = servicePages.flatMap((service) =>
+    variantMeta.map((variant) => ({
+      url: `${siteUrl}/layanan/${service.slug}/${variant.id}/`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: variant.id === "v1" ? 0.85 : 0.75,
+    })),
+  );
+
+  return [...staticPages, ...blogEntries, ...serviceEntries];
 }

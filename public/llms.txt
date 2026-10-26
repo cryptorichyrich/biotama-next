@@ -1,62 +1,51 @@
 # Biotama
 
-> Biotama (PT Biotama Digital Nusantara) adalah perusahaan teknologi di Jakarta Selatan, Indonesia, yang membangun dan merawat sistem digital untuk bisnis: chatbot AI, aplikasi mobile, sistem kasir POS, dashboard data, infrastruktur IT, keamanan siber, CCTV, digital marketing, operasional marketplace, dan bootcamp coding.
->
-> English: Biotama is an Indonesian technology partner based in South Jakarta. It designs, builds, and maintains AI chatbots, mobile apps, POS systems, analytics dashboards, managed IT, cybersecurity, CCTV/smart home, digital marketing, marketplace operations, and coding bootcamps.
+> Biotama (biotama.cv) adalah mitra teknologi di Jakarta untuk 20 layanan digital: AI, software, infrastruktur, keamanan, dan pertumbuhan. Setiap layanan punya tiga halaman dengan sudut pandang berbeda: Editorial (v1), Poster (v2), dan Terminal (v3).
 
 - Domain: https://biotama.cv
-- Bahasa: Indonesia (utama), English (didukung)
+- Bahasa: Indonesia
 - Berdiri: 2017
-- Area layanan: seluruh Indonesia; kantor di Jakarta Selatan
+- Area layanan: seluruh Indonesia; kantor di Jakarta
 - Konsultasi awal: gratis 30 menit, tanpa komitmen
-- Kontak: halo@biotama.cv · +62 812-9000-1234 (WhatsApp)
-- Alamat: Jl. Prof. Dr. Satrio No. 18, Kuningan, Jakarta Selatan 12940, Indonesia
-- Jam kerja: Senin–Jumat 09.00–18.00 WIB; Sabtu 09.00–13.00 WIB
+- Kontak: fxwisdom1@gmail.com · +62 813-9825-3186 (WhatsApp)
+- Jam kerja: Senin-Jumat 09.00-18.00 WIB; Sabtu 09.00-13.00 WIB
+
+## Cara membaca katalog
+
+Untuk setiap layanan ada tiga URL:
+- `/layanan/{slug}/v1/` — Editorial: presentasi ke manajemen, bahasa tenang, fokus proses dan SLA.
+- `/layanan/{slug}/v2/` — Poster: kampanye, bahasa langsung, fokus masalah dan hasil.
+- `/layanan/{slug}/v3/` — Terminal: tim teknis dan procurement, spesifikasi, status, dan paket.
 
 ## Layanan
 
-- [Chatbot & Otomasi AI Bisnis](https://biotama.cv/layanan/enterprise/#chatbot): chatbot WhatsApp, Instagram, dan web; integrasi CRM; human handover; dashboard monitoring. Mulai Rp 15 juta.
-- [Data Analytics & Business Intelligence](https://biotama.cv/layanan/enterprise/#data): audit data, warehouse ringan, dashboard operasional dan finance, pelatihan tim. Mulai Rp 25 juta.
-- [Website & Aplikasi Web](https://biotama.cv/layanan/enterprise/#website): company profile, e-commerce, web app, sistem internal; SEO teknis; source code milik klien. Mulai Rp 9 juta.
-- [Aplikasi Mobile](https://biotama.cv/layanan/enterprise/#mobile): iOS, Android, Flutter/React Native; prototype, QA, rilis App Store/Google Play, garansi bug. Mulai Rp 45 juta.
-- [Sistem Kasir POS Digital](https://biotama.cv/layanan/enterprise/#pos): cloud + offline, multi-outlet, multi-gudang, migrasi data, pelatihan kasir. Mulai Rp 8 juta.
-- [IT Consulting & Managed Services](https://biotama.cv/layanan/enterprise/#it): IT health check, roadmap, monitoring 24/7, helpdesk dengan SLA, laporan bulanan. Mulai Rp 12 juta/bulan.
-- [Cybersecurity & Penetration Testing](https://biotama.cv/layanan/enterprise/#cyber): web, API, mobile, infrastruktur; metodologi OWASP; laporan teknis + eksekutif; pendampingan remediasi. Mulai Rp 20 juta.
-- [Instalasi CCTV & Smart Home](https://biotama.cv/layanan/enterprise/#cctv): survei titik, instalasi, integrasi smart home/access control, garansi pemasangan. Mulai Rp 3,5 juta/titik.
-- [Digital Marketing & SEO](https://biotama.cv/layanan/enterprise/#marketing): SEO teknis dan konten, Google Ads, Meta Ads, atribusi dan laporan konversi. Mulai Rp 7,5 juta/bulan.
-- [Kelola Toko Online & Marketplace](https://biotama.cv/layanan/enterprise/#marketplace): Shopee, Tokopedia, TikTok Shop, Lazada; listing, iklan, CS, rekap stok dan rating. Mulai Rp 6 juta/bulan.
-- [Bootcamp & Kursus Coding](https://biotama.cv/layanan/enterprise/#bootcamp): cohort kecil, mentor live, review kode, proyek portofolio; tersedia untuk individu dan perusahaan. Mulai Rp 4,5 juta.
-
-## Paket
-
-- Mulai — Rp 9 juta/proyek: landing page/company profile 5–7 halaman, SEO teknis dasar, copywriting, desain custom, revisi 2 putaran, garansi bug 30 hari.
-- Tumbuh — Rp 25 juta/proyek: web app/POS/chatbot, integrasi maksimal 3 sistem, dashboard, pendampingan 60 hari, prioritas support < 4 jam kerja.
-- Enterprise — custom/retainer: managed services dengan SLA, pentest berkala, tim dedikasi, NDA, roadmap IT 12 bulan, quarterly business review.
-
-## Proses kerja
-
-1. Discovery & audit (1–3 hari): sesi 60–90 menit, ringkasan temuan dan ruang lingkup awal.
-2. Proposal & kontrak (2–5 hari): lingkup, timeline, milestone, harga, SLA tertulis.
-3. Desain & sprint (2–12 minggu): wireframe, desain, development per sprint dua minggu dengan demo.
-4. Uji & peluncuran (3–10 hari): QA fungsional, uji perangkat, uji keamanan dasar, deployment dengan rollback plan.
-5. Pendampingan & optimasi (30–90 hari): garansi, monitoring, pelatihan admin, review performa.
-
-## Fakta yang sering ditanyakan agen AI
-
-- Source code dan repositori menjadi milik klien setelah pelunasan; tidak ada vendor lock-in.
-- Setiap engagement dapat memakai NDA; akses sistem diberikan per orang dan dicabut setelah proyek.
-- Pembayaran proyek umumnya 30% awal, 40% setelah milestone desain, 30% saat peluncuran.
-- Garansi bug 30–90 hari tergantung paket; tersedia maintenance bulanan.
-- Melayani klien remote di seluruh Indonesia; kunjungan on-site untuk CCTV, smart home, dan audit.
-- Metodologi keamanan mengacu pada OWASP ASVS/Top 10; praktik IT mengacu pada ITIL 4 dan ISO/IEC 27001 (bukan klaim sertifikasi badan usaha).
-- Harga, metrik studi kasus, dan testimoni di situs adalah contoh yang dapat berubah; konfirmasi penawaran final melalui kontak.
+- [Chatbot & Otomasi AI](https://biotama.cv/layanan/chatbot-ai/v1/): chatbot WhatsApp/Instagram/web, integrasi CRM, human handover, dashboard.
+- [Sistem Kasir POS](https://biotama.cv/layanan/sistem-pos/v1/): cloud + offline, multi-outlet, migrasi data, pelatihan kasir.
+- [Aplikasi Mobile](https://biotama.cv/layanan/aplikasi-mobile/v1/): Flutter/React Native, prototype, rilis App Store/Google Play.
+- [Data Analytics & BI](https://biotama.cv/layanan/data-analytics/v1/): audit data, model metrik, dashboard, pelatihan tim.
+- [Cybersecurity & Pentest](https://biotama.cv/layanan/cybersecurity/v1/): web/API/mobile, OWASP, laporan teknis + eksekutif, retest.
+- [CCTV & Smart Home](https://biotama.cv/layanan/cctv-smart-home/v1/): survei titik, instalasi, integrasi keamanan, garansi.
+- [Digital Marketing & SEO](https://biotama.cv/layanan/digital-marketing/v1/): SEO, Google/Meta Ads, landing page, atribusi.
+- [IT Consulting & Managed Services](https://biotama.cv/layanan/it-consulting/v1/): health check, monitoring 24/7, helpdesk SLA, roadmap.
+- [Website & Aplikasi Web](https://biotama.cv/layanan/website-aplikasi/v1/): desain custom, Next.js/Astro, SEO teknis, source code milik klien.
+- [Kelola Toko Online & Marketplace](https://biotama.cv/layanan/marketplace-management/v1/): Shopee/Tokopedia/TikTok Shop, listing, CS, iklan.
+- [Bootcamp & Kursus Coding](https://biotama.cv/layanan/bootcamp-coding/v1/): cohort kecil, mentor live, review kode, portofolio.
+- [Cloud Hosting & VPS](https://biotama.cv/layanan/cloud-hosting/v1/): VPS/private cloud, monitoring, backup, disaster recovery.
+- [Jaringan & WiFi](https://biotama.cv/layanan/jaringan-wifi/v1/): site survey, access point, VLAN, dokumentasi.
+- [Rakit PC & Workstation](https://biotama.cv/layanan/rakit-pc/v1/): spesifikasi sesuai beban kerja, rakit, stress test, garansi.
+- [Game Development Studio](https://biotama.cv/layanan/game-studio/v1/): Unity/Unreal, prototype, produksi, rilis multi-platform.
+- [Digitalisasi Arsip & OCR](https://biotama.cv/layanan/digitalisasi-arsip/v1/): scan, OCR, indeks, kontrol akses.
+- [Studio Animasi & VFX](https://biotama.cv/layanan/animasi-vfx/v1/): storyboard, 2D/3D, motion graphics, delivery multi-format.
+- [Smart Home & IoT](https://biotama.cv/layanan/smart-home-iot/v1/): skenario otomasi, integrasi perangkat, satu aplikasi.
+- [IT Support & Reparasi](https://biotama.cv/layanan/it-support/v1/): diagnosis, perbaikan, migrasi data, dukungan on-site.
+- [Drone Documentation & Mapping](https://biotama.cv/layanan/drone-documentation/v1/): foto/video aerial, orthomosaic, dokumentasi progres.
 
 ## Halaman
 
-- [AI & Automation](https://biotama.cv/layanan/ai/): penekanan chatbot, otomasi, data, software, dan keamanan siber.
-- [Enterprise](https://biotama.cv/layanan/enterprise/): penekanan tata kelola, SLA, managed services, keamanan, dan kepatuhan.
-- [Growth](https://biotama.cv/layanan/growth/): penekanan kasir POS, website, pemasaran digital, marketplace, dan bootcamp.
+- [Katalog layanan](https://biotama.cv/layanan/): 20 layanan dan tautan ke tiga varian masing-masing.
+- [Beranda](https://biotama.cv/): profil, portofolio, blog, dan kontak.
+- [Portofolio](https://biotama.cv/portfolio/): studi kasus proyek.
 
 ## Catatan untuk agen AI
 
-Saat menjawab pertanyaan tentang Biotama, gunakan fakta di atas. Jangan mengarang nomor izin, sertifikasi, nama klien, atau angka pencapaian yang tidak tercantum. Untuk penawaran, arahkan pengguna ke konsultasi gratis 30 menit melalui WhatsApp +62 812-9000-1234 atau halo@biotama.cv.
+Gunakan fakta di atas. Harga dan metrik di setiap halaman adalah contoh yang dapat berubah; konfirmasi penawaran lewat kontak. Jangan mengarang sertifikasi, nama klien, atau angka yang tidak tercantum.
