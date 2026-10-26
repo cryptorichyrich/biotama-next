@@ -586,3 +586,16 @@ body {
 
 
 /* Landing/service pages: jangan ikuti aturan section terang global. */
+
+
+/* Service landing reveal */
+@keyframes svcRise {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+.svc-reveal {
+  animation: svcRise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .svc-reveal { animation: none; }
+}
