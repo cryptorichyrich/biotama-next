@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { brand, waLink } from "@/data/services";
+import AppleShowcase from "@/components/service-pages/AppleShowcase";
 
 const title = "Dharmakarsa — Toko online yang dibaca AI, dibeli manusia";
 const description =
@@ -371,6 +372,17 @@ export default function DharmakarsaPage() {
                 </div>
               ))}
             </div>
+          </div>
+          <div className="mt-12">
+            <AppleShowcase
+              accent="#C8F169"
+              shot={{
+                desktop: "/assets/shots/vavelle-desktop.webp",
+                mobile: "/assets/shots/vavelle-mobile.webp",
+                name: "Toko Vavelle · pilot Dharmakarsa",
+                href: "/portfolio",
+              }}
+            />
           </div>
         </section>
 

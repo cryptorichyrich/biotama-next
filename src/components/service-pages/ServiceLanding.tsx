@@ -3,7 +3,7 @@ import { brand, waLink } from "@/data/services";
 import type { ServicePage, VariantId } from "@/data/service-pages";
 import ServiceVisual from "./ServiceVisual";
 import ServiceDetail from "./ServiceDetail";
-import DeviceShowcase, { type DeviceShot } from "./DeviceShowcase";
+import AppleShowcase, { type AppleShot } from "./AppleShowcase";
 import RevealObserver from "./RevealObserver";
 
 type Props = { service: ServicePage; variant: VariantId; index: number };
@@ -28,7 +28,7 @@ export default function ServiceLanding({ service, variant, index }: Props) {
   const headingCase = mod === 3 ? "uppercase tracking-[-0.02em]" : "";
   const buttonShape = mod === 1 ? "rounded-full" : "rounded-md";
   const patternType = index % 5;
-  const showcases: DeviceShot[] = [
+  const showcases: AppleShot[] = [
     { desktop: "/assets/shots/vavelle-desktop.webp", mobile: "/assets/shots/vavelle-mobile.webp", name: "Toko Vavelle", href: "/portfolio" },
     { desktop: "/assets/shots/srabutan-desktop.webp", mobile: "/assets/shots/srabutan-mobile.webp", name: "Srabutan", href: "/portfolio" },
     { desktop: "/assets/shots/dharmakarsa-desktop.webp", mobile: "/assets/shots/dharmakarsa-mobile.webp", name: "Dharmakarsa", href: "/dharmakarsa" },
@@ -528,7 +528,7 @@ export default function ServiceLanding({ service, variant, index }: Props) {
               </p>
             </div>
             <div className="mt-10">
-              <DeviceShowcase shot={shot} accent={p.accent} />
+              <AppleShowcase shot={shot} accent={p.accent} />
             </div>
           </div>
         </section>

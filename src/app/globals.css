@@ -611,180 +611,319 @@ body {
 .svc2 summary::-webkit-details-marker { display: none; }
 
 
-/* ── Device showcase ── */
-.device-stage {
+/* ── Apple device showcase ── */
+.apple-stage {
   position: relative;
-  max-width: 1000px;
+  max-width: 1040px;
   margin: 0 auto;
-  padding: 10px 0 58px;
-  perspective: 1600px;
+  padding: 8px 0 66px;
+  perspective: 1700px;
 }
-.device-glow {
+.apple-glow {
   position: absolute;
-  left: 12%;
-  right: 12%;
-  top: 18%;
+  left: 8%;
+  right: 8%;
+  top: 16%;
   bottom: 20%;
   border-radius: 999px;
-  filter: blur(90px);
-  opacity: 0.22;
+  filter: blur(100px);
+  opacity: 0.2;
   transform: translate3d(var(--mx, 0px), var(--my, 0px), 0);
-  transition: transform 0.5s ease-out;
+  transition: transform 0.55s ease-out;
   pointer-events: none;
 }
-.macbook-wrap {
-  width: 84%;
-  margin: 0 auto;
+.mb-wrap {
+  width: 80%;
   opacity: 0;
-  transform: translateY(40px) scale(0.985);
+  transform: translateY(42px) scale(0.985);
   transition: opacity 1s cubic-bezier(0.2, 0.7, 0.2, 1), transform 1s cubic-bezier(0.2, 0.7, 0.2, 1);
   transform-style: preserve-3d;
 }
-.device-stage.is-in .macbook-wrap {
+.apple-stage.is-in .mb-wrap {
   opacity: 1;
   transform: none;
 }
-.macbook {
+.mb-pro {
   transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
   transform-style: preserve-3d;
-  transition: transform 0.25s ease-out;
+  transition: transform 0.28s ease-out;
   will-change: transform;
 }
-.macbook-lid {
-  background: linear-gradient(145deg, #46464d, #1b1b1f 55%, #101013);
-  border-radius: 18px;
-  padding: 10px 10px 14px;
-  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.35), 0 2px 0 rgba(255, 255, 255, 0.14) inset;
+.mb-lid {
+  position: relative;
+  background: linear-gradient(152deg, #44444a, #1d1d20 42%, #0b0b0d);
+  border-radius: 23px;
+  padding: 12px 12px 20px;
+  box-shadow:
+    0 60px 110px rgba(0, 0, 0, 0.42),
+    0 14px 30px rgba(0, 0, 0, 0.35),
+    0 1px 0 rgba(255, 255, 255, 0.16) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.6) inset;
 }
-.macbook-cam {
-  display: block;
-  width: 5px;
-  height: 5px;
-  margin: 0 auto 7px;
-  border-radius: 50%;
-  background: #0a0a0a;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
-}
-.macbook-screen {
-  aspect-ratio: 16 / 10;
+.mb-bezel {
+  position: relative;
+  aspect-ratio: 3024 / 1964;
   overflow: hidden;
-  border-radius: 9px;
+  border-radius: 10px;
   background: #000;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.07) inset;
 }
-.macbook-screen img,
-.iphone-screen img {
+.mb-bezel img,
+.ip-screen img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: top center;
 }
-.macbook-base {
-  position: relative;
-  width: 104%;
-  margin-left: -2%;
-  height: 14px;
-  background: linear-gradient(#d8d8dc, #9a9aa0 55%, #6e6e74);
-  border-radius: 0 0 14px 14px;
-  box-shadow: 0 22px 36px rgba(0, 0, 0, 0.28);
-}
-.macbook-base span {
+.mb-notch {
   position: absolute;
-  left: 50%;
   top: 0;
-  width: 14%;
+  left: 50%;
+  width: 9.5%;
+  height: 15px;
+  transform: translateX(-50%);
+  background: #000;
+  border-radius: 0 0 9px 9px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mb-cam {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #0a0a0a;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.mb-glare,
+.ip-glare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(118deg, rgba(255, 255, 255, 0.16) 0%, transparent 32%, transparent 68%, rgba(255, 255, 255, 0.05) 100%);
+  mix-blend-mode: screen;
+}
+.mb-brand {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 5px;
+  text-align: center;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.34);
+}
+.mb-base {
+  position: relative;
+  width: 112%;
+  margin-left: -6%;
+  height: 16px;
+  background: linear-gradient(#ededf0, #c2c2c7 42%, #86868c 78%, #5f5f65);
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 26px 44px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.35) inset;
+}
+.mb-cutout {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 15%;
   height: 5px;
   transform: translateX(-50%);
-  background: #5d5d63;
-  border-radius: 0 0 8px 8px;
+  background: #5a5a60;
+  border-radius: 0 0 7px 7px;
 }
-.iphone-wrap {
+.mb-foot {
   position: absolute;
-  right: 3%;
-  bottom: 42px;
-  width: 19%;
-  min-width: 88px;
-  max-width: 168px;
-  animation: deviceFloat 7s ease-in-out infinite;
+  bottom: -4px;
+  width: 11%;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.4);
+  filter: blur(2px);
+}
+.mb-foot-l { left: 12%; }
+.mb-foot-r { right: 12%; }
+
+.duo-wrap {
+  position: absolute;
+  right: 1%;
+  bottom: 44px;
+  width: 23%;
+  min-width: 94px;
+  max-width: 196px;
+  aspect-ratio: 0.462;
+  animation: appleFloat 7.5s ease-in-out infinite;
   transform-style: preserve-3d;
 }
-.iphone {
-  position: relative;
-  aspect-ratio: 390 / 844;
-  border: 5px solid #1c1c1f;
-  border-radius: 32px;
-  background: #000;
-  box-shadow: 0 40px 70px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.12) inset;
-  transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-  transition: transform 0.25s ease-out;
+.iphone-back {
+  position: absolute;
+  right: 32%;
+  bottom: 3%;
+  width: 86%;
+  height: 100%;
+  border-radius: 42px;
+  background: linear-gradient(150deg, #c8c8ce, #8e8e94 38%, #4c4c51 72%, #2f2f33);
+  box-shadow: 0 34px 70px rgba(0, 0, 0, 0.42), 0 0 0 1px rgba(255, 255, 255, 0.22) inset;
+  transform: rotate(-9deg) rotateY(6deg);
+  z-index: 1;
   overflow: hidden;
 }
-.iphone-screen {
+.ip-camera {
   position: absolute;
-  inset: 3px;
-  border-radius: 27px;
-  overflow: hidden;
-  background: #000;
+  top: 11px;
+  left: 10px;
+  width: 44%;
+  aspect-ratio: 1;
+  border-radius: 13px;
+  background: linear-gradient(150deg, #3b3b3f, #1c1c1f);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12) inset;
 }
-.iphone-island {
+.ip-lens {
   position: absolute;
-  top: 8px;
+  width: 28%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #5b6270 0%, #101114 42%, #000 70%);
+  box-shadow: 0 0 0 2px #2c2c30, 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+.ip-lens-1 { top: 8%; left: 8%; }
+.ip-lens-2 { top: 8%; right: 8%; }
+.ip-lens-3 { bottom: 8%; left: 8%; }
+.ip-flash {
+  position: absolute;
+  right: 13%;
+  bottom: 14%;
+  width: 11%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f5e6c8, #8a7a5a);
+  opacity: 0.8;
+}
+.ip-back-line {
+  position: absolute;
+  top: 8%;
   left: 50%;
-  width: 32%;
-  height: 12px;
+  width: 1px;
+  height: 84%;
+  background: rgba(0, 0, 0, 0.14);
+}
+.iphone-front {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  padding: 4px;
+  border-radius: 46px;
+  background: linear-gradient(145deg, #ececf0, #a1a1a8 30%, #5a5a60 65%, #d6d6dc);
+  box-shadow:
+    0 44px 90px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.3) inset,
+    0 0 0 2px rgba(0, 0, 0, 0.35);
+  transform: rotateY(calc(var(--ry, 0deg) * -0.65)) rotateX(var(--rx, 0deg));
+  transition: transform 0.28s ease-out;
+}
+.ip-frame {
+  height: 100%;
+  border-radius: 42px;
+  background: #000;
+  padding: 3px;
+}
+.ip-screen {
+  position: relative;
+  height: 100%;
+  border-radius: 39px;
+  overflow: hidden;
+  background: #000;
+}
+.ip-island {
+  position: absolute;
+  top: 9px;
+  left: 50%;
+  width: 30%;
+  height: 15px;
   transform: translateX(-50%);
   border-radius: 999px;
   background: #000;
-  z-index: 2;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 5px;
 }
-.device-caption {
+.ip-lens-sm {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #0c0c0c;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.ip-home {
+  position: absolute;
+  bottom: 7px;
+  left: 50%;
+  width: 34%;
+  height: 3px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  z-index: 3;
+}
+.ip-btn {
+  position: absolute;
+  background: linear-gradient(180deg, #cfcfd4, #7c7c82);
+  border-radius: 2px;
+}
+.ip-btn-action { left: -6px; top: 22%; width: 3px; height: 8%; }
+.ip-btn-vol { left: -6px; top: 34%; width: 3px; height: 13%; }
+.ip-btn-power { right: -6px; top: 30%; width: 3px; height: 15%; }
+.apple-caption {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  margin-top: 26px;
+  margin-top: 28px;
   font-family: var(--font-mono);
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  opacity: 0.6;
+  opacity: 0.62;
 }
-.device-caption a {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-@keyframes deviceFloat {
+.apple-caption a { text-decoration: underline; text-underline-offset: 4px; }
+@keyframes appleFloat {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
+  50% { transform: translateY(-13px); }
 }
 @media (max-width: 640px) {
-  .device-stage { padding-bottom: 46px; }
-  .macbook-wrap { width: 94%; }
-  .iphone-wrap { width: 23%; min-width: 72px; right: 1%; bottom: 30px; }
-  .macbook-lid { border-radius: 13px; padding: 7px 7px 10px; }
-  .macbook-screen { border-radius: 6px; }
-  .device-caption { font-size: 9px; margin-top: 20px; }
+  .apple-stage { padding-bottom: 48px; }
+  .mb-wrap { width: 94%; }
+  .duo-wrap { width: 27%; min-width: 78px; right: 0; bottom: 34px; }
+  .mb-lid { border-radius: 14px; padding: 7px 7px 13px; }
+  .mb-bezel { border-radius: 6px; }
+  .mb-brand { font-size: 5px; bottom: 3px; }
+  .apple-caption { margin-top: 22px; font-size: 9px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .macbook-wrap { opacity: 1; transform: none; transition: none; }
-  .iphone-wrap { animation: none; }
-  .macbook, .iphone { transition: none; transform: none; }
+  .mb-wrap { opacity: 1; transform: none; transition: none; }
+  .duo-wrap { animation: none; }
+  .mb-pro, .iphone-front { transition: none; transform: none; }
 }
 
-.macbook-screen { position: relative; }
-.macbook-screen::after {
-  content: "";
-  position: absolute;
-  inset: -45%;
-  background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.22) 50%, transparent 58%);
-  transform: translateX(-120%) rotate(8deg);
-  transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
-  pointer-events: none;
+/* Scroll-driven section motion for every page. Falls back silently where unsupported. */
+@supports (animation-timeline: view()) {
+  main section:not(.svc-reveal) {
+    animation: siteEnter linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 55%;
+  }
 }
-.device-stage:hover .macbook-screen::after {
-  transform: translateX(120%) rotate(8deg);
+@keyframes siteEnter {
+  from { opacity: 0; transform: translateY(26px); }
+  to { opacity: 1; transform: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .macbook-screen::after { display: none; }
+  main section:not(.svc-reveal) { animation: none; }
 }

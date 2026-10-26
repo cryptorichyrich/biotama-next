@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import RoICalculator from "@/components/mallops/RoICalculator";
+import AppleShowcase from "@/components/service-pages/AppleShowcase";
 
 const description =
   "MallOps Suite menyatukan parkir, meter listrik-air, leasing, tagihan, e-Faktur, dan portal tenant dalam satu dashboard. Data milik gedung, kebocoran kelihatan.";
@@ -166,6 +167,17 @@ export default function MallOpsPage() {
               <div key={l} className="px-2 py-2"><p className="font-mono text-2xl font-bold text-[#FF8A5B]">{v}</p><p className="mt-1 text-[10px] uppercase tracking-wide text-[#8FA3B5]">{l}</p></div>
             ))}
           </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-5 py-14">
+          <AppleShowcase
+            accent="#FF6B35"
+            shot={{
+              desktop: "/assets/shots/mallops-desktop.webp",
+              mobile: "/assets/shots/mallops-mobile.webp",
+              name: "MallOps Suite",
+            }}
+          />
         </section>
 
         <section className="mx-auto max-w-6xl px-5 py-16" id="kebocoran">
