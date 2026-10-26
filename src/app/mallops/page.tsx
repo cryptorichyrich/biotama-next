@@ -1,32 +1,33 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import RoICalculator from "@/components/mallops/RoICalculator";
 
-const mallopsDescription =
-  "Paket lengkap otomasi gedung: parkir ala operator besar dengan sensor lahan real-time, meter listrik dan air tenant, leasing dan billing otomatis, e-Faktur, portal tenant, dan bot monitoring. Dibangun dan didukung engineer, data milik gedung.";
+const description =
+  "MallOps Suite menyatukan parkir, meter listrik-air, leasing, tagihan, e-Faktur, dan portal tenant dalam satu dashboard. Data milik gedung, kebocoran kelihatan.";
+const canonical = "https://biotama.cv/mallops/";
 
 export const metadata: Metadata = {
-  title: "MallOps Suite - Sistem Operasional Gedung & Parkir",
-  description: mallopsDescription,
-  alternates: { canonical: "https://biotama.cv/mallops/" },
+  title: { absolute: "MallOps Suite — Setiap gedung bocor. Pertanyaannya berapa." },
+  description,
+  alternates: { canonical },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },
   openGraph: {
     type: "website",
     locale: "id_ID",
     siteName: "Biotama",
-    url: "https://biotama.cv/mallops/",
-    title: "MallOps Suite - Sistem Operasional Gedung & Parkir",
-    description: mallopsDescription,
+    url: canonical,
+    title: "MallOps Suite — Setiap gedung bocor. Pertanyaannya berapa.",
+    description,
     images: [{ url: "/assets/og-v2.png", width: 1200, height: 630, alt: "MallOps Suite" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "MallOps Suite - Sistem Operasional Gedung & Parkir",
-    description: mallopsDescription,
+    title: "MallOps Suite — Setiap gedung bocor. Pertanyaannya berapa.",
+    description,
     images: ["/assets/og-v2.png"],
   },
 };
 
-const mallopsSchema = {
+const schema = {
   "@context": "https://schema.org",
   "@graph": [
     {
@@ -34,8 +35,8 @@ const mallopsSchema = {
       name: "MallOps Suite",
       applicationCategory: "BusinessApplication",
       operatingSystem: "Web",
-      url: "https://biotama.cv/mallops/",
-      description: mallopsDescription,
+      url: canonical,
+      description,
       creator: { "@type": "Organization", name: "Biotama", url: "https://biotama.cv" },
       featureList: [
         "Parkir dengan sensor lahan real-time",
@@ -50,273 +51,244 @@ const mallopsSchema = {
       "@type": "BreadcrumbList",
       itemListElement: [
         { "@type": "ListItem", position: 1, name: "Beranda", item: "https://biotama.cv/" },
-        { "@type": "ListItem", position: 2, name: "MallOps Suite", item: "https://biotama.cv/mallops/" },
+        { "@type": "ListItem", position: 2, name: "MallOps Suite", item: canonical },
       ],
     },
   ],
 };
 
-const pains = [
-  ["Parkir bocor", "Tiket palsu, kasir kolusi, papan kapasitas tidak pernah akurat."],
-  ["Tagihan manual", "Listrik dan air tenant dicatat lewat pencatatan tangan, sengketa tiap bulan."],
-  ["Sewa dan IPL telat", "Penagihan bergantung ingatan manusia, laporan kepemilikan tidak real-time."],
-  ["Tanpa data", "Okupansi, pendapatan per zona, dan arus kas gedung tidak bisa dipantau dari HP."],
+const leaks = [
+  { no: "01", title: "Parkir bocor", desc: "Tiket palsu, kasir kolusi, dan papan kapasitas yang tidak pernah akurat. Pendapatan hilang tanpa jejak.", signal: "selisih kas harian" },
+  { no: "02", title: "Tagihan manual", desc: "Listrik dan air dicatat tangan. Setiap bulan ada sengketa, dan angka yang salah dibayar oleh gedung.", signal: "sengketa tenant" },
+  { no: "03", title: "Sewa telat", desc: "Penagihan bergantung ingatan manusia. Denda tidak jalan, dan piutang menua tanpa tindakan.", signal: "piutang menua" },
+  { no: "04", title: "Data terlambat", desc: "Laporan baru jadi akhir bulan. Keputusan diambil dari perasaan, bukan okupansi dan arus kas.", signal: "keputusan intuitif" },
 ];
 
-const features = [
-  [
-    "Parkir + Sensor Lahan",
-    "Lima mode masuk: tiket, QR, kartu member, uang elektronik bank, LPR tanpa tiket. Papan SISA real-time dari sensor per slot atau loop counter. Shift kasir dengan deteksi selisih.",
-  ],
-  [
-    "Meter IoT Listrik dan Air",
-    "Pembacaan otomatis per unit tenant, langsung menjadi tagihan IPL dan utilitas tanpa entry manual.",
-  ],
-  [
-    "Leasing dan Billing",
-    "Kontrak sewa, eskalasi tahunan, denda telat, faktur otomatis, e-Faktur Pajak sesuai format DJP.",
-  ],
-  [
-    "Portal Tenant dan Bot",
-    "Tenant melihat tagihan dan membayar online; pengelola memantau okupansi dan alarm perangkat lewat Telegram.",
-  ],
+const modules = [
+  ["Parkir & sensor lahan", "Lima mode masuk, tarif progresif, shift kasir, papan SISA real-time."],
+  ["Meter listrik & air", "Pembacaan otomatis per unit, langsung jadi tagihan tanpa entry manual."],
+  ["Leasing & billing", "Kontrak, eskalasi, prorata, denda, pengingat bertahap, laporan aging."],
+  ["Portal tenant", "Tenant lihat tagihan, bayar online, dan buat tiket maintenance."],
+  ["e-Faktur & procurement", "PO per vendor, approval berjenjang, ekspor e-Faktur format DJP."],
+  ["Bot operasional", "Okupansi, pendapatan, tagihan lewat Telegram. Chat allowlist."],
 ];
 
 const packages = [
-  {
-    name: "Starter Parkir",
-    target: "Ruko besar, kompleks, apartemen kecil",
-    price: "Rp 75 - 150 juta",
-    amc: "AMC Rp 1,5 - 3 juta/bulan",
-    items: [
-      "1 - 2 gate + 50 - 150 slot",
-      "Sensor bay atau loop + papan SISA",
-      "Kasir + shift + laporan harian",
-      "Member dan voucher parkir",
-    ],
-    highlight: false,
-  },
-  {
-    name: "Pro Mall",
-    target: "Mall kecil-menengah, plaza strata",
-    price: "Rp 200 - 500 juta",
-    amc: "AMC Rp 4 - 8 juta/bulan",
-    items: [
-      "2 - 8 gate + LPR kamera",
-      "Validasi tenant + chargeback",
-      "Portal tenant + bot Telegram",
-      "QRIS / uang elektronik / tunai",
-    ],
-    highlight: true,
-  },
-  {
-    name: "ERP Gedung Penuh",
-    target: "Mall menengah, office tower, apartemen",
-    price: "Rp 500 juta - 1,5 miliar",
-    amc: "AMC Rp 8 - 20 juta/bulan",
-    items: [
-      "Semua fitur Pro Mall",
-      "Leasing, IPL, meter IoT listrik dan air",
-      "Procurement + e-Faktur sendiri",
-      "Integrasi sistem yang sudah ada",
-    ],
-    highlight: false,
-  },
+  { name: "Starter Parkir", price: "Rp 75–150 jt", note: "AMC Rp 1,5–3 jt/bulan", for: "Ruko besar, kompleks, apartemen kecil.", items: ["1–2 gate + 50–150 slot", "Sensor bay atau loop", "Papan SISA", "Kasir + laporan harian"] },
+  { name: "Pro Mall", price: "Rp 200–500 jt", note: "AMC Rp 4–8 jt/bulan", for: "Mall kecil-menengah, plaza strata.", items: ["2–8 gate + LPR", "Validasi tenant", "Portal tenant + bot", "QRIS / e-money / tunai"] },
+  { name: "Enterprise", price: "Custom", note: "multi-lokasi", for: "Grup properti dengan beberapa gedung.", items: ["Multi-gedung", "Integrasi ERP", "SLA & on-site", "Roadmap bersama"] },
 ];
 
-const steps = [
-  ["1. Survey gratis", "Kami hitung kebocoran parkir dan biaya manual gedung Anda, jadi angka, bukan perasaan."],
-  ["2. Proposal ROI", "Rencana paket lengkap dengan perhitungan balik modal, biasanya 12 - 24 bulan."],
-  ["3. Pilot 30 hari", "Sistem jalan nyata di lokasi Anda sebelum kontrak penuh. Bukti dulu, janji kemudian."],
-  ["4. Kontrak + AMC", "Instalasi, pelatihan, lalu dukungan bulanan dengan SLA jelas. Gate mati = prioritas tertinggi."],
+const faqs = [
+  ["Apakah harus ganti sistem yang sudah jalan?", "Tidak selalu. Kami bisa mulai dari satu modul yang paling bocor, misalnya parkir atau billing, lalu menambahkan modul lain tanpa menghentikan operasional."],
+  ["Berapa lama implementasi?", "Starter parkir 3–5 minggu. Pro Mall 6–10 minggu tergantung jumlah gate, migrasi data, dan integrasi pembayaran."],
+  ["Data disimpan di mana?", "Di server yang Anda kendalikan atau cloud yang disepakati. Data dan akses menjadi milik gedung, bukan vendor."],
+  ["Apakah bisa integrasi dengan pembayaran yang sudah ada?", "Bisa. Kami sudah mengintegrasikan DOKU VA/QRIS, dan bisa menyesuaikan dengan penyedia lain yang punya API."],
+  ["Bagaimana kalau perangkat bermasalah?", "Monitoring perangkat berjalan proaktif. Bot memberi peringatan sebelum petugas menyadari gate atau meter mati."],
 ];
 
-export default function MallopsLandingPage() {
+export default function MallOpsPage() {
   return (
-    <main className="bg-[#fdfbf6] text-[#1a2e22]">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(mallopsSchema) }}
-      />
-      <div className="mx-auto max-w-5xl px-5 pt-6">
-        <a href="/" className="text-xs font-semibold text-[#14532d]/70 hover:text-[#14532d]">
-          ← biotama.cv
-        </a>
-      </div>
-      {/* HERO */}
-      <section className="mx-auto max-w-5xl px-5 pt-16 pb-12 text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#8a7229]">
-          Paket Otomasi Gedung
-        </p>
-        <h1 className="mt-4 text-3xl font-bold leading-tight sm:text-4xl">
-          Parkir ala operator besar.
-          <br />
-          Ekonomi gedung dalam satu dashboard.
-        </h1>
-        <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-[#4b5a50]">
-          MallOps Suite menggabungkan sistem parkir berbasis sensor, meter listrik dan
-          air IoT, penagihan otomatis, dan portal tenant ke dalam satu sistem yang
-          datanya milik gedung Anda, bukan milik operator.
-        </p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-          <a
-            href="mailto:fxwisdom1@gmail.com?subject=Permintaan%20Demo%20MallOps%20Suite"
-            className="rounded-xl bg-[#14532d] px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0e3b21]"
-          >
-            Minta Demo Gratis
-          </a>
-          <a
-            href="/mallops-proposal-template.pdf"
-            className="rounded-xl border border-[#14532d]/30 px-6 py-3 text-sm font-semibold text-[#14532d] transition hover:bg-[#14532d]/5"
-          >
-            Unduh Contoh Proposal (PDF)
-          </a>
-        </div>
-      </section>
+    <div className="mallops-page min-h-screen bg-[#0A1018] text-[#E8F0F7]">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
-      {/* PAIN */}
-      <section className="border-y border-[#e7e0cf] bg-white/60">
-        <div className="mx-auto max-w-5xl px-5 py-12">
-          <h2 className="text-center text-xl font-bold">Kenapa gedung kehilangan uang diam-diam</h2>
-          <div className="mt-8 grid gap-5 sm:grid-cols-2">
-            {pains.map(([title, body]) => (
-              <div key={title} className="rounded-2xl border border-[#e7e0cf] bg-white p-5">
-                <h3 className="font-semibold">{title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-[#4b5a50]">{body}</p>
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0A1018]/90 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4">
+          <a href="/mallops" className="flex items-center gap-3">
+            <span className="grid h-9 w-9 place-items-center rounded-md bg-[#FF6B35] font-mono text-[10px] font-bold text-[#0A1018]">MO</span>
+            <span>
+              <span className="block text-sm font-semibold tracking-tight">MallOps Suite</span>
+              <span className="block font-mono text-[9px] uppercase tracking-[0.16em] text-[#8FA3B5]">building operations · by Biotama</span>
+            </span>
+          </a>
+          <nav className="hidden items-center gap-6 text-xs text-[#A9BACB] md:flex">
+            <a href="#kebocoran" className="hover:text-white">Kebocoran</a>
+            <a href="#modul" className="hover:text-white">Modul</a>
+            <a href="#hitung" className="hover:text-white">Hitung</a>
+            <a href="#harga" className="hover:text-white">Harga</a>
+          </nav>
+          <a href="#survey" className="rounded-md bg-[#FF6B35] px-4 py-2.5 text-xs font-bold text-[#0A1018]">Survey gratis</a>
+        </div>
+      </header>
+
+      <main>
+        <section className="relative overflow-hidden border-b border-white/10">
+          <div className="pointer-events-none absolute inset-0 opacity-25" style={{ backgroundImage: "linear-gradient(rgba(255,107,53,.16) 1px, transparent 1px), linear-gradient(90deg, rgba(255,107,53,.16) 1px, transparent 1px)", backgroundSize: "52px 52px", maskImage: "radial-gradient(circle at 70% 30%, black, transparent 72%)" }} />
+          <div className="relative mx-auto grid max-w-6xl gap-10 px-5 py-16 lg:grid-cols-[1.1fr_.9fr] lg:py-24">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[#FF8A5B]">MallOps Suite · building operations</p>
+              <h1 className="mt-5 max-w-2xl text-4xl font-semibold leading-[1.02] tracking-tight sm:text-5xl lg:text-6xl">
+                Gedung Anda bocor tiap bulan. <span className="text-[#FF8A5B]">Pertanyaannya: berapa?</span>
+              </h1>
+              <p className="mt-6 max-w-xl text-base leading-relaxed text-[#A9BACB]">
+                Parkir, listrik-air, sewa, tagihan, dan tenant masih dijalankan terpisah. MallOps menyatukan semuanya jadi satu dashboard, dengan data milik gedung. Kebocoran jadi kelihatan, keputusan jadi lebih cepat.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <a href="#hitung" className="rounded-md bg-[#FF6B35] px-5 py-3 text-sm font-bold text-[#0A1018]">Hitung potensi kebocoran</a>
+                <a href="#survey" className="rounded-md border border-white/20 px-5 py-3 text-sm font-semibold">Minta survey gratis</a>
+              </div>
+              <ul className="mt-7 flex flex-wrap gap-x-5 gap-y-2 font-mono text-[10px] uppercase tracking-[0.1em] text-[#8FA3B5]">
+                <li>parkir · utilitas · leasing</li>
+                <li>e-Faktur siap</li>
+                <li>data milik gedung</li>
+              </ul>
+            </div>
+
+            <aside className="self-start rounded-xl border border-white/12 bg-[#0F1924] p-4">
+              <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-[#8FA3B5]">gedung · live</span>
+                <span className="font-mono text-[9px] text-[#35D0C6]">● terhubung</span>
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                {[["87%", "okupansi"], ["Rp 1,24 M", "pendapatan"], ["Rp 38 jt", "potensi bocor"], ["12", "tagihan telat"]].map(([v, l], i) => (
+                  <div key={l} className="rounded-lg border border-white/8 bg-[#0A1018] p-3">
+                    <p className={`font-mono text-xl font-bold ${i === 2 ? "text-[#FF8A5B]" : "text-[#E8F0F7]"}`}>{v}</p>
+                    <p className="mt-1 text-[10px] uppercase tracking-wide text-[#6F8397]">{l}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 space-y-2">
+                {[["Parkir", 82], ["Utilitas", 64], ["Sewa", 91]].map(([label, pct]) => (
+                  <div key={label as string}>
+                    <div className="flex justify-between font-mono text-[10px] text-[#8FA3B5]"><span>{label}</span><span>{pct}%</span></div>
+                    <div className="mt-1 h-1.5 rounded-full bg-white/10"><div className="h-1.5 rounded-full bg-[#FF6B35]" style={{ width: `${pct}%` }} /></div>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-4 border-t border-white/10 pt-3 text-[10px] leading-relaxed text-[#6F8397]">Contoh tampilan. Angka aktual mengikuti data gedung Anda.</p>
+            </aside>
+          </div>
+        </section>
+
+        <section className="border-b border-white/10 bg-[#0F1924]">
+          <div className="mx-auto grid max-w-6xl grid-cols-2 gap-px px-5 py-7 sm:grid-cols-4">
+            {[["5", "modul operasional"], ["60+", "test otomatis"], ["1", "dashboard"], ["100%", "data milik gedung"]].map(([v, l]) => (
+              <div key={l} className="px-2 py-2"><p className="font-mono text-2xl font-bold text-[#FF8A5B]">{v}</p><p className="mt-1 text-[10px] uppercase tracking-wide text-[#8FA3B5]">{l}</p></div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-5 py-16" id="kebocoran">
+          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#FF8A5B]">Masalah</p>
+          <h2 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">Kebocoran paling mahal adalah yang tidak terlihat.</h2>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {leaks.map((l) => (
+              <div key={l.no} className="rounded-lg border border-white/10 bg-[#0F1924] p-5">
+                <div className="flex items-center justify-between font-mono text-[10px] text-[#6F8397]"><span>{l.no}</span><span className="text-[#FF8A5B]">{l.signal}</span></div>
+                <h3 className="mt-3 text-base font-semibold">{l.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-[#8FA3B5]">{l.desc}</p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* FEATURES */}
-      <section className="mx-auto max-w-5xl px-5 py-12">
-        <h2 className="text-center text-xl font-bold">Satu sistem, semua berputar</h2>
-        <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-[#4b5a50]">
-          Sistem ini bukan konsep: sudah berjalan dengan uji otomatis lulus penuh dan
-          demo end-to-end, dari pelat nomor masuk sampai faktur pajak terbit.
-        </p>
-        <div className="mt-8 grid gap-5 sm:grid-cols-2">
-          {features.map(([title, body]) => (
-            <div key={title} className="rounded-2xl border border-[#e7e0cf] bg-white p-6">
-              <h3 className="font-semibold text-[#14532d]">{title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-[#4b5a50]">{body}</p>
+        <section className="border-y border-white/10 bg-[#0F1924]" id="modul">
+          <div className="mx-auto max-w-6xl px-5 py-16">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#35D0C6]">Satu sistem</p>
+            <h2 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">Semua yang berputar di gedung, dalam satu layar.</h2>
+            <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {modules.map(([t, d], i) => (
+                <div key={t} className="rounded-lg border border-white/10 bg-[#0A1018] p-5">
+                  <span className="font-mono text-[10px] text-[#35D0C6]">0{i + 1}</span>
+                  <h3 className="mt-2 text-sm font-semibold">{t}</h3>
+                  <p className="mt-1.5 text-sm leading-relaxed text-[#8FA3B5]">{d}</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </section>
+          </div>
+        </section>
 
-      {/* PACKAGES */}
-      <section className="border-y border-[#e7e0cf] bg-white/60">
-        <div className="mx-auto max-w-5xl px-5 py-12">
-          <h2 className="text-center text-xl font-bold">Paket dan harga</h2>
-          <p className="mx-auto mt-3 max-w-2xl text-center text-sm text-[#4b5a50]">
-            Harga tergantung hasil survey lokasi. Angka di bawah adalah kisaran proyek
-            serupa agar Anda bisa membandingkan sebelum kami datang.
-          </p>
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
-            {packages.map((p) => (
-              <div
-                key={p.name}
-                className={`flex flex-col rounded-2xl border p-6 ${
-                  p.highlight
-                    ? "border-[#8a7229] bg-white shadow-md ring-1 ring-[#8a7229]/40"
-                    : "border-[#e7e0cf] bg-white"
-                }`}
-              >
-                {p.highlight && (
-                  <span className="mb-3 w-fit rounded-full bg-[#8a7229] px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-white">
-                    Paling sering diambil
-                  </span>
-                )}
-                <h3 className="text-lg font-bold">{p.name}</h3>
-                <p className="mt-1 text-xs text-[#4b5a50]">{p.target}</p>
-                <p className="mt-4 text-xl font-bold text-[#14532d]">{p.price}</p>
-                <p className="text-xs text-[#8a7229]">{p.amc}</p>
-                <ul className="mt-4 space-y-2 text-sm text-[#4b5a50]">
-                  {p.items.map((item) => (
-                    <li key={item} className="flex gap-2">
-                      <span className="text-[#8a7229]">-</span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+        <section className="mx-auto max-w-6xl px-5 py-16" id="hitung">
+          <div className="grid gap-8 lg:grid-cols-[.9fr_1.1fr]">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#FF8A5B]">Kalkulator</p>
+              <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">Berapa yang bisa Anda selamatkan tahun ini?</h2>
+              <p className="mt-4 text-sm leading-relaxed text-[#8FA3B5]">Ubah asumsinya. Kalkulator ini hanya untuk memberi gambaran skala, bukan penawaran. Angka final datang dari survey dan audit tagihan.</p>
+              <a href="#survey" className="mt-6 inline-flex rounded-md border border-white/20 px-4 py-2.5 text-xs font-semibold">Minta angka yang sebenarnya</a>
+            </div>
+            <div className="rounded-xl border border-white/10 bg-[#0F1924] p-5"><RoICalculator /></div>
+          </div>
+        </section>
+
+        <section className="border-y border-white/10 bg-[#0F1924]" id="harga">
+          <div className="mx-auto max-w-6xl px-5 py-16">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#FF8A5B]">Paket</p>
+            <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">Mulai dari modul yang paling bocor.</h2>
+            <div className="mt-8 grid gap-4 md:grid-cols-3">
+              {packages.map((p, i) => (
+                <div key={p.name} className={`rounded-xl border p-5 ${i === 1 ? "border-[#FF6B35] bg-[#FF6B35]/5" : "border-white/10"}`}>
+                  <div className="flex items-baseline justify-between"><h3 className="text-base font-semibold">{p.name}</h3><span className="font-mono text-[9px] text-[#6F8397]">{p.note}</span></div>
+                  <p className="mt-4 text-2xl font-semibold text-[#FF8A5B]">{p.price}</p>
+                  <p className="mt-2 text-xs leading-relaxed text-[#8FA3B5]">{p.for}</p>
+                  <ul className="mt-4 space-y-2 text-sm text-[#C9D6E3]">{p.items.map((item) => <li key={item}>— {item}</li>)}</ul>
+                  <a href={`mailto:fxwisdom1@gmail.com?subject=Paket%20MallOps%20${p.name}`} className={`mt-6 block rounded-md px-4 py-2.5 text-center text-xs font-bold ${i === 1 ? "bg-[#FF6B35] text-[#0A1018]" : "border border-white/20"}`}>Minta proposal</a>
+                </div>
+              ))}
+            </div>
+            <p className="mt-5 text-[10px] text-[#6F8397]">Harga indikatif, belum termasuk pajak. Proposal final menyebut lingkup dan SLA.</p>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-5 py-16">
+          <div className="grid gap-8 md:grid-cols-4">
+            {[["01", "Survey", "Kami hitung titik parkir, unit, tagihan, dan alur yang berjalan sekarang."], ["02", "Baseline", "Tiga bulan data dipakai untuk menentukan titik bocor dan prioritas."], ["03", "Implementasi", "Modul dipasang bertahap, tanpa menghentikan operasional."], ["04", "Serah terima", "Pelatihan, SOP, dan pendampingan setelah go-live."]].map(([no, t, d]) => (
+              <div key={no} className="border-t border-white/15 pt-4"><span className="font-mono text-[10px] text-[#35D0C6]">{no}</span><h3 className="mt-2 text-base font-semibold">{t}</h3><p className="mt-1 text-sm leading-relaxed text-[#8FA3B5]">{d}</p></div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* PROCESS */}
-      <section className="mx-auto max-w-5xl px-5 py-12">
-        <h2 className="text-center text-xl font-bold">Cara kerja kami</h2>
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {steps.map(([title, body]) => (
-            <div key={title} className="rounded-2xl border border-[#e7e0cf] bg-white p-5">
-              <h3 className="text-sm font-bold text-[#14532d]">{title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-[#4b5a50]">{body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* WHY */}
-      <section className="border-t border-[#e7e0cf] bg-[#14532d] text-white">
-        <div className="mx-auto max-w-5xl px-5 py-12">
-          <h2 className="text-center text-xl font-bold">Kenapa MallOps</h2>
-          <div className="mt-8 grid gap-6 text-sm leading-relaxed sm:grid-cols-2">
+        <section className="border-y border-white/10 bg-[#0F1924]">
+          <div className="mx-auto grid max-w-6xl gap-8 px-5 py-16 lg:grid-cols-2">
             <div>
-              <h3 className="font-semibold text-[#d9b64a]">Dibangun engineer, bukan reseller</h3>
-              <p className="mt-2 text-white/85">
-                Kode teruji dengan puluhan pengujian otomatis, dapat diaudit teknisi
-                Anda saat proses kerja, dan dikembangkan sendiri dari nol.
-              </p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#35D0C6]">Bukti teknis</p>
+              <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">Dibangun untuk audit, bukan hanya demo.</h2>
+              <p className="mt-4 text-sm leading-relaxed text-[#8FA3B5]">MallOps berjalan di Odoo 19 dengan pengujian otomatis di database bersih. Integrasi pembayaran, pajak, dan perangkat diuji, bukan diasumsikan.</p>
             </div>
-            <div>
-              <h3 className="font-semibold text-[#d9b64a]">Data milik gedung Anda</h3>
-              <p className="mt-2 text-white/85">
-                Tidak ada bagi hasil parkir. Basis data, kamera, dan laporan adalah
-                milik Anda. Kami hanya mengoperasikan.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-[#d9b64a]">Siap UU PDP</h3>
-              <p className="mt-2 text-white/85">
-                Retensi foto plat terbatas, akses berjenjang dengan jejak audit, dan
-                perjanjian pemrosesan data sejak hari pertama.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-[#d9b64a]">Gate mati = darurat</h3>
-              <p className="mt-2 text-white/85">
-                Monitoring perangkat proaktif lewat bot: sering kali kami tahu
-                perangkat bermasalah sebelum petugas Anda sadar.
-              </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {[["Odoo 19", "accounting & invoicing core"], ["60+ tests", "fresh database, bukan mock"], ["DOKU", "VA / QRIS, webhook bertanda tangan"], ["e-Faktur", "format DJP, NSFP unik"], ["ESP32", "Modbus RS485 & pulse input"], ["Tenant portal", "token per tenant, httpOnly"]].map(([t, d]) => (
+                <div key={t} className="rounded-lg border border-white/10 bg-[#0A1018] p-4"><p className="font-mono text-xs text-[#FF8A5B]">{t}</p><p className="mt-1 text-[11px] leading-relaxed text-[#8FA3B5]">{d}</p></div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* CTA */}
-      <section className="mx-auto max-w-5xl px-5 py-14 text-center">
-        <h2 className="text-2xl font-bold">Hitung kebocoran gedung Anda</h2>
-        <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-[#4b5a50]">
-          Survey gratis tanpa komitmen. Jika angkanya tidak menarik, kami yang akan
-          bilang sistem ini tidak cocok untuk Anda.
-        </p>
-        <a
-          href="mailto:fxwisdom1@gmail.com?subject=Survey%20Gratis%20MallOps%20Suite"
-          className="mt-6 inline-block rounded-xl bg-[#14532d] px-8 py-3 text-sm font-semibold text-white transition hover:bg-[#0e3b21]"
-        >
-          Jadwalkan Survey
-        </a>
-        <p className="mt-6 text-xs text-[#4b5a50]">
-          <Link href="/" className="underline hover:text-[#14532d]">
-            biotama.cv
-          </Link>{" "}
-          - Agustinus Biotamalo Lumbantoruan, engineer di balik MallOps Suite
-        </p>
-      </section>
-    </main>
+        <section className="mx-auto max-w-3xl px-5 py-16" id="faq">
+          <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Pertanyaan sebelum tanda tangan</h2>
+          <div className="mt-6">
+            {faqs.map(([q, a]) => (
+              <details key={q} className="border-t border-white/10 py-4">
+                <summary className="cursor-pointer list-none text-sm font-semibold">{q}</summary>
+                <p className="mt-2 text-sm leading-relaxed text-[#8FA3B5]">{a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        <section className="border-t border-white/10 bg-[#FF6B35] text-[#0A1018]" id="survey">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-6 px-5 py-12">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] opacity-70">Survey gratis</p>
+              <h2 className="mt-2 max-w-xl text-2xl font-bold leading-tight sm:text-3xl">Kalau tidak ada kebocoran, kami yang bilang.</h2>
+              <p className="mt-2 max-w-lg text-sm opacity-80">Satu kunjungan, satu laporan singkat, tanpa kewajiban lanjut.</p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <a href="mailto:fxwisdom1@gmail.com?subject=Survey%20Gratis%20MallOps%20Suite" className="rounded-md bg-[#0A1018] px-5 py-3 text-sm font-bold text-[#FF8A5B]">Jadwalkan survey</a>
+              <a href="/" className="rounded-md border border-[#0A1018]/30 px-5 py-3 text-sm font-bold">biotama.cv</a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="bg-[#0A1018]">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-7 text-[10px] text-[#6F8397]">
+          <span>© {new Date().getFullYear()} MallOps Suite · dibangun oleh Biotama</span>
+          <div className="flex gap-5">
+            <a href="/" className="hover:text-white">biotama.cv</a>
+            <a href="/dharmakarsa" className="hover:text-white">Dharmakarsa</a>
+            <a href="/layanan" className="hover:text-white">Layanan</a>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 }

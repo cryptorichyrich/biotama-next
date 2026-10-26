@@ -546,11 +546,6 @@ body {
   display: none;
 }
 
-/* ── Light mode section alternation ── */
-[data-theme="light"] section:nth-child(even) {
-  background: #ffffff;
-}
-
 /* ── Light mode: gold highlighted quotes ── */
 [data-theme="light"] .about-quote blockquote,
 [data-theme="light"] .testimonial-quote blockquote {
@@ -591,9 +586,3 @@ body {
 
 
 /* Landing/service pages: jangan ikuti aturan section terang global. */
-.lp section:nth-child(2n),
-.layanan-hub section:nth-child(2n) {
-  background-color: transparent !important;
-}
-
-.dharma-page section:nth-child(2n) { background-color: transparent !important; }

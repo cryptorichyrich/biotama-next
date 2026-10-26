@@ -1,20 +1,16 @@
 import type { Metadata } from "next";
 import { brand, waLink } from "@/data/services";
 
-const title = "Dharmakarsa — Agentic Commerce & Operations OS";
+const title = "Dharmakarsa — Toko online yang dibaca AI, dibeli manusia";
 const description =
-  "Dharmakarsa menyatukan storefront, admin, API, dan agent gateway dalam satu sistem multi-tenant. Agent boleh bekerja, tetapi setiap aksi melewati policy, persetujuan, dan jejak audit.";
+  "Dharmakarsa membangun toko online yang siap era AI: katalog terbaca agent, checkout tetap enak untuk manusia, admin gampang dipakai tim. Launch 3-4 minggu.";
 const canonical = `https://${brand.domain}/dharmakarsa/`;
 
 export const metadata: Metadata = {
   title: { absolute: title },
   description,
   alternates: { canonical },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
-  },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },
   openGraph: {
     type: "website",
     locale: "id_ID",
@@ -22,502 +18,479 @@ export const metadata: Metadata = {
     url: canonical,
     title,
     description,
-    images: [
-      {
-        url: "/assets/og-dharmakarsa.png",
-        width: 1200,
-        height: 630,
-        alt: "Dharmakarsa — agentic commerce and operations OS",
-      },
-    ],
+    images: [{ url: "/assets/og-dharmakarsa.png", width: 1200, height: 630, alt: "Dharmakarsa — toko online untuk era AI" }],
   },
-  twitter: {
-    card: "summary_large_image",
-    title,
-    description,
-    images: ["/assets/og-dharmakarsa.png"],
-  },
+  twitter: { card: "summary_large_image", title, description, images: ["/assets/og-dharmakarsa.png"] },
   other: { "content-language": "id-ID" },
 };
 
-const modules = [
+const layers = [
   {
     no: "01",
-    title: "Storefront multi-tenant",
-    desc: "Satu basis kode, konfigurasi per klien. Storefront Astro dengan katalog, cart, checkout, dan halaman legal yang bisa diganti tanpa fork.",
-    tag: "52 halaman",
+    tag: "Manusia",
+    title: "Storefront yang bikin orang percaya",
+    desc: "Halaman cepat, foto tajam, checkout singkat. Tanpa popup mengganggu, tanpa alur yang bikin batal.",
+    points: ["Mobile-first", "Checkout 2 langkah", "SEO teknis"],
   },
   {
     no: "02",
-    title: "Admin & runtime theme",
-    desc: "Admin 39 halaman untuk produk, pesanan, konten, dan tema. Warna dan tipografi bisa diubah dari panel tanpa deploy ulang.",
-    tag: "39 halaman",
+    tag: "Mesin",
+    title: "Katalog yang bisa dibaca agent",
+    desc: "Produk, harga, stok, dan kebijakan toko dalam format yang dipahami AI pencari dan shopping agent.",
+    points: ["Schema.org lengkap", "Product feed", "Agent endpoint"],
   },
   {
     no: "03",
-    title: "Satu API gateway",
-    desc: "Logika bisnis, otorisasi, dan audit ditulis sekali di edge, lalu dipakai oleh storefront, admin, dan agent.",
-    tag: "Hono · Workers",
-  },
-  {
-    no: "04",
-    title: "Agent gateway",
-    desc: "MCP, UCP, ACP, dan REST sebagai pintu masuk. Tool yang tersedia dibatasi per tenant, bukan akses bebas ke database.",
-    tag: "MCP · UCP · ACP",
-  },
-  {
-    no: "05",
-    title: "Policy & approval",
-    desc: "Policy engine deterministik, approval inbox untuk aksi berisiko, dan change set yang bisa ditinjau sebelum dieksekusi.",
-    tag: "human in the loop",
-  },
-  {
-    no: "06",
-    title: "Rental & evidence",
-    desc: "Modul sewa unit dengan ketersediaan, booking, checklist, dan foto bukti ber-watermark. Sudah berjalan di pilot pertama.",
-    tag: "live · mig 0059–0062",
+    tag: "Operator",
+    title: "Admin yang tidak bikin tim kewalahan",
+    desc: "Produk, pesanan, konten, tema, dan sewa dalam satu panel. Ubah tampilan tanpa deploy.",
+    points: ["39 halaman admin", "Runtime theme", "Rental & bukti"],
   },
 ];
 
-const security = [
+const deliverables = [
+  "Storefront siap jual, 40+ halaman",
+  "Admin produk, pesanan, konten, dan tema",
+  "Katalog machine-readable: schema, feed, API",
+  "Checkout, pembayaran, dan pengiriman",
+  "Modul sewa, booking, dan bukti serah terima",
+  "Analytics dan audit akses agent",
+  "Onboarding tim dan dokumentasi",
+];
+
+const packages = [
   {
-    no: "01",
-    title: "Isolasi tenant",
-    desc: "Token per tenant, konfigurasi per tenant, dan akses lintas tenant ditolak secara desain.",
+    name: "Launch",
+    price: "Rp 35 jt",
+    note: "3-4 minggu",
+    for: "Brand baru atau toko yang mau pindah dari template.",
+    items: ["1 brand", "40 halaman storefront", "Admin lengkap", "Agent-ready dasar", "Training 2 sesi"],
   },
   {
-    no: "02",
-    title: "Policy, bukan prompt",
-    desc: "Setiap tool punya izin eksplisit. Model tidak bisa menambah kemampuan hanya dengan instruksi.",
+    name: "Growth",
+    price: "Rp 75 jt",
+    note: "5-7 minggu",
+    for: "Toko yang butuh sewa, multi-brand, atau integrasi.",
+    items: ["3 brand", "Modul rental & bukti", "Integrasi pembayaran", "Agent endpoint + policy", "Pendampingan 60 hari"],
   },
   {
-    no: "03",
-    title: "Approval inbox",
-    desc: "Aksi yang mengubah uang, stok, atau konten menunggu persetujuan manusia sebelum dieksekusi.",
-  },
-  {
-    no: "04",
-    title: "Change set & audit",
-    desc: "Perubahan dikelompokkan, dicatat, dan bisa ditinjau ulang. Tidak ada tulisan agent langsung ke D1.",
+    name: "Partner",
+    price: "Custom",
+    note: "retainer",
+    for: "Agency atau operator yang ingin basis putih-label.",
+    items: ["Tenant tak terbatas", "Onboarding klien", "SLA & monitoring", "Roadmap bersama"],
   },
 ];
 
 const faqs: [string, string][] = [
   [
-    "Apakah Dharmakarsa hanya untuk toko online?",
-    "Tidak. Intinya adalah commerce dan operasional: katalog, checkout, pembayaran, pengiriman, sewa unit, bukti serah terima, dan konten. Storefront adalah salah satu antarmuka, bukan keseluruhan sistem.",
+    "Apa maksudnya toko yang bisa dibaca AI?",
+    "Artinya katalog, harga, stok, dan kebijakan toko disajikan dalam format terstruktur yang bisa dibaca assistant dan shopping agent: schema.org, product feed, dan endpoint resmi. Jadi saat calon pembeli bertanya ke AI, toko Anda punya kesempatan muncul sebagai jawaban, bukan hanya saat mereka mengetik di Google.",
   ],
   [
-    "Bagaimana agent dicegah mengubah data sembarangan?",
-    "Agent tidak menulis langsung ke database. Ia memanggil tool di edge, dan setiap tool melewati policy, validasi, serta approval untuk aksi berisiko. Semua perubahan masuk ke change set dan tercatat.",
+    "Apakah agent bisa checkout sendiri?",
+    "Bisa dibuka bertahap, tetapi tidak harus. Default kami: agent boleh mencari, membandingkan, dan menyiapkan keranjang; keputusan membayar tetap di tangan manusia kecuali Anda mengaktifkan alur khusus dengan policy dan batas nominal.",
   ],
   [
-    "Bisakah dipakai untuk klien kedua?",
-    "Bisa. Tenant dikonfigurasi lewat client config dan script onboarding. Storefront dan admin dibangun dari basis yang sama, dengan teks, tema, dan konten per klien.",
+    "Bedanya dengan Shopify atau WooCommerce?",
+    "Anda dapat storefront yang dirancang untuk brand Anda, bukan template yang sama dengan ribuan toko lain. Datanya milik Anda, kodenya diserahkan, dan lapisan agent serta modul sewa bisa dibangun sesuai model bisnis.",
   ],
   [
-    "Apakah harus memakai Cloudflare?",
-    "Stack produksi berjalan di Cloudflare Workers, D1, KV, R2, Queues, dan Durable Objects. Alasannya operasional: satu orang harus bisa deploy, memantau, dan mematikan sistem tanpa tim platform besar.",
+    "Kalau saya sudah punya toko, bisa migrasi?",
+    "Bisa. Kami migrasi produk, pelanggan, pesanan, dan URL penting dengan redirect plan supaya trafik tidak jatuh. Migrasi diuji di staging sebelum cutover.",
+  ],
+  [
+    "Berapa lama sampai bisa jualan?",
+    "Paket Launch 3-4 minggu setelah konten dan akses siap. Yang paling sering memperlambat bukan coding, tapi kesiapan foto, deskripsi, dan kebijakan toko.",
   ],
 ];
 
-export default function DharmakarsaPage() {
-  const schema = {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "SoftwareApplication",
-        name: "Dharmakarsa",
-        applicationCategory: "BusinessApplication",
-        operatingSystem: "Web",
+const schema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": ["Service", "SoftwareApplication"],
+      name: "Dharmakarsa",
+      serviceType: "Pembuatan toko online untuk era AI",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      url: canonical,
+      description,
+      provider: { "@type": "Organization", name: "Biotama", url: `https://${brand.domain}` },
+      areaServed: { "@type": "Country", name: "Indonesia" },
+      offers: packages.map((p) => ({
+        "@type": "Offer",
+        name: p.name,
+        priceCurrency: "IDR",
+        description: `${p.price} · ${p.note}`,
+        availability: "https://schema.org/InStock",
         url: canonical,
-        description,
-        creator: {
-          "@type": "Organization",
-          name: "Biotama",
-          url: `https://${brand.domain}`,
-        },
-        featureList: modules.map((m) => m.title),
-      },
-      {
-        "@type": "FAQPage",
-        "@id": `${canonical}#faq`,
-        mainEntity: faqs.map(([q, a]) => ({
-          "@type": "Question",
-          name: q,
-          acceptedAnswer: { "@type": "Answer", text: a },
-        })),
-      },
-      {
-        "@type": "BreadcrumbList",
-        "@id": `${canonical}#breadcrumb`,
-        itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Beranda", item: `https://${brand.domain}/` },
-          { "@type": "ListItem", position: 2, name: "Dharmakarsa", item: canonical },
-        ],
-      },
-    ],
-  };
+      })),
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${canonical}#faq`,
+      mainEntity: faqs.map(([q, a]) => ({
+        "@type": "Question",
+        name: q,
+        acceptedAnswer: { "@type": "Answer", text: a },
+      })),
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Beranda", item: `https://${brand.domain}/` },
+        { "@type": "ListItem", position: 2, name: "Dharmakarsa", item: canonical },
+      ],
+    },
+  ],
+};
 
+export default function DharmakarsaPage() {
   return (
-    <div className="dharma-page min-h-screen bg-[#070B0F] text-[#E6F0EC]">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
-      />
+    <div className="dharma-page min-h-screen bg-[#F4F0E6] text-[#0E1512]">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
-      <header className="sticky top-0 z-50 border-b border-white/10 bg-[#070B0F]/90 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 border-b border-[#0E1512]/10 bg-[#F4F0E6]/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4">
           <a href="/dharmakarsa" className="flex items-center gap-3">
-            <span className="grid h-9 w-9 place-items-center rounded-md border border-[#3AE2B4]/40 bg-[#3AE2B4]/10 font-mono text-xs font-bold text-[#3AE2B4]">
+            <span className="grid h-9 w-9 place-items-center rounded-full bg-[#0E1512] font-mono text-[10px] font-bold text-[#C8F169]">
               DK
             </span>
             <span>
               <span className="block text-sm font-semibold tracking-tight">Dharmakarsa</span>
-              <span className="block font-mono text-[9px] uppercase tracking-[0.16em] text-[#8CA19A]">
-                agentic OS · by Biotama
+              <span className="block font-mono text-[9px] uppercase tracking-[0.16em] text-[#5C6A62]">
+                commerce for the AI era
               </span>
             </span>
           </a>
-          <nav className="hidden items-center gap-6 text-xs text-[#A9BDB6] md:flex">
-            <a href="#platform" className="hover:text-white">Platform</a>
-            <a href="#arsitektur" className="hover:text-white">Arsitektur</a>
-            <a href="#keamanan" className="hover:text-white">Keamanan</a>
-            <a href="#pilot" className="hover:text-white">Pilot</a>
+          <nav className="hidden items-center gap-6 text-xs text-[#3E4A44] md:flex">
+            <a href="#cara-kerja" className="hover:text-[#0E1512]">Cara kerja</a>
+            <a href="#bukti" className="hover:text-[#0E1512]">Bukti</a>
+            <a href="#harga" className="hover:text-[#0E1512]">Harga</a>
+            <a href="#faq" className="hover:text-[#0E1512]">FAQ</a>
           </nav>
-          <a
-            href={`mailto:${brand.email}?subject=Demo%20Dharmakarsa`}
-            className="rounded-md bg-[#3AE2B4] px-4 py-2 text-xs font-bold text-[#04110D]"
-          >
-            Minta demo
+          <a href="#audit" className="rounded-full bg-[#0E1512] px-5 py-2.5 text-xs font-bold text-[#F4F0E6]">
+            Audit gratis
           </a>
         </div>
       </header>
 
       <main>
-        <section className="relative overflow-hidden border-b border-white/10">
-          <div
-            className="pointer-events-none absolute inset-0 opacity-[0.18]"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(58,226,180,.25) 1px, transparent 1px), linear-gradient(90deg, rgba(58,226,180,.25) 1px, transparent 1px)",
-              backgroundSize: "64px 64px",
-              maskImage: "radial-gradient(circle at 50% 20%, black, transparent 75%)",
-            }}
-          />
-          <div className="relative mx-auto grid max-w-6xl gap-10 px-5 py-16 lg:grid-cols-[1.15fr_.85fr] lg:py-24">
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#3AE2B4]">
-                Agentic commerce &amp; operations OS
-              </p>
-              <h1 className="mt-5 max-w-2xl text-4xl font-semibold leading-[1.03] tracking-tight sm:text-5xl lg:text-6xl">
-                Commerce yang bisa dijalankan agent, tanpa kehilangan kendali.
-              </h1>
-              <p className="mt-6 max-w-xl text-base leading-relaxed text-[#A9BDB6]">
-                Dharmakarsa menyatukan storefront, admin, API, dan agent gateway dalam
-                satu sistem multi-tenant. Agent boleh bekerja, tetapi setiap aksi
-                melewati policy, persetujuan, dan jejak audit.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3 text-sm">
-                <a
-                  href={`mailto:${brand.email}?subject=Demo%20Dharmakarsa`}
-                  className="rounded-md bg-[#3AE2B4] px-5 py-3 font-bold text-[#04110D]"
-                >
-                  Minta demo privat
-                </a>
-                <a
-                  href="#arsitektur"
-                  className="rounded-md border border-white/20 px-5 py-3 font-semibold text-[#D7E6E1]"
-                >
-                  Lihat arsitektur
-                </a>
-              </div>
-              <ul className="mt-7 flex flex-wrap gap-x-5 gap-y-2 font-mono text-[10px] uppercase tracking-[0.1em] text-[#8CA19A]">
-                <li>tenant-scoped</li>
-                <li>agent off critical path</li>
-                <li>approval sebelum eksekusi</li>
-              </ul>
-            </div>
-
-            <aside className="self-start rounded-xl border border-white/12 bg-[#0B1216] p-5 font-mono text-[11px]">
-              <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                <span className="text-[9px] uppercase tracking-[0.18em] text-[#8CA19A]">
-                  runtime · pilot
-                </span>
-                <span className="text-[#3AE2B4]">● healthy</span>
-              </div>
-              <dl className="mt-2 divide-y divide-white/5">
-                {[
-                  ["edge", "Cloudflare Workers"],
-                  ["api", "Hono · REST + adapters"],
-                  ["data", "D1 · KV · R2 · Queues"],
-                  ["storefront", "Astro · 52 halaman"],
-                  ["admin", "39 halaman · runtime theme"],
-                  ["agents", "MCP · UCP · ACP"],
-                  ["client", "Toko Vavelle"],
-                ].map(([k, v]) => (
-                  <div key={k} className="grid grid-cols-[80px_1fr] gap-3 py-3">
-                    <dt className="text-[#6F827C]">{k}</dt>
-                    <dd className="text-[#D7E6E1]">{v}</dd>
-                  </div>
-                ))}
-              </dl>
-            </aside>
-          </div>
-        </section>
-
-        <section className="border-b border-white/10 bg-[#0A1115]">
-          <div className="mx-auto grid max-w-6xl grid-cols-2 gap-px px-5 py-8 sm:grid-cols-4">
-            {[
-              ["52", "halaman storefront"],
-              ["39", "halaman admin"],
-              ["1", "API gateway"],
-              ["0", "tulisan agent langsung ke DB"],
-            ].map(([v, l]) => (
-              <div key={l} className="px-2 py-3">
-                <p className="font-mono text-2xl font-bold text-[#3AE2B4]">{v}</p>
-                <p className="mt-1 text-[10px] uppercase tracking-wide text-[#8CA19A]">{l}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-6xl px-5 py-16" id="masalah">
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#FFC46B]">
-            Masalah
-          </p>
-          <h2 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-            Tiga hal yang bikin commerce agency berhenti tumbuh.
-          </h2>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {[
-              ["Toko baru, kode baru", "Setiap klien dimulai dari fork. Perbaikan di satu toko tidak otomatis sampai ke toko lain."],
-              ["Agent tanpa pagar", "Agent diberi akses langsung ke database, lalu berharap prompt cukup untuk menjaga batas."],
-              ["Operasional tercecer", "Tema, konten, stok, dan pesanan tersebar di banyak panel yang tidak saling bicara."],
-            ].map(([t, d]) => (
-              <div key={t} className="rounded-lg border border-white/10 bg-[#0B1216] p-5">
-                <h3 className="text-base font-semibold">{t}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-[#8CA19A]">{d}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="border-y border-white/10 bg-[#0A1115]" id="platform">
-          <div className="mx-auto max-w-6xl px-5 py-16">
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#3AE2B4]">
-              Platform
+        <section className="mx-auto grid max-w-6xl gap-12 px-5 pb-16 pt-14 lg:grid-cols-[1.08fr_.92fr] lg:pb-24 lg:pt-20">
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#123B2E]">
+              E-commerce untuk era agentic AI
             </p>
-            <h2 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-              Enam bagian yang membuat agent aman dijalankan.
-            </h2>
-            <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {modules.map((m) => (
-                <article key={m.no} className="rounded-lg border border-white/10 bg-[#070B0F] p-5">
-                  <div className="flex items-center justify-between font-mono text-[10px] text-[#6F827C]">
-                    <span>{m.no}</span>
-                    <span className="text-[#3AE2B4]">{m.tag}</span>
-                  </div>
-                  <h3 className="mt-3 text-base font-semibold">{m.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-[#8CA19A]">{m.desc}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-6xl px-5 py-16" id="arsitektur">
-          <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#3AE2B4]">
-            Arsitektur
-          </p>
-          <h2 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-            Dua bidang, satu batas.
-          </h2>
-          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-[#8CA19A]">
-            Bidang edge melayani manusia. Bidang agent melayani otomasi. Keduanya
-            bertemu di tool gateway, bukan di database.
-          </p>
-
-          <div className="mt-8 grid gap-4 lg:grid-cols-2">
-            <div className="rounded-lg border border-[#3AE2B4]/30 bg-[#0B1216] p-5">
-              <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#3AE2B4]">
-                edge plane · per tenant
-              </p>
-              <div className="mt-4 space-y-2 font-mono text-[11px]">
-                {[
-                  ["Storefront", "Astro · 52 halaman · runtime theme"],
-                  ["Admin", "39 halaman · konten, pesanan, tema"],
-                  ["API", "Hono di Workers · REST"],
-                  ["Data", "D1 · KV · R2 · Queues · DO"],
-                ].map(([k, v], i) => (
-                  <div key={k}>
-                    <div className="rounded border border-white/12 bg-[#070B0F] p-3">
-                      <span className="text-[#3AE2B4]">{k}</span>
-                      <span className="ml-3 text-[#8CA19A]">{v}</span>
-                    </div>
-                    {i < 3 && <p className="py-1 text-center text-[#3A4A46]">↓</p>}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="rounded-lg border border-[#FFC46B]/30 bg-[#0B1216] p-5">
-              <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#FFC46B]">
-                agent plane · guardrails
-              </p>
-              <div className="mt-4 space-y-2 font-mono text-[11px]">
-                {[
-                  ["Agent", "MCP · UCP · ACP · REST"],
-                  ["Model gateway", "routing · fallback · budget"],
-                  ["Tool gateway", "allowlist per tenant"],
-                  ["Policy & approval", "deterministic · change set · audit"],
-                ].map(([k, v], i) => (
-                  <div key={k}>
-                    <div className="rounded border border-white/12 bg-[#070B0F] p-3">
-                      <span className="text-[#FFC46B]">{k}</span>
-                      <span className="ml-3 text-[#8CA19A]">{v}</span>
-                    </div>
-                    {i < 3 && <p className="py-1 text-center text-[#3A4A46]">↓</p>}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <p className="mt-4 rounded border border-dashed border-[#3AE2B4]/30 bg-[#3AE2B4]/5 px-4 py-3 font-mono text-[11px] text-[#B9D9CF]">
-            Aturan: agent tidak pernah menulis langsung ke D1. Semua aksi lewat tool di edge.
-          </p>
-        </section>
-
-        <section className="border-y border-white/10 bg-[#0A1115]" id="keamanan">
-          <div className="mx-auto max-w-6xl px-5 py-16">
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#FFC46B]">
-              Keamanan
+            <h1 className="mt-5 text-[clamp(2.6rem,5.4vw,4.6rem)] font-[family-name:var(--font-display)] font-semibold leading-[0.98] tracking-[-0.03em]">
+              Pelanggan pertama toko Anda mungkin <span className="italic text-[#123B2E]">bukan manusia.</span>
+            </h1>
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-[#4A574F]">
+              Orang sekarang bertanya ke AI sebelum membeli. Kalau katalog Anda tidak
+              terbaca mesin, toko Anda tidak masuk pertimbangan. Dharmakarsa membangun
+              toko yang dibaca agent, tetap enak dipakai manusia, dan gampang dijalankan tim Anda.
             </p>
-            <h2 className="mt-3 max-w-2xl text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-              Agent boleh cepat. Batasnya tetap tegas.
-            </h2>
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              {security.map((s) => (
-                <div key={s.no} className="flex gap-4 border-t border-white/10 pt-4">
-                  <span className="font-mono text-[10px] text-[#3AE2B4]">{s.no}</span>
-                  <div>
-                    <h3 className="text-sm font-semibold">{s.title}</h3>
-                    <p className="mt-1 text-sm leading-relaxed text-[#8CA19A]">{s.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-6xl px-5 py-16" id="pilot">
-          <div className="grid gap-8 lg:grid-cols-[.9fr_1.1fr]">
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#3AE2B4]">
-                Pilot
-              </p>
-              <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-                Bukan demo. Sudah dipakai jualan.
-              </h2>
-              <p className="mt-4 text-sm leading-relaxed text-[#8CA19A]">
-                Deployment pertama adalah Toko Vavelle. Storefront, admin, tema,
-                dan modul sewa berjalan di stack yang sama. Yang belum selesai
-                kami tulis terbuka, bukan disembunyikan di balik kata pilot.
-              </p>
-              <a
-                href={`mailto:${brand.email}?subject=Studi%20kasus%20Dharmakarsa`}
-                className="mt-6 inline-flex rounded-md border border-white/20 px-4 py-2.5 text-xs font-semibold"
-              >
-                Minta walkthrough
+            <div className="mt-8 flex flex-wrap gap-3">
+              <a href="#audit" className="rounded-full bg-[#0E1512] px-6 py-3.5 text-sm font-bold text-[#F4F0E6]">
+                Audit kesiapan AI toko Anda, gratis
               </a>
+              <a href="#bukti" className="rounded-full border border-[#0E1512]/25 px-6 py-3.5 text-sm font-semibold">
+                Lihat bukti Vavelle
+              </a>
+            </div>
+            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[10px] uppercase tracking-[0.08em] text-[#5C6A62]">
+              <span>Launch 3-4 minggu</span>
+              <span>Data &amp; kode milik Anda</span>
+              <span>Tanpa tim developer</span>
+            </div>
+          </div>
+
+          <div className="relative">
+            <div className="absolute -inset-3 -z-0 rounded-[28px] bg-[#C8F169]/45 blur-2xl" />
+            <div className="relative overflow-hidden rounded-2xl border border-[#0E1512]/12 bg-white shadow-[0_24px_60px_rgba(14,21,18,0.12)]">
+              <div className="flex items-center justify-between border-b border-[#0E1512]/8 px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-[#0E1512]/20" />
+                  <span className="h-2 w-2 rounded-full bg-[#0E1512]/20" />
+                  <span className="h-2 w-2 rounded-full bg-[#C8F169]" />
+                </div>
+                <span className="font-mono text-[9px] uppercase tracking-[0.14em] text-[#5C6A62]">
+                  asisten AI · 21.04
+                </span>
+              </div>
+              <div className="space-y-3 p-4 text-[13px]">
+                <div className="ml-auto max-w-[85%] rounded-2xl rounded-br-sm bg-[#0E1512] px-3.5 py-2.5 text-[#F4F0E6]">
+                  Rekomendasi kopi Vietnam untuk hadiah kantor, budget 300 ribu.
+                </div>
+                <div className="max-w-[92%] rounded-2xl rounded-bl-sm bg-[#F1EDE2] px-3.5 py-3 text-[#26332C]">
+                  <p>Saya temukan beberapa opsi. Salah satunya:</p>
+                  <div className="mt-3 flex gap-3 rounded-xl border border-[#0E1512]/10 bg-white p-2.5">
+                    <div className="grid h-14 w-14 shrink-0 place-items-center rounded-lg bg-[#123B2E] text-[10px] font-bold text-[#C8F169]">
+                      VV
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold">Trung Nguyen G7 — Vavelle</p>
+                      <p className="mt-0.5 text-[11px] text-[#5C6A62]">Kopi Vietnam · stok tersedia · 4.8</p>
+                      <p className="mt-1 text-[11px] font-semibold">Rp 89.000</p>
+                    </div>
+                  </div>
+                  <p className="mt-3 text-[11px] text-[#5C6A62]">
+                    Data produk dibaca dari katalog terstruktur. Sumber: vavelle.com
+                  </p>
+                </div>
+              </div>
+              <div className="border-t border-[#0E1512]/8 bg-[#F9F6EE] px-4 py-3 font-mono text-[9px] uppercase tracking-[0.12em] text-[#5C6A62]">
+                schema.org · product feed · agent endpoint
+              </div>
+            </div>
+            <p className="mt-4 text-center text-[11px] leading-relaxed text-[#5C6A62]">
+              Kalau toko Anda tidak muncul di jawaban seperti ini, Anda kehilangan pembeli
+              yang tidak pernah membuka Google.
+            </p>
+          </div>
+        </section>
+
+        <section className="border-y border-[#0E1512]/10 bg-[#0E1512] text-[#F4F0E6]">
+          <div className="mx-auto grid max-w-6xl gap-6 px-5 py-10 sm:grid-cols-3">
+            {[
+              ["3-4 minggu", "dari brief ke toko siap jual"],
+              ["52 halaman", "storefront pilot Vavelle"],
+              ["1 panel", "produk, pesanan, tema, sewa"],
+            ].map(([v, l]) => (
+              <div key={l} className="border-l border-[#F4F0E6]/20 pl-4">
+                <p className="text-2xl font-semibold text-[#C8F169]">{v}</p>
+                <p className="mt-1 font-mono text-[10px] uppercase tracking-wide text-[#F4F0E6]/60">{l}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-5 py-16 lg:py-20" id="cara-kerja">
+          <div className="grid gap-10 lg:grid-cols-[.9fr_1.1fr]">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#123B2E]">Kenapa sekarang</p>
+              <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl leading-tight tracking-tight sm:text-4xl">
+                Tempat pertama orang mencari barang sudah pindah.
+              </h2>
+            </div>
+            <div className="space-y-5 text-sm leading-relaxed text-[#4A574F]">
+              <p>
+                Dulu orang membuka Google, klik satu dari sepuluh tautan, lalu membandingkan
+                sendiri. Sekarang mereka bertanya ke assistant, mendapat tiga rekomendasi,
+                dan langsung membeli yang paling meyakinkan.
+              </p>
+              <p>
+                Agent tidak melihat desain cantik. Ia membaca struktur: nama produk, harga,
+                stok, variasi, ongkir, kebijakan retur, dan ulasan. Kalau informasi itu tidak
+                tersedia dalam format yang jelas, toko Anda tidak masuk jawaban.
+              </p>
+              <p className="font-semibold text-[#0E1512]">
+                Dharmakarsa menyiapkan kedua sisi: manusia yang membeli, dan mesin yang merekomendasikan.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-12 grid gap-4 md:grid-cols-3">
+            {layers.map((l) => (
+              <div key={l.no} className="rounded-2xl border border-[#0E1512]/12 bg-white p-6">
+                <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.14em] text-[#5C6A62]">
+                  <span>{l.no}</span>
+                  <span className="rounded-full bg-[#C8F169] px-2.5 py-1 text-[#0E1512]">{l.tag}</span>
+                </div>
+                <h3 className="mt-4 font-[family-name:var(--font-display)] text-xl leading-snug">{l.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-[#4A574F]">{l.desc}</p>
+                <ul className="mt-4 space-y-1.5 text-xs text-[#123B2E]">
+                  {l.points.map((p) => (
+                    <li key={p}>— {p}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="border-y border-[#0E1512]/10 bg-[#E9E3D5]">
+          <div className="mx-auto grid max-w-6xl gap-10 px-5 py-16 lg:grid-cols-2 lg:py-20">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#123B2E]">Yang Anda dapat</p>
+              <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl leading-tight tracking-tight sm:text-4xl">
+                Bukan cuma website. Ini mesin jualan.
+              </h2>
+              <p className="mt-4 max-w-md text-sm leading-relaxed text-[#4A574F]">
+                Semua yang dibutuhkan untuk mulai berjualan, dalam satu kontrak dan satu tim.
+                Tidak ada plugin tambahan yang harus Anda cari sendiri.
+              </p>
+              <a href="#harga" className="mt-6 inline-flex rounded-full bg-[#0E1512] px-5 py-3 text-xs font-bold text-[#F4F0E6]">
+                Lihat paket
+              </a>
+            </div>
+            <ul className="grid gap-3 sm:grid-cols-2">
+              {deliverables.map((d) => (
+                <li key={d} className="flex gap-3 rounded-xl border border-[#0E1512]/10 bg-[#F4F0E6] px-4 py-3 text-sm">
+                  <span className="text-[#123B2E]">✓</span>
+                  {d}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-5 py-16 lg:py-20" id="bukti">
+          <div className="grid gap-10 lg:grid-cols-[1fr_1fr]">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#123B2E]">Bukti</p>
+              <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl leading-tight tracking-tight sm:text-4xl">
+                Sudah dipakai berjualan, bukan cuma didemokan.
+              </h2>
+              <p className="mt-4 text-sm leading-relaxed text-[#4A574F]">
+                Pilot pertama Dharmakarsa adalah Toko Vavelle. Storefront, admin, tema,
+                dan modul sewa berjalan di sistem yang sama. Kami menunjukkan angka dan
+                batasannya, bukan hanya portofolio cantik.
+              </p>
+              <div className="mt-6 rounded-2xl border border-[#0E1512]/12 bg-white p-5">
+                <p className="font-[family-name:var(--font-display)] text-lg leading-snug">
+                  &ldquo;Yang saya butuhkan bukan toko yang bagus di presentasi, tapi toko
+                  yang bisa saya kelola sendiri setelah serah terima.&rdquo;
+                </p>
+                <p className="mt-3 text-xs text-[#5C6A62]">
+                  Prinsip kerja Dharmakarsa
+                </p>
+              </div>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               {[
-                ["Storefront", "52 halaman", "katalog, cart, checkout, konten"],
-                ["Admin", "39 halaman", "produk, pesanan, tema, tenant"],
-                ["Theme runtime", "tanpa deploy", "warna dan tipografi dari panel"],
-                ["Rental & evidence", "live", "unit, booking, checklist, foto bukti"],
-              ].map(([t, v, d]) => (
-                <div key={t} className="rounded-lg border border-white/10 bg-[#0B1216] p-4">
-                  <p className="font-mono text-[10px] uppercase tracking-wide text-[#6F827C]">{t}</p>
-                  <p className="mt-2 text-xl font-semibold text-[#3AE2B4]">{v}</p>
-                  <p className="mt-1 text-[11px] leading-relaxed text-[#8CA19A]">{d}</p>
+                ["52", "halaman storefront", "katalog, cart, checkout, konten"],
+                ["39", "halaman admin", "produk, pesanan, tema, tenant"],
+                ["0", "deploy untuk ganti tema", "warna dan tipografi dari panel"],
+                ["live", "rental & bukti", "booking, checklist, foto watermark"],
+              ].map(([v, t, d]) => (
+                <div key={t} className="rounded-2xl border border-[#0E1512]/12 bg-white p-5">
+                  <p className="font-[family-name:var(--font-display)] text-3xl text-[#123B2E]">{v}</p>
+                  <p className="mt-1 text-sm font-semibold">{t}</p>
+                  <p className="mt-1 text-[11px] leading-relaxed text-[#5C6A62]">{d}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="border-t border-white/10 bg-[#0A1115]">
-          <div className="mx-auto max-w-6xl px-5 py-16">
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#FFC46B]">
-              Cocok untuk
-            </p>
-            <div className="mt-6 grid gap-4 sm:grid-cols-3">
-              {[
-                ["Agency & studio", "Klien bertambah, tim tetap kecil. Butuh basis yang bisa dipakai ulang tanpa fork."],
-                ["Multi-brand operator", "Beberapa merek, satu operasional. Butuh isolasi data dan tema per merek."],
-                ["Marketplace & rental", "Produk, sewa, dan bukti serah terima dalam satu alur, bukan tiga sistem."],
-              ].map(([t, d]) => (
-                <div key={t} className="border-t border-white/10 pt-4">
-                  <h3 className="text-base font-semibold">{t}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-[#8CA19A]">{d}</p>
+        <section className="border-y border-[#0E1512]/10 bg-[#0E1512] text-[#F4F0E6]" id="harga">
+          <div className="mx-auto max-w-6xl px-5 py-16 lg:py-20">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#C8F169]">Paket</p>
+                <h2 className="mt-3 font-[family-name:var(--font-display)] text-3xl leading-tight tracking-tight sm:text-4xl">
+                  Harga jelas. Mulai dari yang paling masuk akal.
+                </h2>
+              </div>
+              <p className="max-w-sm text-xs leading-relaxed text-[#F4F0E6]/55">
+                Angka di bawah adalah titik awal. Proposal final menyebut lingkup, jumlah revisi,
+                dan waktu serah terima secara tertulis.
+              </p>
+            </div>
+            <div className="mt-9 grid gap-4 md:grid-cols-3">
+              {packages.map((p, i) => (
+                <div
+                  key={p.name}
+                  className={`rounded-2xl p-6 ${i === 1 ? "bg-[#C8F169] text-[#0E1512]" : "border border-[#F4F0E6]/20"}`}
+                >
+                  <div className="flex items-baseline justify-between">
+                    <h3 className="font-[family-name:var(--font-display)] text-xl">{p.name}</h3>
+                    <span className="font-mono text-[9px] uppercase tracking-wide opacity-60">{p.note}</span>
+                  </div>
+                  <p className="mt-4 text-3xl font-semibold">{p.price}</p>
+                  <p className={`mt-2 text-xs leading-relaxed ${i === 1 ? "text-[#0E1512]/70" : "text-[#F4F0E6]/55"}`}>
+                    {p.for}
+                  </p>
+                  <ul className="mt-4 space-y-2 text-sm">
+                    {p.items.map((item) => (
+                      <li key={item}>— {item}</li>
+                    ))}
+                  </ul>
+                  <a
+                    href={`mailto:${brand.email}?subject=Paket%20Dharmakarsa%20${p.name}`}
+                    className={`mt-6 block rounded-full px-4 py-2.5 text-center text-xs font-bold ${
+                      i === 1 ? "bg-[#0E1512] text-[#C8F169]" : "bg-[#F4F0E6] text-[#0E1512]"
+                    }`}
+                  >
+                    Ambil paket {p.name}
+                  </a>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section className="mx-auto max-w-4xl px-5 py-16" id="faq">
-          <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">Pertanyaan teknis</h2>
-          <div className="mt-6">
-            {faqs.map(([q, a]) => (
-              <details key={q} className="border-t border-white/10 py-4">
-                <summary className="cursor-pointer list-none text-sm font-semibold">{q}</summary>
-                <p className="mt-2 text-sm leading-relaxed text-[#8CA19A]">{a}</p>
-              </details>
+        <section className="mx-auto max-w-6xl px-5 py-16 lg:py-20">
+          <div className="grid gap-8 md:grid-cols-4">
+            {[
+              ["01", "Audit", "Kami cek katalog, schema, kecepatan, checkout, dan kesiapan agent."],
+              ["02", "Rancang", "Struktur produk, alur beli, dan prioritas fitur disepakati."],
+              ["03", "Bangun", "Storefront, admin, dan lapisan agent dikerjakan per sprint."],
+              ["04", "Luncurkan", "Migrasi, QA, pelatihan, dan pendampingan setelah rilis."],
+            ].map(([no, t, d]) => (
+              <div key={no} className="border-t border-[#0E1512]/20 pt-4">
+                <span className="font-mono text-[10px] text-[#123B2E]">{no}</span>
+                <h3 className="mt-2 font-[family-name:var(--font-display)] text-xl">{t}</h3>
+                <p className="mt-1 text-sm leading-relaxed text-[#4A574F]">{d}</p>
+              </div>
             ))}
           </div>
         </section>
 
-        <section className="border-t border-white/10 bg-[#3AE2B4] text-[#04110D]">
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-6 px-5 py-12">
-            <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] opacity-70">
-                Demo privat
-              </p>
-              <h2 className="mt-2 max-w-xl text-2xl font-bold leading-tight sm:text-3xl">
-                Lihat Dharmakarsa dengan data dan tenant contoh.
-              </h2>
+        <section className="border-t border-[#0E1512]/10 bg-[#E9E3D5]" id="faq">
+          <div className="mx-auto max-w-3xl px-5 py-16">
+            <h2 className="font-[family-name:var(--font-display)] text-3xl tracking-tight">Yang biasanya ditanyakan</h2>
+            <div className="mt-6">
+              {faqs.map(([q, a]) => (
+                <details key={q} className="border-b border-[#0E1512]/15 py-4">
+                  <summary className="cursor-pointer list-none text-sm font-semibold">{q}</summary>
+                  <p className="mt-2 text-sm leading-relaxed text-[#4A574F]">{a}</p>
+                </details>
+              ))}
             </div>
-            <div className="flex flex-wrap gap-3">
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-5 py-16 lg:py-20" id="audit">
+          <div className="rounded-[28px] bg-[#C8F169] p-8 sm:p-12">
+            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#0E1512]/60">
+              Audit gratis · 30 menit
+            </p>
+            <h2 className="mt-3 max-w-3xl font-[family-name:var(--font-display)] text-3xl leading-tight tracking-tight sm:text-4xl">
+              Cek dulu: toko Anda terbaca AI atau tidak?
+            </h2>
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-[#0E1512]/70">
+              Kami periksa 12 titik: schema produk, feed, kecepatan, checkout, kebijakan,
+              dan akses agent. Anda dapat hasilnya dalam bentuk laporan singkat, tanpa kewajiban lanjut.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
               <a
-                href={`mailto:${brand.email}?subject=Demo%20Dharmakarsa`}
-                className="rounded-md bg-[#04110D] px-5 py-3 text-sm font-bold text-[#3AE2B4]"
+                href={`mailto:${brand.email}?subject=Audit%20Kesiapan%20AI%20Toko`}
+                className="rounded-full bg-[#0E1512] px-6 py-3 text-sm font-bold text-[#C8F169]"
               >
-                {brand.email}
+                Minta audit gratis
               </a>
               <a
-                href={waLink("Halo Biotama, saya ingin demo Dharmakarsa.")}
+                href={waLink("Halo Biotama, saya ingin audit kesiapan AI untuk toko online saya.")}
                 target="_blank"
                 rel="noopener"
-                className="rounded-md border border-[#04110D]/30 px-5 py-3 text-sm font-bold"
+                className="rounded-full border border-[#0E1512]/25 px-6 py-3 text-sm font-semibold"
               >
-                WhatsApp
+                WhatsApp {brand.phoneDisplay}
               </a>
             </div>
           </div>
         </section>
       </main>
 
-      <footer className="bg-[#070B0F]">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-7 text-[10px] text-[#6F827C]">
+      <footer className="border-t border-[#0E1512]/10 bg-[#F4F0E6]">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-7 text-[10px] text-[#5C6A62]">
           <span>© {new Date().getFullYear()} Dharmakarsa · dibangun oleh Biotama</span>
           <div className="flex gap-5">
-            <a href="/" className="hover:text-white">biotama.cv</a>
-            <a href="/layanan" className="hover:text-white">Layanan</a>
-            <a href="/mallops" className="hover:text-white">MallOps</a>
+            <a href="/" className="hover:text-[#0E1512]">biotama.cv</a>
+            <a href="/layanan" className="hover:text-[#0E1512]">Layanan</a>
+            <a href="/mallops" className="hover:text-[#0E1512]">MallOps</a>
           </div>
         </div>
       </footer>

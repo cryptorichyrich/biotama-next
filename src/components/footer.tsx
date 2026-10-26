@@ -25,22 +25,22 @@ export function Footer() {
         </div>
       </section>
 
-      <footer className="border-t border-[var(--color-border)]">
+      <footer className="border-t border-white/10 bg-[#080808] text-[#f0e8d0]">
       {/* Service directory: 20 layanan x 3 versi */}
       <section className="border-t border-[var(--color-border)]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-gold)]">
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#ffd633]">
                 Layanan
               </p>
-              <h2 className="mt-2 text-xl font-[family-name:var(--font-display)] text-[var(--color-text-heading)]">
+              <h2 className="mt-2 text-xl font-[family-name:var(--font-display)] text-[#f0e8d0]">
                 {megaServiceCount} layanan, {megaServiceCount * 3} halaman
               </h2>
             </div>
             <a
               href="/layanan"
-              className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--color-amber-text)] hover:text-[var(--color-amber-bright)]"
+              className="font-mono text-[10px] uppercase tracking-[0.12em] text-[#ffd633] hover:text-white"
             >
               Katalog lengkap →
             </a>
@@ -49,7 +49,7 @@ export function Footer() {
           <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-8 md:grid-cols-3 lg:grid-cols-5">
             {serviceGroups.map((group) => (
               <div key={group.label}>
-                <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-[var(--color-amber-dim)]">
+                <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-[#c9a84c]">
                   {group.label}
                 </p>
                 <ul className="mt-3 space-y-3">
@@ -57,7 +57,7 @@ export function Footer() {
                     <li key={item.slug}>
                       <a
                         href={`/layanan/${item.slug}/v1/`}
-                        className="text-[12px] leading-snug text-[var(--color-amber-text)] hover:text-[var(--color-amber-bright)]"
+                        className="text-[12px] leading-snug text-[#f0e8d0] hover:text-white"
                       >
                         {item.name}
                       </a>
@@ -67,7 +67,7 @@ export function Footer() {
                             key={variant.id}
                             href={`/layanan/${item.slug}/${variant.id}/`}
                             aria-label={`${item.name} versi ${variant.label}`}
-                            className="rounded border border-[var(--color-border)] px-1.5 py-0.5 font-mono text-[9px] uppercase text-[var(--color-amber-dim)] hover:border-[var(--color-gold)]/50 hover:text-[var(--color-gold)]"
+                            className="rounded border border-white/20 px-1.5 py-0.5 font-mono text-[9px] uppercase text-[#d8c9a8] hover:border-[#ffd633]/60 hover:text-[#ffd633]"
                           >
                             {variant.id}
                           </a>
@@ -107,7 +107,7 @@ export function Footer() {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-xs font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)] hover:text-[var(--color-amber-text)] transition-colors duration-200"
+                className="text-xs font-[family-name:var(--font-mono)] text-[#d8c9a8] hover:text-white transition-colors duration-200"
               >
                 {link.label}
               </a>
@@ -116,10 +116,10 @@ export function Footer() {
 
           {/* $ exit in green mono */}
           <div className="flex items-center gap-3">
-            <p className="text-xs font-[family-name:var(--font-mono)] text-[var(--color-text-muted)]">
+            <p className="text-xs font-[family-name:var(--font-mono)] text-[#c9a84c]">
               &copy; {year} {profile.name}
             </p>
-            <span className="text-xs font-[family-name:var(--font-mono)] text-[var(--color-green-term)]">
+            <span className="text-xs font-[family-name:var(--font-mono)] text-[#7CFF9B]">
               $ exit
             </span>
           </div>
