@@ -31,6 +31,30 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.8,
     },
+    {
+      url: `${siteUrl}/layanan/`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.95,
+    },
+    {
+      url: `${siteUrl}/layanan/ai/`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.9,
+    },
+    {
+      url: `${siteUrl}/layanan/enterprise/`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.9,
+    },
+    {
+      url: `${siteUrl}/layanan/growth/`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.9,
+    },
   ];
 
   const blogEntries = blogPosts.map((post) => ({

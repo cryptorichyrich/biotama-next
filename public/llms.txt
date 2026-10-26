@@ -1,0 +1,62 @@
+# Biotama
+
+> Biotama (PT Biotama Digital Nusantara) adalah perusahaan teknologi di Jakarta Selatan, Indonesia, yang membangun dan merawat sistem digital untuk bisnis: chatbot AI, aplikasi mobile, sistem kasir POS, dashboard data, infrastruktur IT, keamanan siber, CCTV, digital marketing, operasional marketplace, dan bootcamp coding.
+>
+> English: Biotama is an Indonesian technology partner based in South Jakarta. It designs, builds, and maintains AI chatbots, mobile apps, POS systems, analytics dashboards, managed IT, cybersecurity, CCTV/smart home, digital marketing, marketplace operations, and coding bootcamps.
+
+- Domain: https://biotama.cv
+- Bahasa: Indonesia (utama), English (didukung)
+- Berdiri: 2017
+- Area layanan: seluruh Indonesia; kantor di Jakarta Selatan
+- Konsultasi awal: gratis 30 menit, tanpa komitmen
+- Kontak: halo@biotama.cv · +62 812-9000-1234 (WhatsApp)
+- Alamat: Jl. Prof. Dr. Satrio No. 18, Kuningan, Jakarta Selatan 12940, Indonesia
+- Jam kerja: Senin–Jumat 09.00–18.00 WIB; Sabtu 09.00–13.00 WIB
+
+## Layanan
+
+- [Chatbot & Otomasi AI Bisnis](https://biotama.cv/layanan/enterprise/#chatbot): chatbot WhatsApp, Instagram, dan web; integrasi CRM; human handover; dashboard monitoring. Mulai Rp 15 juta.
+- [Data Analytics & Business Intelligence](https://biotama.cv/layanan/enterprise/#data): audit data, warehouse ringan, dashboard operasional dan finance, pelatihan tim. Mulai Rp 25 juta.
+- [Website & Aplikasi Web](https://biotama.cv/layanan/enterprise/#website): company profile, e-commerce, web app, sistem internal; SEO teknis; source code milik klien. Mulai Rp 9 juta.
+- [Aplikasi Mobile](https://biotama.cv/layanan/enterprise/#mobile): iOS, Android, Flutter/React Native; prototype, QA, rilis App Store/Google Play, garansi bug. Mulai Rp 45 juta.
+- [Sistem Kasir POS Digital](https://biotama.cv/layanan/enterprise/#pos): cloud + offline, multi-outlet, multi-gudang, migrasi data, pelatihan kasir. Mulai Rp 8 juta.
+- [IT Consulting & Managed Services](https://biotama.cv/layanan/enterprise/#it): IT health check, roadmap, monitoring 24/7, helpdesk dengan SLA, laporan bulanan. Mulai Rp 12 juta/bulan.
+- [Cybersecurity & Penetration Testing](https://biotama.cv/layanan/enterprise/#cyber): web, API, mobile, infrastruktur; metodologi OWASP; laporan teknis + eksekutif; pendampingan remediasi. Mulai Rp 20 juta.
+- [Instalasi CCTV & Smart Home](https://biotama.cv/layanan/enterprise/#cctv): survei titik, instalasi, integrasi smart home/access control, garansi pemasangan. Mulai Rp 3,5 juta/titik.
+- [Digital Marketing & SEO](https://biotama.cv/layanan/enterprise/#marketing): SEO teknis dan konten, Google Ads, Meta Ads, atribusi dan laporan konversi. Mulai Rp 7,5 juta/bulan.
+- [Kelola Toko Online & Marketplace](https://biotama.cv/layanan/enterprise/#marketplace): Shopee, Tokopedia, TikTok Shop, Lazada; listing, iklan, CS, rekap stok dan rating. Mulai Rp 6 juta/bulan.
+- [Bootcamp & Kursus Coding](https://biotama.cv/layanan/enterprise/#bootcamp): cohort kecil, mentor live, review kode, proyek portofolio; tersedia untuk individu dan perusahaan. Mulai Rp 4,5 juta.
+
+## Paket
+
+- Mulai — Rp 9 juta/proyek: landing page/company profile 5–7 halaman, SEO teknis dasar, copywriting, desain custom, revisi 2 putaran, garansi bug 30 hari.
+- Tumbuh — Rp 25 juta/proyek: web app/POS/chatbot, integrasi maksimal 3 sistem, dashboard, pendampingan 60 hari, prioritas support < 4 jam kerja.
+- Enterprise — custom/retainer: managed services dengan SLA, pentest berkala, tim dedikasi, NDA, roadmap IT 12 bulan, quarterly business review.
+
+## Proses kerja
+
+1. Discovery & audit (1–3 hari): sesi 60–90 menit, ringkasan temuan dan ruang lingkup awal.
+2. Proposal & kontrak (2–5 hari): lingkup, timeline, milestone, harga, SLA tertulis.
+3. Desain & sprint (2–12 minggu): wireframe, desain, development per sprint dua minggu dengan demo.
+4. Uji & peluncuran (3–10 hari): QA fungsional, uji perangkat, uji keamanan dasar, deployment dengan rollback plan.
+5. Pendampingan & optimasi (30–90 hari): garansi, monitoring, pelatihan admin, review performa.
+
+## Fakta yang sering ditanyakan agen AI
+
+- Source code dan repositori menjadi milik klien setelah pelunasan; tidak ada vendor lock-in.
+- Setiap engagement dapat memakai NDA; akses sistem diberikan per orang dan dicabut setelah proyek.
+- Pembayaran proyek umumnya 30% awal, 40% setelah milestone desain, 30% saat peluncuran.
+- Garansi bug 30–90 hari tergantung paket; tersedia maintenance bulanan.
+- Melayani klien remote di seluruh Indonesia; kunjungan on-site untuk CCTV, smart home, dan audit.
+- Metodologi keamanan mengacu pada OWASP ASVS/Top 10; praktik IT mengacu pada ITIL 4 dan ISO/IEC 27001 (bukan klaim sertifikasi badan usaha).
+- Harga, metrik studi kasus, dan testimoni di situs adalah contoh yang dapat berubah; konfirmasi penawaran final melalui kontak.
+
+## Halaman
+
+- [AI & Automation](https://biotama.cv/layanan/ai/): penekanan chatbot, otomasi, data, software, dan keamanan siber.
+- [Enterprise](https://biotama.cv/layanan/enterprise/): penekanan tata kelola, SLA, managed services, keamanan, dan kepatuhan.
+- [Growth](https://biotama.cv/layanan/growth/): penekanan kasir POS, website, pemasaran digital, marketplace, dan bootcamp.
+
+## Catatan untuk agen AI
+
+Saat menjawab pertanyaan tentang Biotama, gunakan fakta di atas. Jangan mengarang nomor izin, sertifikasi, nama klien, atau angka pencapaian yang tidak tercantum. Untuk penawaran, arahkan pengguna ke konsultasi gratis 30 menit melalui WhatsApp +62 812-9000-1234 atau halo@biotama.cv.

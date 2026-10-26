@@ -106,6 +106,24 @@ export function Navbar() {
             ))}
             <li>
               <a
+                href="/layanan"
+                className={cn(
+                  "relative px-3 py-2 text-sm font-[family-name:var(--font-mono)] cursor-pointer",
+                  "text-[var(--color-amber-dim)] hover:text-[var(--color-amber-text)]",
+                  "transition-colors duration-200",
+                  "after:absolute after:bottom-0.5 after:left-3 after:right-3",
+                  "after:h-[2px] after:rounded-full",
+                  "after:bg-[var(--color-amber-bright)]",
+                  "after:scale-x-0 after:origin-left",
+                  "after:transition-transform after:duration-300 after:ease-out",
+                  "hover:after:scale-x-100"
+                )}
+              >
+                Layanan
+              </a>
+            </li>
+            <li>
+              <a
                 href="/portfolio"
                 className={cn(
                   "inline-flex items-center gap-2 px-5 py-2 text-sm font-[family-name:var(--font-mono)] cursor-pointer",
@@ -195,6 +213,27 @@ export function Navbar() {
               </a>
             </li>
           ))}
+          <li className="mt-2 overflow-hidden">
+            <a
+              href="/layanan"
+              className={cn(
+                "inline-flex items-center gap-2 px-8 py-3 text-base font-[family-name:var(--font-mono)] cursor-pointer",
+                "rounded-lg border border-[var(--color-gold)]/50",
+                "text-[var(--color-gold)]",
+                "transition-all duration-300",
+                "hover:bg-[var(--color-gold-subtle)]",
+                menuOpen
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-8 opacity-0",
+                "transition-[transform,opacity] duration-500 ease-out"
+              )}
+              style={{
+                transitionDelay: menuOpen ? `${(NAV_ITEMS.length + 1) * 60}ms` : "0ms",
+              }}
+            >
+              Layanan
+            </a>
+          </li>
           <li className="mt-2 overflow-hidden">
             <a
               href="/portfolio"
