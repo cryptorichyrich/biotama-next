@@ -212,7 +212,7 @@ export default function ServiceLanding({ service, variant, index }: Props) {
   );
 
   const pricing = (
-    <div id="paket">
+    <div id="paket" className="scroll-mt-24">
       {sectionLabel("Paket")}
       <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
         <h2 className={`${font} max-w-xl text-3xl leading-tight tracking-tight sm:text-4xl ${headingCase}`}>Harga jelas. Lingkup tertulis.</h2>
@@ -260,7 +260,7 @@ export default function ServiceLanding({ service, variant, index }: Props) {
   );
 
   const faq = (
-    <div id="faq">
+    <div id="faq" className="scroll-mt-24">
       {sectionLabel("FAQ")}
       <div className="mt-4 grid gap-8 lg:grid-cols-[.7fr_1.3fr]">
         <h2 className={`${font} text-3xl leading-tight tracking-tight sm:text-4xl ${headingCase}`}>Yang biasanya ditanyakan.</h2>
@@ -276,7 +276,135 @@ export default function ServiceLanding({ service, variant, index }: Props) {
     </div>
   );
 
-  const block = { proof: proofStrip, problem, compare, features, detail, outcomes, process, pricing, guarantee, faq } as const;
+
+  const authority = (
+    <div>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          {sectionLabel("Sistem yang berjalan")}
+          <h2 className={`${font} mt-4 max-w-2xl text-3xl leading-tight tracking-tight sm:text-4xl ${headingCase}`}>
+            Bukan konsep di slide.
+          </h2>
+        </div>
+        <p className="max-w-xs text-xs leading-relaxed" style={{ color: p.muted }}>
+          Empat produk yang kami bangun dan rawat sendiri. Sebagian bisa Anda buka sekarang.
+        </p>
+      </div>
+      <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {[
+          ["Toko Vavelle", "E-commerce", "52 halaman storefront, 39 halaman admin, tema runtime.", ""],
+          ["Dharmakarsa", "Commerce OS", "Multi-tenant, agent gateway, rental & bukti.", "/dharmakarsa"],
+          ["MallOps Suite", "Building operations", "Parkir, utilitas, billing, portal tenant.", "/mallops"],
+          ["Srabutan", "Marketplace jasa", "Profil, order, dan pembayaran dalam satu alur.", ""],
+        ].map(([name, kind, note, href]) => (
+          <div key={name} className={`${radius} ${borderWidth} flex flex-col p-5`} style={{ borderColor: line, backgroundColor: p.card }}>
+            <p className="font-mono text-[9px] uppercase tracking-[0.14em]" style={{ color: p.muted }}>{kind}</p>
+            <h3 className={`${font} mt-2 text-lg`}>{name}</h3>
+            <p className="mt-2 flex-1 text-xs leading-relaxed" style={{ color: p.muted }}>{note}</p>
+            {href ? (
+              <a href={href} className="mt-4 text-[11px] font-semibold underline underline-offset-4" style={{ color: p.ink }}>
+                Lihat studi kasus →
+              </a>
+            ) : (
+              <span className="mt-4 font-mono text-[10px]" style={{ color: p.muted }}>production</span>
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[10px] uppercase tracking-[0.08em]" style={{ color: p.muted }}>
+        <span>8 tahun membangun sistem</span>
+        <span>60+ test otomatis di MallOps</span>
+        <span>data &amp; kode milik klien</span>
+      </div>
+    </div>
+  );
+
+  const standards = (
+    <div>
+      {sectionLabel("Standar kerja")}
+      <h2 className={`${font} mt-4 max-w-2xl text-3xl leading-tight tracking-tight sm:text-4xl ${headingCase}`}>
+        Kualitas bukan perasaan. Ada prosedurnya.
+      </h2>
+      <div className="mt-8 grid gap-5 sm:grid-cols-2">
+        {[
+          ["Arsitektur sebelum kode", "Keputusan teknis, trade-off, dan batas sistem ditulis sebelum build. Bukan ditemukan di tengah jalan."],
+          ["QA di staging", "Fitur diuji di lingkungan terpisah dengan data uji. Produksi bukan tempat eksperimen."],
+          ["Keamanan & akses", "Hak akses per peran, audit trail, dan validasi di sisi server untuk setiap alur sensitif."],
+          ["Serah terima nyata", "Dokumentasi, akses, dan kode diserahkan. Anda bisa lanjut tanpa kami, dan itu memang tujuannya."],
+        ].map(([t, d], i) => (
+          <div key={t} className="flex gap-4 border-t pt-4" style={{ borderColor: line }}>
+            <span className="font-mono text-[10px]" style={{ color: p.muted }}>0{i + 1}</span>
+            <div>
+              <h3 className={`${font} text-lg`}>{t}</h3>
+              <p className="mt-1 text-sm leading-relaxed" style={{ color: p.muted }}>{d}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const fit = (
+    <div>
+      {sectionLabel("Cocok atau tidak")}
+      <div className="mt-4 grid gap-8 lg:grid-cols-2">
+        <div>
+          <h2 className={`${font} text-2xl leading-tight tracking-tight sm:text-3xl ${headingCase}`}>Biasanya cocok kalau...</h2>
+          <ul className="mt-5 space-y-3 text-sm">
+            {[
+              `Anda butuh ${service.outcomes[0].toLowerCase()}, bukan sekadar deliverables.`,
+              "Sudah ada proses yang berjalan, tapi belum rapi atau belum terukur.",
+              "Ingin harga, lingkup, dan batas kerja yang jelas sebelum mulai.",
+            ].map((t) => (
+              <li key={t} className="flex gap-3 border-b pb-3" style={{ borderColor: softLine }}>
+                <span style={{ color: p.ink }}>✓</span>{t}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h2 className={`${font} text-2xl leading-tight tracking-tight sm:text-3xl ${headingCase}`}>Sebaiknya jangan pilih kami kalau...</h2>
+          <ul className="mt-5 space-y-3 text-sm" style={{ color: p.muted }}>
+            {[
+              "Yang dicari hanya harga termurah, tanpa lingkup dan tanggung jawab.",
+              "Tidak ada waktu untuk review, feedback, atau pengambilan keputusan.",
+            ].map((t) => (
+              <li key={t} className="flex gap-3 border-b pb-3" style={{ borderColor: softLine }}>
+                <span>—</span>{t}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+
+  const owner = (
+    <div className={`${radius} ${borderWidth} grid gap-6 p-6 sm:grid-cols-[auto_1fr] sm:items-center sm:p-8`} style={{ borderColor: line, backgroundColor: p.card }}>
+      <img
+        src="/photo.jpg"
+        alt="Agustinus Biotamalo Lumbantoruan"
+        width={96}
+        height={96}
+        className="h-24 w-24 rounded-full object-cover"
+        style={{ border: `1px solid ${line}` }}
+      />
+      <div>
+        <p className="font-mono text-[10px] uppercase tracking-[0.16em]" style={{ color: p.muted }}>Yang mengerjakan</p>
+        <h2 className={`${font} mt-2 text-2xl leading-tight`}>Agustinus Biotamalo Lumbantoruan</h2>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed" style={{ color: p.muted }}>
+          Solutions architect, 8 tahun membangun sistem fintech, commerce, dan operasional.
+          Anda berbicara langsung dengan orang yang merancang dan membangun, bukan handoff ke sales.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-4 text-xs font-semibold">
+          <a href="/portfolio" className="underline underline-offset-4">Portofolio</a>
+          <a href="/resume" className="underline underline-offset-4">Resume</a>
+        </div>
+      </div>
+    </div>
+  );
+
+  const block = { proof: proofStrip, problem, compare, features, detail, outcomes, process, pricing, guarantee, standards, fit, owner, faq } as const;
   type BlockKey = keyof typeof block;
 
   const headMap: Record<VariantId, BlockKey[]> = {
@@ -286,10 +414,10 @@ export default function ServiceLanding({ service, variant, index }: Props) {
   };
   const head = headMap[variant];
   const rot = (index + vi) % head.length;
-  const order: BlockKey[] = [...head.slice(rot), ...head.slice(0, rot), "pricing", "guarantee", "faq"];
+  const order: BlockKey[] = [...head.slice(rot), ...head.slice(0, rot), "pricing", "guarantee", "standards", "fit", "owner", "faq"];
 
   return (
-    <div className="svc2 min-h-screen" style={{ ...style, backgroundColor: p.bg, color: p.ink }}>
+    <div className="svc2 min-h-screen pb-24 md:pb-0" style={{ ...style, backgroundColor: p.bg, color: p.ink }}>
       <header className={`sticky top-0 z-50 ${borderWidth} border-x-0 border-t-0 backdrop-blur-xl`} style={{ borderColor: line, backgroundColor: `${p.bg}e6` }}>
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-4">
           <a href="/layanan" className="flex items-center gap-2 text-sm font-semibold">
@@ -371,6 +499,10 @@ export default function ServiceLanding({ service, variant, index }: Props) {
           )}
         </section>
 
+        <section className="mx-auto max-w-6xl px-5 py-14 sm:py-20">
+          <div className="svc-reveal">{authority}</div>
+        </section>
+
         <div className="mx-auto max-w-6xl px-5">
           {order.map((key, i) => (
             <section key={`${key}-${i}`} className="svc-reveal border-t py-14 sm:py-20" style={{ borderColor: softLine, animationDelay: `${Math.min(i * 35, 210)}ms` }}>
@@ -411,6 +543,23 @@ export default function ServiceLanding({ service, variant, index }: Props) {
           </div>
         </div>
       </footer>
+
+      <div className="fixed inset-x-0 bottom-0 z-40 border-t p-3 backdrop-blur-xl md:hidden" style={{ borderColor: line, backgroundColor: `${p.bg}f2` }}>
+        <div className="flex gap-2">
+          <a
+            href={waLink(`Halo Biotama, saya ingin konsultasi tentang ${service.name}.`)}
+            target="_blank"
+            rel="noopener"
+            className="flex-1 rounded-md px-4 py-3 text-center text-xs font-semibold"
+            style={{ backgroundColor: p.ink, color: p.bg }}
+          >
+            Konsultasi gratis
+          </a>
+          <a href="#paket" className="rounded-md border px-4 py-3 text-xs font-semibold" style={{ borderColor: line, color: p.ink }}>
+            Paket
+          </a>
+        </div>
+      </div>
     </div>
   );
 }

@@ -599,3 +599,10 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .svc-reveal { animation: none; }
 }
+
+.svc2 h1, .svc2 h2 { text-wrap: balance; }
+.svc2 a:focus-visible, .svc2 summary:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+.svc2 summary::-webkit-details-marker { display: none; }
