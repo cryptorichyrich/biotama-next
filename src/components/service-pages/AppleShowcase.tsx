@@ -70,34 +70,50 @@ export default function AppleShowcase({ shot, accent }: { shot: AppleShot; accen
         </div>
       </div>
 
-      <div className="duo-wrap">
-        <div className="iphone-back" aria-hidden="true">
-          <div className="ip-camera">
-            <span className="ip-lens ip-lens-1" />
-            <span className="ip-lens ip-lens-2" />
-            <span className="ip-lens ip-lens-3" />
-            <span className="ip-flash" />
-          </div>
-          <span className="ip-back-line" />
-        </div>
-
-        <div className="iphone-front">
-          <div className="ip-frame">
-            <div className="ip-screen">
-              <img src={shot.mobile} alt={`${shot.name} di iPhone 17 Pro Duo`} loading="lazy" />
-              <span className="ip-island" aria-hidden="true"><span className="ip-lens-sm" /></span>
-              <span className="ip-glare" aria-hidden="true" />
-              <span className="ip-home" aria-hidden="true" />
+      <div className="fold-wrap">
+        <div className="fold-cover" aria-hidden="false">
+          <div className="fold-cover-frame">
+            <div className="fold-cover-screen">
+              <img src={shot.mobile} alt={`${shot.name} di cover screen iPhone Fold`} loading="lazy" />
+              <span className="fold-cover-island" aria-hidden="true">
+                <span className="fold-cover-lens" />
+              </span>
             </div>
           </div>
-          <span className="ip-btn ip-btn-action" aria-hidden="true" />
-          <span className="ip-btn ip-btn-vol" aria-hidden="true" />
-          <span className="ip-btn ip-btn-power" aria-hidden="true" />
+          <span className="fold-cover-btn fold-cover-power" aria-hidden="true" />
+          <span className="fold-cover-btn fold-cover-vol" aria-hidden="true" />
+        </div>
+
+        <div
+          className="fold-open"
+          role="img"
+          aria-label={`${shot.name} di layar lipat iPhone Fold`}
+        >
+          <div className="fold-half fold-left">
+            <div className="fold-half-frame">
+              <div
+                className="fold-half-screen"
+                style={{ backgroundImage: `url(${shot.desktop})` }}
+              />
+            </div>
+          </div>
+          <div className="fold-half fold-right">
+            <div className="fold-half-frame">
+              <div
+                className="fold-half-screen"
+                style={{ backgroundImage: `url(${shot.desktop})` }}
+              />
+            </div>
+          </div>
+          <span className="fold-crease" aria-hidden="true" />
+          <span className="fold-hinge-line" aria-hidden="true" />
+          <span className="fold-cam" aria-hidden="true" />
+          <span className="fold-glare" aria-hidden="true" />
         </div>
       </div>
 
       <div className="apple-caption">
-        <span>{shot.name} · MacBook Pro &amp; iPhone 17 Pro Duo</span>
+        <span>{shot.name} · MacBook Pro &amp; iPhone Fold</span>
         {shot.href ? <a href={shot.href}>Lihat studi kasus <span aria-hidden="true">→</span></a> : null}
       </div>
     </div>
