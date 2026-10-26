@@ -1,5 +1,6 @@
 import { profile } from "@/data/profile";
 import { SocialIcons } from "@/components/SocialIcons";
+import { megaServiceCount, serviceGroups, variantLinks } from "@/data/mega-menu";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -25,6 +26,62 @@ export function Footer() {
       </section>
 
       <footer className="border-t border-[var(--color-border)]">
+      {/* Service directory: 20 layanan x 3 versi */}
+      <section className="border-t border-[var(--color-border)]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[var(--color-gold)]">
+                Layanan
+              </p>
+              <h2 className="mt-2 text-xl font-[family-name:var(--font-display)] text-[var(--color-text-heading)]">
+                {megaServiceCount} layanan, {megaServiceCount * 3} halaman
+              </h2>
+            </div>
+            <a
+              href="/layanan"
+              className="font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--color-amber-text)] hover:text-[var(--color-amber-bright)]"
+            >
+              Katalog lengkap →
+            </a>
+          </div>
+
+          <div className="mt-8 grid grid-cols-2 gap-x-6 gap-y-8 md:grid-cols-3 lg:grid-cols-5">
+            {serviceGroups.map((group) => (
+              <div key={group.label}>
+                <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-[var(--color-amber-dim)]">
+                  {group.label}
+                </p>
+                <ul className="mt-3 space-y-3">
+                  {group.items.map((item) => (
+                    <li key={item.slug}>
+                      <a
+                        href={`/layanan/${item.slug}/v1/`}
+                        className="text-[12px] leading-snug text-[var(--color-amber-text)] hover:text-[var(--color-amber-bright)]"
+                      >
+                        {item.name}
+                      </a>
+                      <div className="mt-1 flex gap-1">
+                        {variantLinks.map((variant) => (
+                          <a
+                            key={variant.id}
+                            href={`/layanan/${item.slug}/${variant.id}/`}
+                            aria-label={`${item.name} versi ${variant.label}`}
+                            className="rounded border border-[var(--color-border)] px-1.5 py-0.5 font-mono text-[9px] uppercase text-[var(--color-amber-dim)] hover:border-[var(--color-gold)]/50 hover:text-[var(--color-gold)]"
+                          >
+                            {variant.id}
+                          </a>
+                        ))}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex flex-col md:flex-row items-center justify-between gap-8">
           {/* BL. in gold Spectral */}
