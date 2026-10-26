@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import VariantEditorial from "@/components/service-pages/VariantEditorial";
-import VariantPoster from "@/components/service-pages/VariantPoster";
-import VariantTerminal from "@/components/service-pages/VariantTerminal";
+import ServiceLanding from "@/components/service-pages/ServiceLanding";
 import {
   getService,
   getVariant,
@@ -125,7 +123,7 @@ export default async function ServiceVariantPage({
     ],
   };
 
-  const props = { service, variant: variant.id as VariantId };
+  const index = servicePages.findIndex((item) => item.slug === service.slug);
 
   return (
     <>
@@ -133,9 +131,7 @@ export default async function ServiceVariantPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
-      {variant.id === "v1" && <VariantEditorial {...props} />}
-      {variant.id === "v2" && <VariantPoster {...props} />}
-      {variant.id === "v3" && <VariantTerminal {...props} />}
+      <ServiceLanding service={service} variant={variant.id as VariantId} index={index} />
     </>
   );
 }
