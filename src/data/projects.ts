@@ -8,10 +8,26 @@ export interface Project {
   decision?: string;
   tech: string[];
   url?: string;
+  /** Internal landing page for this project. */
+  landing?: string;
   featured: boolean;
 }
 
 export const projects: Project[] = [
+  {
+    id: "dharmakarsa",
+    name: "Dharmakarsa",
+    description:
+      "Agentic commerce & operations OS: multi-tenant storefront and admin, one API gateway, agent access through MCP/UCP/ACP/REST, deterministic tool policy with approval inbox and change sets, tenant config and runtime themes, plus rental booking and evidence modules. First deployment: Toko Vavelle.",
+    short:
+      "Agentic commerce OS: multi-tenant storefront, admin, API gateway, agent tool policy and approvals, rental and evidence modules.",
+    decision:
+      "Keep agents off the critical path: manual checkout and admin must keep working when the model or agent is down.",
+    tech: ["Cloudflare Workers", "Hono", "D1", "R2", "KV", "Astro", "MCP", "TypeScript"],
+    url: "/dharmakarsa",
+    landing: "/dharmakarsa",
+    featured: true,
+  },
   {
     id: "mallops-suite",
     name: "MallOps Suite",
@@ -20,6 +36,7 @@ export const projects: Project[] = [
     decision: "Build on Odoo 19 for the accounting and invoicing core; custom code only where it differentiates.",
     tech: ["Odoo 19", "Python", "PostgreSQL", "Astro", "React", "REST API", "Telegram Bot API"],
     url: "https://github.com/cryptorichyrich/mallops-showcase",
+    landing: "/mallops",
     featured: true,
   },
   {

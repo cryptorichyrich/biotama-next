@@ -46,6 +46,15 @@ export function Projects() {
                   </span>
                 ))}
               </div>
+
+              {project.landing && (
+                <a
+                  href={project.landing}
+                  className="mt-4 inline-flex items-center gap-2 text-xs font-[family-name:var(--font-mono)] text-[var(--color-gold)] hover:text-[var(--color-gold-bright)]"
+                >
+                  Buka landing page <span aria-hidden="true">→</span>
+                </a>
+              )}
             </div>
           </div>
         ))}

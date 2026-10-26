@@ -1,10 +1,59 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+const mallopsDescription =
+  "Paket lengkap otomasi gedung: parkir ala operator besar dengan sensor lahan real-time, meter listrik dan air tenant, leasing dan billing otomatis, e-Faktur, portal tenant, dan bot monitoring. Dibangun dan didukung engineer, data milik gedung.";
+
 export const metadata: Metadata = {
   title: "MallOps Suite - Sistem Operasional Gedung & Parkir",
-  description:
-    "Paket lengkap otomasi gedung: parkir ala operator besar dengan sensor lahan real-time, meter listrik dan air tenant, leasing dan billing otomatis, e-Faktur, portal tenant, dan bot monitoring. Dibangun dan didukung engineer, data milik gedung.",
+  description: mallopsDescription,
+  alternates: { canonical: "https://biotama.cv/mallops/" },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },
+  openGraph: {
+    type: "website",
+    locale: "id_ID",
+    siteName: "Biotama",
+    url: "https://biotama.cv/mallops/",
+    title: "MallOps Suite - Sistem Operasional Gedung & Parkir",
+    description: mallopsDescription,
+    images: [{ url: "/assets/og-v2.png", width: 1200, height: 630, alt: "MallOps Suite" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MallOps Suite - Sistem Operasional Gedung & Parkir",
+    description: mallopsDescription,
+    images: ["/assets/og-v2.png"],
+  },
+};
+
+const mallopsSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      name: "MallOps Suite",
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      url: "https://biotama.cv/mallops/",
+      description: mallopsDescription,
+      creator: { "@type": "Organization", name: "Biotama", url: "https://biotama.cv" },
+      featureList: [
+        "Parkir dengan sensor lahan real-time",
+        "Meter listrik dan air IoT",
+        "Leasing dan billing otomatis",
+        "e-Faktur",
+        "Portal tenant",
+        "Bot monitoring Telegram",
+      ],
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Beranda", item: "https://biotama.cv/" },
+        { "@type": "ListItem", position: 2, name: "MallOps Suite", item: "https://biotama.cv/mallops/" },
+      ],
+    },
+  ],
 };
 
 const pains = [
@@ -85,6 +134,15 @@ const steps = [
 export default function MallopsLandingPage() {
   return (
     <main className="bg-[#fdfbf6] text-[#1a2e22]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(mallopsSchema) }}
+      />
+      <div className="mx-auto max-w-5xl px-5 pt-6">
+        <a href="/" className="text-xs font-semibold text-[#14532d]/70 hover:text-[#14532d]">
+          ← biotama.cv
+        </a>
+      </div>
       {/* HERO */}
       <section className="mx-auto max-w-5xl px-5 pt-16 pb-12 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#8a7229]">

@@ -33,6 +33,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
+      url: `${siteUrl}/dharmakarsa/`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.95,
+    },
+    {
       url: `${siteUrl}/layanan/`,
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
