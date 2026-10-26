@@ -100,6 +100,7 @@ export function Footer() {
               { label: "About", href: "#about" },
               { label: "Experience", href: "#experience" },
               { label: "Projects", href: "#projects" },
+              { label: "Works", href: "/works" },
               { label: "Skills", href: "#skills" },
               { label: "Blog", href: "#blog" },
               { label: "Contact", href: "#contact" },

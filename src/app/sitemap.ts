@@ -1,5 +1,6 @@
 import { blogPosts } from "../data/blog-posts";
 import { servicePages, variantMeta } from "../data/service-pages";
+import { works } from "../data/works";
 import type { MetadataRoute } from "next";
 
 export const dynamic = "force-static";
@@ -39,6 +40,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.95,
     },
     {
+      url: `${siteUrl}/works/`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.95,
+    },
+    {
       url: `${siteUrl}/layanan/`,
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
@@ -62,5 +69,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   );
 
-  return [...staticPages, ...blogEntries, ...serviceEntries];
+  const workEntries = works.map((work) => ({
+    url: `${siteUrl}/works/${work.slug}/`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.85,
+  }));
+
+  return [...staticPages, ...blogEntries, ...serviceEntries, ...workEntries];
 }

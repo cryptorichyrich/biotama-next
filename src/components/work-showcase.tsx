@@ -10,9 +10,14 @@ export function WorkShowcase() {
         <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-semibold tracking-tight gradient-text">
           Real products. Real screens.
         </h2>
-        <p className="text-sm font-[family-name:var(--font-mono)] text-[var(--color-text-body)] leading-relaxed md:justify-self-end md:max-w-sm">
-          Screenshots from systems running in production and pilot. Desktop and mobile share the same design system.
-        </p>
+        <div className="md:justify-self-end md:max-w-sm">
+          <p className="text-sm font-[family-name:var(--font-mono)] text-[var(--color-text-body)] leading-relaxed">
+            Screenshots from systems running in production and pilot. Desktop and mobile share the same design system.
+          </p>
+          <a href="/works" className="mt-3 inline-flex text-xs font-[family-name:var(--font-mono)] text-[var(--color-gold)] underline underline-offset-4 hover:text-[var(--color-gold-bright)]">
+            See all works →
+          </a>
+        </div>
       </div>
       <div className="mt-10">
         <AppleShowcase

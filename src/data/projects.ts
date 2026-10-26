@@ -108,6 +108,7 @@ export const projects: Project[] = [
     name: "Toko Vavelle",
     description: "Vietnam Coffee E-Commerce platform built with AstroJS, Tailwind, and SEO-optimized architecture. Features automated AI image generation pipeline for commercial product photography.",
     tech: ["AstroJS", "Tailwind", "SEO", "fal.ai", "Nano Banana"],
+    landing: "/works/tokovavelle",
     featured: true,
   },
   {
@@ -115,6 +116,7 @@ export const projects: Project[] = [
     name: "Vavelle Crispy Pork Belly",
     description: "E-commerce storefront for premium crispy pork belly products, featuring an automated AI image generation pipeline (fal.ai, Nano Banana) for commercial-quality product photography at scale.",
     tech: ["AstroJS", "Tailwind", "fal.ai", "Nano Banana", "Python"],
+    landing: "/works/tokovavelle",
     featured: true,
   },
   {
@@ -124,6 +126,7 @@ export const projects: Project[] = [
       "Bali tourism site (traveltobaliparadise.com) with curated tour packages, vehicle rentals, destination pages and a blog. Package pricing is published in USD and IDR, and every booking path funnels into a tracked WhatsApp handoff instead of an abandoned form. Astro 5 static output with Tailwind.",
     tech: ["Astro 5", "Tailwind", "GA4", "WhatsApp API"],
     url: "https://traveltobaliparadise.com",
+    landing: "/works/travel-bali",
     featured: true,
   },
   {
@@ -142,12 +145,25 @@ export const projects: Project[] = [
     featured: true,
   },
   {
+    id: "beligih",
+    name: "Beligih",
+    description:
+      "E-commerce platform for Indonesian micro-businesses: free storefront, no-code builder, payments, shipping, and transactional email. Built for owners who need to sell online without hiring a developer.",
+    short:
+      "E-commerce SaaS for UMKM: free storefront, no-code setup, payments, shipping, and transactional email.",
+    tech: ["Next.js", "Supabase", "Cloudflare Workers", "Xendit", "Everpro"],
+    url: "https://beligih.id",
+    landing: "/works/beligih",
+    featured: true,
+  },
+  {
     id: "srabutan",
     name: "Srabutan.com",
     description: "Indonesia's next freelance marketplace: full-stack platform with AI-powered matching, real-time collaboration, and secure payments.",
     short: "Indonesia's freelance marketplace, built from zero: AI-powered matching, real-time collaboration, secure payments, and full CI/CD with Docker.",
     decision: "Keep payments white-label through Xendit's Payment Request API; shift provider risk, never redirect buyers.",
     tech: ["React", "Vue", "Python", "Docker"],
+    landing: "/works/srabutan",
     featured: true,
   },
   {
@@ -157,6 +173,7 @@ export const projects: Project[] = [
     short: "Community commerce platform: multi-role verification, tender and bazar management, digitized permits with digital signatures, Row-Level Security across 68 pages.",
     tech: ["Astro", "React", "TypeScript", "Supabase", "PostgreSQL"],
     url: "https://umkm.servatius.id",
+    landing: "/works/umkm-st-servatius",
     featured: true,
   },
   {
@@ -165,6 +182,7 @@ export const projects: Project[] = [
     description: "Personal coaching brand site (healerpath.id) for a counselor and healer: service catalogue, blog, and testimonials with editorial typography. Built on Jekyll static output with a git-based CMS so the non-technical owner edits all content through a friendly admin UI, deployed to the edge on Cloudflare Pages.",
     tech: ["Jekyll", "Pages CMS", "Cloudflare Pages"],
     url: "https://healerpath.id",
+    landing: "/works/healer-path",
     featured: false,
   },
   {
