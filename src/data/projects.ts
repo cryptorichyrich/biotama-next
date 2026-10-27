@@ -148,10 +148,12 @@ export const projects: Project[] = [
     id: "beligih",
     name: "Beligih",
     description:
-      "E-commerce platform for Indonesian micro-businesses: free storefront, no-code builder, payments, shipping, and transactional email. Built for owners who need to sell online without hiring a developer.",
+      "Multi-tenant commerce platform for Indonesian UMKM: an Astro SSR storefront and a React 19 seller studio with a block-based page builder covering 100+ block types, drag-and-drop composition, inline editing, variants, and per-block color slots. The Hono API runs on Cloudflare Workers over Supabase Postgres with row-level security, joined by DOKU payments, Everpro shipping, custom domains, transactional email, and a two-tier subscription model (free at 5% platform fee, Pro at Rp49K and 3%).",
     short:
-      "E-commerce SaaS for UMKM: free storefront, no-code setup, payments, shipping, and transactional email.",
-    tech: ["Next.js", "Supabase", "Cloudflare Workers", "Xendit", "Everpro"],
+      "Multi-tenant commerce SaaS for UMKM: block-based page builder, Astro storefront, React studio, Cloudflare Workers API, DOKU payments, Everpro shipping.",
+    decision:
+      "One codebase for every tenant: configuration and design tokens replace per-client forks, while each store keeps its own database and domain.",
+    tech: ["React 19", "Astro", "TypeScript", "Hono", "Cloudflare Workers", "Supabase", "PostgreSQL", "DOKU", "Everpro", "Tailwind CSS"],
     url: "https://beligih.id",
     landing: "/works/beligih",
     featured: true,
