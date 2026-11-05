@@ -82,10 +82,16 @@ const main = async () => {
     if (fs.existsSync(applicationsDir)) {
       const entries = fs.readdirSync(applicationsDir);
       for (const entry of entries) {
-        // Match "something.html" (not resume or cover-letter subfiles)
-        if (entry.endsWith(".html") && !entry.includes("/") && entry !== "index.html") {
-          const slug = entry.replace(/\.html$/, "");
-          slugs.push(slug);
+        if (entry.startsWith("__next")) continue;
+        // Next 16 + trailingSlash: out/applications/<slug>/index.html
+        const full = path.join(applicationsDir, entry);
+        if (fs.statSync(full).isDirectory()) {
+          if (fs.existsSync(path.join(full, "index.html"))) slugs.push(entry);
+          continue;
+        }
+        // Layout lama: out/applications/<slug>.html
+        if (entry.endsWith(".html") && entry !== "index.html") {
+          slugs.push(entry.replace(/\.html$/, ""));
         }
       }
     }
@@ -95,7 +101,15 @@ const main = async () => {
       process.exit(0);
     }
 
-    console.log(`Found ${slugs.length} application(s): ${slugs.join(", ")}`);
+    // ponytail: SLUG=<slug> membatasi generate ke satu lamaran, biar tidak jalan 477 aplikasi tiap kali.
+    const only = (process.env.SLUG || "").trim();
+    const targets = only ? slugs.filter((s) => s === only) : slugs;
+    if (only && targets.length === 0) {
+      console.log(`Slug "${only}" tidak ditemukan di out/applications.`);
+      process.exit(1);
+    }
+
+    console.log(`Found ${targets.length} application(s): ${targets.join(", ")}`);
 
     console.log("Starting local server...");
     server = await createStaticServer(distDir);
@@ -105,7 +119,7 @@ const main = async () => {
     browser = await puppeteer.launch({ headless: true });
     const publicDir = path.join(__dirname, "..", "public");
 
-    for (const slug of slugs) {
+    for (const slug of targets) {
       const page = await browser.newPage();
       await page.setViewport({ width: 794, height: 1122, deviceScaleFactor: 2 });
 

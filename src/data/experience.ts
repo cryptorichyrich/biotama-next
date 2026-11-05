@@ -69,7 +69,7 @@ export const experiences: Experience[] = [
     highlights: [
       "Engineered payment gateway integrations at Wirecard subsidiary",
       "Connected Prisma Gateway with banking systems for corporate payment flows",
-      "PCI-DSS compliance across all payment implementations",
+      "Maintained strict security, audit, and data-handling controls across all payment integrations",
     ],
     tech: ["Java", "HTML5", "CSS3", "Spring", "Spring Boot", "Hibernate"],
   },

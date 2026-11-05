@@ -56,7 +56,7 @@ export const profile: Profile = {
   location: "Jakarta, Indonesia",
   bio: "",
   photoUrl: "/photo.jpg",
-  summary: "Solutions architect with 15 years in fintech delivery and platform engineering, working where failure is expensive: payment integrations under PCI-DSS discipline, ERP implementations end to end, and AI systems in production. I work from discovery to delivery: translating business requirements into solution designs, integration contracts, and explicit trade-offs, choosing boring technology where it protects the business, and keeping the rationale in writing. Still hands-on: React, Next.js, Astro, Node, Python, SQL, Docker, CI/CD. A good solution is measured by one thing: how cheaply the team can change it.",
+  summary: "Solutions architect with 15 years in fintech delivery and platform engineering, working where failure is expensive: payment integrations under strict security and audit discipline, ERP implementations end to end, and AI systems in production. I work from discovery to delivery: translating business requirements into solution designs, integration contracts, and explicit trade-offs, choosing boring technology where it protects the business, and keeping the rationale in writing. Still hands-on: React, Next.js, Astro, Node, Python, SQL, Docker, CI/CD. A good solution is measured by one thing: how cheaply the team can change it.",
   principles: [
     {
       title: "Systems over features",
