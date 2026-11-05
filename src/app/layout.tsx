@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     "Solutions Architect",
     "Fintech Engineer",
     "Payment Gateway Architecture",
-    "PCI-DSS Compliance",
+    "Secure Payment Integrations",
     "Microservices Design",
     "Full Stack Developer",
     "React Developer",
