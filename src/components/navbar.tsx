@@ -8,13 +8,8 @@ import { ThemeToggle } from "@/components/ThemeProvider";
 import { megaServiceCount, serviceGroups, variantLinks } from "@/data/mega-menu";
 
 const NAV_ITEMS = [
-  { label: "About", href: "#about" },
-  { label: "Experience", href: "#experience" },
-  { label: "Projects", href: "#projects" },
-  { label: "Skills", href: "#skills" },
-  { label: "Testimonials", href: "#testimonials" },
-  { label: "Blog", href: "#blog" },
-  { label: "Contact", href: "#contact" },
+  { label: "Blog", href: "/blog" },
+  { label: "Kontak", href: "/#kontak" },
 ];
 
 export function Navbar() {
@@ -71,10 +66,19 @@ export function Navbar() {
     (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
       e.preventDefault();
       setMenuOpen(false);
-      const el = document.querySelector(href);
-      if (el) {
-        el.scrollIntoView({ behavior: "smooth" });
+      if (href.startsWith("#")) {
+        document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
+        return;
       }
+      if (href.startsWith("/#")) {
+        if (window.location.pathname === "/") {
+          document.querySelector(href.slice(1))?.scrollIntoView({ behavior: "smooth" });
+        } else {
+          window.location.href = href;
+        }
+        return;
+      }
+      window.location.href = href;
     },
     []
   );
@@ -83,7 +87,11 @@ export function Navbar() {
     (e: React.MouseEvent<HTMLAnchorElement>) => {
       e.preventDefault();
       setMenuOpen(false);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (window.location.pathname === "/") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        window.location.href = "/";
+      }
     },
     []
   );

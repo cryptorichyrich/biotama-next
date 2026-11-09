@@ -338,6 +338,10 @@
 }
 .v5 .wdec { font-family: var(--sans); font-size: 12.5px; color: #4a4539; line-height: 1.5; }
 .v5 .wgo { font-family: var(--sans); font-size: 11px; font-weight: 600; color: var(--green); white-space: nowrap; }
+.v5 .wname:hover { color: var(--green); }
+.v5 .wname .war { color: var(--green); font-family: var(--sans); font-size: 13px; }
+.v5 .wgo a:hover { border-bottom: 1px solid var(--green); }
+.v5 .author .date a { color: var(--green); border-bottom: 1px solid var(--green); }
 
 /* agent */
 .v5 .agent { padding-block: clamp(44px, 6vw, 72px); background: var(--green-soft); border-block: 1px solid var(--line); }

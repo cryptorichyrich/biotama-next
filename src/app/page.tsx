@@ -91,7 +91,7 @@ export default function Home() {
               </figure>
               <div className="author">
                 <span className="who"><b>{profile.name}</b> · {profile.role} · Jakarta</span>
-                <span className="date">November 2026</span>
+                <span className="date">November 2026 · <a href="/resume.pdf" download>CV (PDF) ↓</a></span>
               </div>
             </div>
           </div>
@@ -191,12 +191,12 @@ export default function Home() {
             </div>
             <div className="wlist">
               {works.map((w) => (
-                <a className="wrow" href={w.live} target="_blank" rel="noopener noreferrer" key={w.slug}>
-                  <span className="wname">{w.name}</span>
+                <div className="wrow" key={w.slug}>
+                  <a className="wname" href={`/works/${w.slug}/`}>{w.name}<span className="war" aria-hidden="true"> →</span></a>
                   <span className="wcat">{w.category}</span>
                   <span className="wdec">{workDecisions[w.slug]}</span>
-                  <span className="wgo" aria-hidden="true">Buka →</span>
-                </a>
+                  <span className="wgo"><a href={w.live} target="_blank" rel="noopener noreferrer" aria-label={`Buka situs ${w.name}`}>Buka situs ↗</a></span>
+                </div>
               ))}
             </div>
           </div>
@@ -306,7 +306,8 @@ export default function Home() {
             <a href={github} target="_blank" rel="noopener noreferrer">GitHub</a>
             <a href="/works">Karya</a>
             <a href="/layanan">Layanan</a>
-            <a href="/resume">CV</a>
+            <a href="/resume/">CV</a>
+            <a href="/resume.pdf" download>CV (PDF)</a>
             <a href="/blog">Blog</a>
             <a href={linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
             <a href={`mailto:${profile.email}`}>Email</a>

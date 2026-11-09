@@ -206,6 +206,8 @@ export default async function WorkPage({ params }: Params) {
           <span>© {new Date().getFullYear()} {work.name} · dibangun oleh Biotama</span>
           <div className="flex gap-5">
             <a href="/works" className="hover:opacity-70">Works</a>
+            <a href="/layanan" className="hover:opacity-70">Layanan</a>
+            <a href="/resume.pdf" className="hover:opacity-70">CV (PDF)</a>
             <a href="/" className="hover:opacity-70">biotama.cv</a>
             <a href={work.live} target="_blank" rel="noopener" className="hover:opacity-70">Live site</a>
           </div>

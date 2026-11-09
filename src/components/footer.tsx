@@ -97,13 +97,12 @@ export function Footer() {
           {/* Nav links in amber mono */}
           <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
             {[
-              { label: "About", href: "#about" },
-              { label: "Experience", href: "#experience" },
-              { label: "Projects", href: "#projects" },
-              { label: "Works", href: "/works" },
-              { label: "Skills", href: "#skills" },
-              { label: "Blog", href: "#blog" },
-              { label: "Contact", href: "#contact" },
+              { label: "Karya", href: "/works" },
+              { label: "Layanan", href: "/layanan" },
+              { label: "CV", href: "/resume" },
+              { label: "CV (PDF)", href: "/resume.pdf" },
+              { label: "Blog", href: "/blog" },
+              { label: "Kontak", href: "/#kontak" },
             ].map((link) => (
               <a
                 key={link.href}

@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { brand, waLink } from "@/data/services";
-import type { ServicePage, VariantId } from "@/data/service-pages";
+import { servicePages, type ServicePage, type VariantId } from "@/data/service-pages";
 import ServiceVisual from "./ServiceVisual";
 import ServiceDetail from "./ServiceDetail";
 import AppleShowcase, { type AppleShot } from "./AppleShowcase";
@@ -35,6 +35,10 @@ export default function ServiceLanding({ service, variant, index }: Props) {
     { desktop: "/assets/shots/mallops-desktop.webp", mobile: "/assets/shots/mallops-mobile.webp", name: "MallOps Suite", href: "/mallops" },
   ];
   const shot = showcases[index % showcases.length];
+  const related = [
+    ...servicePages.filter((s) => s.category === service.category && s.slug !== service.slug),
+    ...servicePages.filter((s) => s.category !== service.category && s.slug !== service.slug),
+  ].slice(0, 4);
 
   const style = {
     "--bg": p.bg, "--ink": p.ink, "--muted": p.muted,
@@ -541,6 +545,19 @@ export default function ServiceLanding({ service, variant, index }: Props) {
           ))}
         </div>
 
+        <section className="mx-auto max-w-6xl px-5">
+          <div className="border-t py-10" style={{ borderColor: line }}>
+            <p className="font-mono text-[10px] uppercase tracking-[0.18em]" style={{ color: p.muted }}>Layanan lain</p>
+            <div className="mt-4 grid gap-2 sm:grid-cols-2">
+              {related.map((s) => (
+                <a key={s.slug} href={`/layanan/${s.slug}/v1/`} className="text-sm underline underline-offset-4" style={{ color: p.ink }}>
+                  {s.name} →
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <section className={`${radius} mx-auto mb-16 mt-6 max-w-6xl overflow-hidden`} style={{ backgroundColor: p.ink, color: p.bg }}>
           <div className="grid gap-8 p-8 sm:p-12 lg:grid-cols-[1.3fr_.7fr] lg:items-end">
             <div>
@@ -568,6 +585,8 @@ export default function ServiceLanding({ service, variant, index }: Props) {
           <span>© {new Date().getFullYear()} {brand.name} · {service.name}</span>
           <div className="flex gap-5">
             <a href="/layanan" className="hover:opacity-70">Semua layanan</a>
+            <a href="/works" className="hover:opacity-70">Karya</a>
+            <a href="/resume.pdf" className="hover:opacity-70">CV (PDF)</a>
             <a href="/" className="hover:opacity-70">Beranda</a>
             <a href="/llms.txt" className="hover:opacity-70">llms.txt</a>
           </div>

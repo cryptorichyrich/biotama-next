@@ -166,7 +166,8 @@ export default function WorksPage() {
             <a href={github} target="_blank" rel="noopener noreferrer">GitHub</a>
             <a href="/">Beranda</a>
             <a href="/layanan">Layanan</a>
-            <a href="/resume">CV</a>
+            <a href="/resume/">CV</a>
+            <a href="/resume.pdf" download>CV (PDF)</a>
             <a href="/blog">Blog</a>
             <a href={linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
             <a href={`mailto:${profile.email}`}>Email</a>
