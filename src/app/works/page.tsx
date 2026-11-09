@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { archive, works } from "@/data/works";
 import { profile } from "@/data/profile";
+import { SiteFooter } from "@/components/site-footer";
 import "../home.css";
 import "./works.css";
 
@@ -75,14 +76,12 @@ const schema = {
   },
 };
 
-const github = profile.socials.find((s) => s.platform === "GitHub")?.url ?? "";
-const linkedin = profile.socials.find((s) => s.platform === "LinkedIn")?.url ?? "";
 
 export default function WorksPage() {
   const archived = archive.filter((a) => !featured.some((f) => f.name === a.name));
 
   return (
-    <div className="v5">
+    <div className="v5" id="top">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
       <header className="mast">
@@ -159,21 +158,7 @@ export default function WorksPage() {
         </section>
       </main>
 
-      <footer>
-        <div className="wrap">
-          <span>{profile.name} / 2026</span>
-          <div className="flinks">
-            <a href={github} target="_blank" rel="noopener noreferrer">GitHub</a>
-            <a href="/">Beranda</a>
-            <a href="/layanan">Layanan</a>
-            <a href="/resume/">CV</a>
-            <a href="/resume.pdf" download>CV (PDF)</a>
-            <a href="/blog">Blog</a>
-            <a href={linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
-            <a href={`mailto:${profile.email}`}>Email</a>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { profile } from "@/data/profile";
 import { works } from "@/data/works";
+import { SiteFooter } from "@/components/site-footer";
 import "./home.css";
 
 export const metadata: Metadata = {
@@ -48,7 +49,7 @@ const schema = {
 
 export default function Home() {
   return (
-    <div className="v5">
+    <div className="v5" id="top">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />
 
       <header className="mast">
@@ -299,21 +300,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer>
-        <div className="wrap">
-          <span>{profile.name} / 2026</span>
-          <div className="flinks">
-            <a href={github} target="_blank" rel="noopener noreferrer">GitHub</a>
-            <a href="/works">Karya</a>
-            <a href="/layanan">Layanan</a>
-            <a href="/resume/">CV</a>
-            <a href="/resume.pdf" download>CV (PDF)</a>
-            <a href="/blog">Blog</a>
-            <a href={linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
-            <a href={`mailto:${profile.email}`}>Email</a>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }
