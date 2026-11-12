@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "generate-resume-pdf": "tsx scripts/generate-resume-pdf.ts",
+    "generate-rate-card-pdf": "tsx scripts/generate-rate-card-pdf.ts",
     "generate-application-pdfs": "tsx scripts/generate-application-pdfs.ts",
     "generate-pdfs": "npm run generate-resume-pdf && npm run generate-application-pdfs"
   },
