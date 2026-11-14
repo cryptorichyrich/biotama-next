@@ -6327,9 +6327,26 @@ The tooling stack stays boring on purpose. Ahrefs or Semrush for keywords and ba
 
 ## A 30-day way to internalize this
 
-Reading a framework changes nothing. Running it on a site you own changes how you think. Week one: pick one of your sites, run a full funnel diagnosis by hand, write findings in an impact-effort-risk table. Week two: take your highest-impact finding, write the hypothesis with its indicator and time window, record the baseline, ship the fix. Week three: build one small automation, daily indexation checks through the Search Console API, or rank tracking. Week four: write the one-page stakeholder report, then test whether a non-technical reader understands it in two minutes.
+Reading a framework changes nothing. Running it on a site you own changes how you think. The plan:
 
-Run a six-question self-check through the month. Did I locate the funnel stage before proposing a fix? Does each change have a hypothesis and an indicator? Is this my highest-impact item, or my easiest one? Is this decision standing on data? Can I explain the business impact to a non-technical reader? Did I promise a timeline I believe? A month of honest yeses means the framework has taken root.
+**Week 1.** Pick one of your sites. Run a full funnel diagnosis by hand. Write findings in an impact-effort-risk table.
+
+**Week 2.** Take your highest-impact finding. Write the hypothesis with its indicator and time window. Record the baseline. Ship the fix.
+
+**Week 3.** Build one small automation: daily indexation checks through the Search Console API, or rank tracking.
+
+**Week 4.** Write the one-page stakeholder report. Test whether a non-technical reader understands it in two minutes.
+
+Run a six-question self-check through the month:
+
+- Did I locate the funnel stage before proposing a fix?
+- Does each change have a hypothesis and an indicator?
+- Is this my highest-impact item, or my easiest one?
+- Is this decision standing on data?
+- Can I explain the business impact to a non-technical reader?
+- Did I promise a timeline I believe?
+
+A month of honest yeses means the framework has taken root.
 
 ## The shift in one line
 
