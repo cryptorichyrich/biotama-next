@@ -6219,6 +6219,63 @@ Architecture is about trade-offs, not silver bullets. BullMQ optimizes for simpl
 
 ![BullMQ vs Temporal](/images/blog/bullmq-vs-temporal-nodejs-workflows.jpg)`,
   },
+  {
+    slug: "seo-professional-framework",
+    title: "The Mental Framework Professional SEO Teams Actually Use",
+    description:
+      "Most SEO audits die as a PDF. The seven-principle framework that turns a checklist mentality into diagnosis, prioritization, and revenue.",
+    date: "2026-11-14",
+    tags: ["SEO", "Technical SEO", "AI Workflows"],
+    content: `## Most SEO audits die as a PDF
+
+Someone runs an audit, produces a 40-page document full of findings, emails it to the dev team, and nothing happens. Three months later, the same audit surfaces the same issues. I have watched this loop repeat at company after company.
+
+The problem is not laziness. Most people learn SEO as a list of tactics: meta descriptions, alt text, sitemaps, headings. They can execute the checklist, but they cannot diagnose, so a report becomes 50 findings instead of a plan.
+
+Professional SEO teams think differently. After running technical SEO end-to-end on my own production sites for years, here is the mental model I use. It is the one that separates people who do SEO from people who strategize it.
+
+## 1. Diagnose through a funnel, not a tactic
+
+When a page does not rank, a junior looks at meta tags first. A professional asks where in the funnel the page fails. Each issue belongs to a stage, and fixing the wrong stage wastes effort.
+
+The funnel has five stages. Crawlability: can Googlebot reach the page at all? Indexation: is the page in the index? Relevance: does Google consider it relevant for the query? Authority: does the site earn trust? Conversion: does the traffic it gets convert?
+
+I ran into this on a recent project. New products on an ecommerce site were not appearing in search. The immediate assumption was a content problem. The real cause sat two stages up the funnel: the sitemap still listed 14 old products while the live catalog had 18. Four products had no chance of being discovered. No content optimization would have fixed that. One fix at the crawlability stage solved everything downstream.
+
+## 2. Every change is a testable hypothesis
+
+Professional SEO work looks like this: "If I implement X, I expect indicator Y to move within Z weeks." Adding Product structured data should raise click-through rate from search results within 30 days. If it does not, the hypothesis dies.
+
+This separates engineers of search from checklist followers. Nothing ships on the strength of a "best practice." A change comes with a reason it should work and a plan to measure whether it did.
+
+## 3. Prioritize by impact times effort times risk
+
+A good audit does not produce 50 findings. It produces five ordered fixes. Three questions decide the order.
+
+Impact: how much traffic or value does this issue block? A small issue on a high-traffic page can beat a large issue on a page with thin traffic. Effort: how long does the fix take, and does it need another team? Risk: what are the side effects? A site migration and a blog post carry very different risk profiles.
+
+## 4. Data wins, opinions lose
+
+"I think this title is better" has no place in a professional team. Decisions stand on search volume, on what the SERP displays for a query, on competitor gaps, and on click data from Search Console. Correlation and causation deserve the same separation: a page ranking #1 with a high bounce rate may be targeting the wrong intent, not succeeding at the right one.
+
+## 5. Ranking is a proxy, not the goal
+
+Position #1 means little when visitors do not click or convert. The metrics that matter: clicks, engagement, and organic revenue. When I report to stakeholders, I talk about the organic channel's contribution to revenue, not how many keywords moved up three positions. Business language, not SEO language.
+
+## 6. Context before content
+
+Before writing or optimizing anything, answer three questions. Who is searching, and what is their intent, informational or transactional? Where are they in the funnel? What format does Google reward for this keyword: a product page, an article, a video, a listicle? Reading the top 10 results for a target keyword before writing a single word is a habit that sounds obvious and gets skipped constantly. Content gets built for a specific SERP, not for "SEO" in general.
+
+## 7. Honest time horizons
+
+Technical fixes can show results in weeks. Content and authority take three to six months. Professionals say this out loud at the start of an engagement, so stakeholder expectations do not explode in month two. Promise process and leading indicators, not a ranking number.
+
+## The shift in one line
+
+Stop asking "what is wrong with this page?" and start asking "where in the funnel does this page fail?" That single question turns a checklist into a diagnosis, a report into a plan, and an audit into revenue.
+
+![SEO funnel framework](/images/blog/seo-professional-framework.jpg)`,
+  },
 ];
 
 export function getBlogPostBySlug(slug: string): BlogPost | undefined {
