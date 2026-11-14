@@ -6230,31 +6230,39 @@ Architecture is about trade-offs, not silver bullets. BullMQ optimizes for simpl
 
 Someone runs an audit, produces a 40-page document full of findings, emails it to the dev team, and nothing happens. Three months later, the same audit surfaces the same issues. I have watched this loop repeat at company after company.
 
-The problem is not laziness. The problem is that most people learn SEO as a list of tactics. Meta descriptions. Alt text. Sitemaps. Headings. They can execute the checklist, but they cannot diagnose, so a report becomes 50 findings instead of a plan.
+The problem is not laziness. Most people learn SEO as a list of tactics: meta descriptions, alt text, sitemaps, headings. They can execute the checklist, but they cannot diagnose, so a report becomes 50 findings instead of a plan.
 
 Professional SEO teams operate on a different mental model. After years of running technical SEO end-to-end on production sites, shipping fixes into codebases myself instead of handing over recommendations, I can tell you the model is not complicated. But it does require asking a different first question than most people are taught.
 
 ## 1. Diagnose through a funnel, not a tactic
 
-When a page does not rank, a junior opens the title tag. A professional asks: where in the funnel does this page fail? Every SEO problem lives in one of five stages:
+When a page does not rank, a junior opens the title tag. A professional asks: where in the funnel does this page fail? Every SEO problem lives in one of five stages.
 
-Crawlability: can Googlebot reach and render the page at all? Indexation: is the page in the index? Relevance: does Google consider it a good answer for the query? Authority: does the site earn enough trust to compete? Conversion: does the traffic it gets convert?
+| Stage | Key question | Symptoms of failure |
+|---|---|---|
+| Crawlability | Can Googlebot reach and render the page? | Unexpected status codes, JS-only content, forgotten robots directives |
+| Indexation | Is the page in the index? | "Crawled, currently not indexed", duplicates, canonicals pointing elsewhere |
+| Relevance | Does Google consider it relevant for the query? | Indexed but invisible beyond position 50 |
+| Authority | Does the site earn enough trust to compete? | Stuck at positions 4-10, losing to stronger competitors |
+| Conversion | Does the traffic it gets convert? | Impressions without clicks or sales, high bounce |
 
 The stages are sequential. Fixing relevance when the problem sits at crawlability is effort with zero return, because the page does not enter the competition at all.
 
-Diagnosing each stage looks different in practice. Crawlability fails when the page returns unexpected status codes, hides behind JavaScript the crawler cannot execute, or lives behind a robots directive nobody remembers adding. Indexation fails when Google crawls the page but excludes it: Search Console coverage for "crawled, currently not indexed" points at duplicate content, thin pages, or canonical tags aimed somewhere else. Relevance fails when a page is indexed but invisible beyond position 50, which means Google understood the page and ranked it below better answers. Authority fails when you rank positions 4 to 10 for a query and cannot break through to the top three. Conversion fails when impressions exist but clicks and sales do not follow.
-
-I hit a concrete example of misdiagnosis this month. New products on an ecommerce site were not appearing in search. The team assumed a content problem and started rewriting product descriptions. The actual cause sat two stages up the funnel: the sitemap was a static file listing 14 old products while the live catalog had 18. Four products had no inbound links, no sitemap entry, and no path to discovery. Google had no way to see them. No content optimization would have fixed that. I regenerated the sitemap from the product API so it could never drift from the catalog again, deployed it, and the products entered the index within days.
-
-The diagnostic question that prevents this entire class of mistake: "where in the funnel does this page fail?" before "what should we change?"
+I hit a concrete example of misdiagnosis this month. New products on an ecommerce site were not appearing in search. The team assumed a content problem and started rewriting product descriptions. The real cause sat two stages up the funnel: the sitemap was a static file listing 14 old products while the live catalog had 18. Four products had no inbound links, no sitemap entry, and no path to discovery. Google had no way to see them. No content optimization would have fixed that. I regenerated the sitemap from the product API so it could not drift from the catalog again, deployed it, and the products entered the index within days.
 
 ## 2. Treat each change as a testable hypothesis
 
 Professional SEO work sounds like this: "If I implement X, I expect indicator Y to move within Z weeks." Adding Product structured data should raise click-through rate from search results within 30 days. If it does not, the hypothesis dies.
 
-The part that gets skipped: a baseline before you touch anything. Most teams skip this. They ship a change, see movement a month later, and have no way to know whether the change caused it or a seasonal pattern did. A hypothesis without a recorded baseline is not a test, it is a vibe.
+The part that gets skipped: a baseline before you touch anything. Most teams ship a change, see movement a month later, and have no way to know whether the change caused it or a seasonal pattern did. A hypothesis without a recorded baseline is not a test, it is a vibe.
 
-So before each change, write down three things. The expected effect, the indicator that will show it, and the window in which you expect movement. Then check the window. Structured data might lift CTR within 30 days. A content overhaul might need 90 days. A site migration might take six months to fully settle. If the window closes with no movement, the change did not work, no matter how good it looked in the proposal.
+So before each change, write down three things: the expected effect, the indicator that will show it, and the window in which you expect movement. Then check the window. Structured data might lift CTR within 30 days. A content overhaul might need 90 days. A site migration might take six months to fully settle.
+
+| Change | Realistic window |
+|---|---|
+| Structured data addition | ~30 days to see CTR movement |
+| Content overhaul | ~90 days |
+| Site migration | ~6 months to fully settle |
 
 There is a quieter benefit. A hypothesis journal, even a spreadsheet with one row per change, builds institutional memory. Six months later you answer "did the FAQ schema help?" with data instead of a recollection. Sometimes a "best practice" turns out to do nothing for your specific site, and you get to stop paying for it.
 
@@ -6262,11 +6270,11 @@ There is a quieter benefit. A hypothesis journal, even a spreadsheet with one ro
 
 A good audit does not produce 50 findings. It produces five ordered fixes. Three questions decide the order.
 
-Impact: how much traffic or value does this issue block? Issue size and issue impact are different dimensions. A duplicated title tag on your most visited product page blocks more value than a full crawl-depth problem on a blog archive nobody visits. Pull the page's traffic data before you judge the issue's severity.
-
-Effort: how long does the fix take, and does it need another team? A redirect chain you can fix in a config file beats an information-architecture restructure that needs three sprints of dev time, even if the restructure is "bigger."
-
-Risk: what are the side effects? A site migration and a blog post carry different risk profiles. Changing URL structures, implementing hreflang, consolidating domains: these can move rankings in either direction. Sequence the low-risk, high-impact fixes first so you bank wins while the riskier work gets planned.
+| Question | What to count |
+|---|---|
+| Impact? | How much traffic or value does this issue block? A small issue on a high-traffic page beats a big issue on a page with thin traffic. |
+| Effort? | How long does the fix take, and does it need another team? |
+| Risk? | What are the side effects? A migration and a blog post carry different risk profiles. |
 
 A worked example. Suppose an audit finds: 300 redirect chains, missing structured data on product pages, thin category descriptions, and slow Largest Contentful Paint on mobile. The naive team fixes redirect chains first because 300 sounds big. The professional team starts with structured data on the highest-traffic product pages: high impact, low effort, low risk. Then mobile LCP: high impact, medium effort, low risk. Thin descriptions wait, because content production is slow and the ROI is unproven. The redirect chains get batched into a maintenance ticket, because most of them sit on pages with thin traffic. The order comes from the math, not from the size of the number in the audit report.
 
@@ -6274,19 +6282,19 @@ A worked example. Suppose an audit finds: 300 redirect chains, missing structure
 
 "I think this title is better" has no place in a professional team. Decisions stand on search volume, on what the SERP displays for the query, on competitor gaps, and on click data from Search Console.
 
-The most underused data source is the SERP itself. Search your target keyword and read what Google chose to reward. If the query returns product pages, Google reads the intent as transactional, and your 2,000-word guide will not rank, however well you write it. If it returns "what is" articles, a product page will not rank. Teams lose months optimizing pages against the intent the SERP never had.
+The most underused data source is the SERP itself. Search your target keyword and read what Google chose to reward. If the query returns product pages, Google reads the intent as transactional, and your 2,000-word guide will not rank, however well you write it. If it returns "what is" articles, a product page will not rank. Teams lose months optimizing pages against an intent the SERP does not have.
 
-The second discipline is separating correlation from causation in your own metrics. A page ranking #1 with a high bounce rate is not a success story. It might be winning the wrong intent: searchers arrive, realize the page does not answer their actual question, and leave. The ranking is real, the traffic is real, and both point at the wrong target. Segmented analytics reveal this. Aggregate dashboards hide it.
+The second discipline is separating correlation from causation in your own metrics. A page ranking #1 with a high bounce rate is not a success story. It might be winning the wrong intent: searchers arrive, realize the page does not answer their question, and leave. The ranking is real, the traffic is real, and both point at the wrong target. Segmented analytics reveal this. Aggregate dashboards hide it.
 
-The honest version of data-driven also means recording when the data is thin. A new site with 40 monthly clicks cannot support statistically meaningful CTR conclusions, and pretending otherwise leads to confident decisions built on noise. Say so, wait for volume, decide then.
+The honest version of data-driven also means recording when the data is thin. A new site with 40 monthly clicks cannot support meaningful CTR conclusions, and pretending otherwise leads to confident decisions built on noise. Say so, wait for volume, decide then.
 
 ## 5. Ranking is a proxy, not the goal
 
 Position #1 means little when visitors do not click and nothing converts. The metrics that matter: clicks, engagement, and organic revenue.
 
-This principle changes how you report. When I report to stakeholders, I talk about the organic channel's contribution to revenue and pipeline, not how many keywords moved up three positions. A ranking report tells the SEO team how the game is going. A revenue report tells the business whether the game is worth playing.
+This distinction changes how you report. A ranking report tells the SEO team how the game is going. A revenue report tells the business whether the game is worth playing. When I report to stakeholders, I talk about the organic channel's contribution to revenue and pipeline, not how many keywords moved up three positions.
 
-This distinction matters beyond optics. Ranking reports create the wrong incentives. Chase positions and you end up targeting keywords that are easy to win but convert poorly. Tie SEO to revenue and you drift toward keywords with commercial intent, pages that support the buying process, and fixes that remove friction from high-value journeys. The metric you report is the strategy you are actually running.
+There is a reason this matters beyond optics. Ranking reports create the wrong incentives. Chase positions and you end up targeting keywords that are easy to win but convert poorly. Tie SEO to revenue and you drift toward keywords with commercial intent, pages that support the buying process, and fixes that remove friction from high-value journeys. The metric you report is the strategy you are running.
 
 ## 6. Context before content
 
@@ -6306,9 +6314,14 @@ The corollary is knowing which metrics move first. Crawl frequency and index cov
 
 Mindset needs a schedule. Professional teams run a four-week cycle that turns the seven principles into routine.
 
-Week one: audit and data. Full crawl, Search Console review (coverage, queries, click-through rate), rank tracking. Output: findings scored by impact, effort, and risk. Week two: technical sprint. Fixes execute like a dev sprint, with tickets, owners, and deadlines, because unfixed audit findings are just documentation. Week three: content. Briefs built from intent and keyword clusters rather than single keywords, then production. Week four: off-page and review. Link outreach, data review, and a one-page stakeholder report: wins, in progress, blocked, business impact.
+| Week | Focus | Output |
+|---|---|---|
+| Week 1 | Audit and data: full crawl, Search Console review, rank tracking | Findings scored by impact, effort, and risk |
+| Week 2 | Technical sprint: fixes execute like a dev sprint | Fixes deployed and verified |
+| Week 3 | Content: briefs built from intent and keyword clusters | Content live per brief |
+| Week 4 | Off-page and review: outreach, data review | One-page stakeholder report |
 
-Team structure follows the same logic. An lead owns strategy, prioritization, and reporting. A technical SEO owns crawl behavior, structured data, Core Web Vitals, and indexation. A content person owns briefs and on-page work. A digital PR person owns links and mentions. A small team collapses this to a strategist, a generalist, and a content writer, and the cycle still runs.
+Team structure follows the same logic. A lead owns strategy, prioritization, and reporting. A technical SEO owns crawl behavior, structured data, Core Web Vitals, and indexation. A content person owns briefs and on-page work. A digital PR person owns links and mentions. A small team collapses this to a strategist, a generalist, and a content writer, and the cycle still runs.
 
 The tooling stack stays boring on purpose. Ahrefs or Semrush for keywords and backlinks. Search Console for search data. Screaming Frog for crawling. GA4 for behavior and revenue. A rank tracker. What changed in the last two years sits on top: my crawl, audit, keyword research, and index-submission workflows run as pipelines against APIs, with AI agents doing the data collection. That is how an audit cycle that took days now takes hours, and why my time goes to judgment calls instead of copy-paste.
 
@@ -6320,9 +6333,9 @@ Run a six-question self-check through the month. Did I locate the funnel stage b
 
 ## The shift in one line
 
-Stop asking "what is wrong with this page?" Start asking "where in the funnel does this page fail?"
+> Where in the funnel does this page fail?
 
-That question turns a checklist into a diagnosis, a report into a plan, and an audit into revenue. The 40-page PDF dies the moment someone in the room knows which of the five stages actually broke, because fixing one stage beats documenting fifty findings.
+That question turns a checklist into a diagnosis, a report into a plan, and an audit into revenue. The 40-page PDF dies the moment someone in the room knows which of the five stages broke, because fixing one stage beats documenting fifty findings.
 
 ![SEO funnel framework](/images/blog/seo-professional-framework.jpg)`,
   },

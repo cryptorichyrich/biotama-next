@@ -291,6 +291,65 @@ function renderMarkdown(markdown: string) {
       continue;
     }
 
+    // Table: | a | b |  (with optional --- separator row)
+    if (trimmed.startsWith("|") && trimmed.endsWith("|")) {
+      const isSep = (l: string) => /^\|?[\s:|-]+\|?$/.test(l.trim()) && l.includes("-");
+      const tableLines: string[] = [];
+      let j = i;
+      while (j < lines.length) {
+        const l = lines[j].trim();
+        if (l.startsWith("|") && l.endsWith("|")) {
+          tableLines.push(l);
+          j++;
+        } else break;
+      }
+      i = j - 1;
+      // drop separator rows
+      const contentLines = tableLines.filter((l) => !isSep(l));
+      const parseRow = (l: string) => l.slice(1, -1).split("|").map((c) => c.trim());
+      if (contentLines.length >= 2) {
+        const headers = parseRow(contentLines[0]);
+        const rows = contentLines.slice(1).map(parseRow);
+        elements.push(
+          <div key={key++} className="my-6 overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+              <thead>
+                <tr>
+                  {headers.map((h, hi) => (
+                    <th key={hi} className="text-left px-3 py-2 font-semibold text-[var(--color-gold)] border-b border-[var(--color-amber-dim)]/40 font-[family-name:var(--font-mono)]">
+                      {renderInline(h)}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((row, ri) => (
+                  <tr key={ri} className={ri % 2 === 1 ? "bg-white/[0.03]" : ""}>
+                    {row.map((cell, ci) => (
+                      <td key={ci} className="px-3 py-2 align-top text-[var(--color-text-body)] border-b border-[var(--color-amber-dim)]/15">
+                        {renderInline(cell)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+        continue;
+      }
+    }
+
+    // Blockquote: > text
+    if (trimmed.startsWith("&gt; ") || trimmed.startsWith("> ")) {
+      elements.push(
+        <blockquote key={key++} className="my-6 border-l-4 border-[var(--color-gold)] pl-4 text-lg italic text-[var(--color-gold)] font-[family-name:var(--font-display)]">
+          {renderInline(trimmed.replace(/^>\s?/, ""))}
+        </blockquote>
+      );
+      continue;
+    }
+
     // Regular paragraph — body text in mono
     elements.push(
       <p key={key++} className="text-base md:text-lg leading-relaxed mb-5 font-[family-name:var(--font-mono)] text-[var(--color-text-body)]">
