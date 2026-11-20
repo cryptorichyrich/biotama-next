@@ -115,5 +115,7 @@ export const profile: Profile = {
   certifications: [
     { title: "AWS Certified Solutions Architect", institution: "Amazon Web Services", date: "2023" },
     { title: "Google Professional Cloud Architect", institution: "Google Cloud", date: "2022" },
+    { title: "Foundations of Cybersecurity", institution: "Google", date: "Nov 2026" },
+    { title: "Play It Safe: Manage Security Risks", institution: "Google", date: "Nov 2026" },
   ],
 };
