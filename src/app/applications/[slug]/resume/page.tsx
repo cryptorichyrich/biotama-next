@@ -58,22 +58,7 @@ export default async function TailoredResumePage({ params }: { params: Promise<{
       </div>
 
       <div className="resume-content bg-white text-slate-800 p-8 md:p-10 lg:p-12">
-        <header className="border-b border-slate-200 pb-5 mb-5 flex items-center gap-5">
-          {/* Profile photo */}
-          <div className="shrink-0">
-            <div
-              className="w-[72px] h-[72px] rounded-full overflow-hidden border-2 border-[#c9a84c]"
-              style={{ printColorAdjust: "exact", WebkitPrintColorAdjust: "exact" }}
-            >
-              <img
-                src={profile.photoUrl}
-                alt={profile.name}
-                width={72}
-                height={72}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
+        <header className="border-b border-slate-200 pb-5 mb-5 flex items-center">
           <div className="flex-1 min-w-0">
             <h1 className="text-3xl font-bold text-slate-900 tracking-tight">{profile.name}</h1>
             <p className="text-lg font-medium text-slate-700 mt-1">{displayTitle}</p>

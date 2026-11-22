@@ -93,22 +93,7 @@ export default function ResumePage() {
       {/* Resume Content */}
       <div className="resume-content p-[15mm] print:p-0">
         {/* ── HEADER ── */}
-        <header className="pb-4 mb-5 flex items-center gap-5" style={{ borderBottom: "1px solid #e5e5e5" }}>
-          {/* Profile photo: circle 80mm print / 80px screen */}
-          <div className="shrink-0">
-            <div
-              className="w-[80px] h-[80px] rounded-full overflow-hidden border-2 border-[#c9a84c]"
-              style={{ printColorAdjust: "exact", WebkitPrintColorAdjust: "exact" }}
-            >
-              <img
-                src={profile.photoUrl}
-                alt={profile.name}
-                width={80}
-                height={80}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
+        <header className="pb-4 mb-5 flex items-center" style={{ borderBottom: "1px solid #e5e5e5" }}>
           <div className="flex-1 min-w-0">
             <h1 className="text-2xl font-extrabold tracking-tight" style={{ color: "#222222" }}>
               {profile.name}
