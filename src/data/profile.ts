@@ -117,5 +117,8 @@ export const profile: Profile = {
     { title: "Google Professional Cloud Architect", institution: "Google Cloud", date: "2022" },
     { title: "Foundations of Cybersecurity", institution: "Google", date: "Nov 2026" },
     { title: "Play It Safe: Manage Security Risks", institution: "Google", date: "Nov 2026" },
+    { title: "Build an AI Agent (OpenAI, LlamaIndex, Pinecone & Streamlit)", institution: "Udemy", date: "Oct 2025" },
+    { title: "The DevOps Essentials - The Handbook", institution: "Udemy", date: "Nov 2024" },
+    { title: "React, NodeJS, Express & MongoDB - The MERN Fullstack Guide", institution: "Udemy", date: "Nov 2024" },
   ],
 };
