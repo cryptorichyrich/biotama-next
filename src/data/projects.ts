@@ -180,8 +180,8 @@ export const projects: Project[] = [
   {
     id: "umkm-st-servatius",
     name: "UMKM St. Servatius",
-    description: "Community commerce platform for a parish micro-business ecosystem (umkm.servatius.id): business directory with multi-role verification workflow, tender and bazar management with a 3-layer contribution guard (UI, consent checkbox, database RLS), and paper SOP forms digitized into auto-numbered PDF permits with digital signatures. 68 static pages hardened with Row-Level Security across 25 SQL migrations.",
-    short: "Community commerce platform: multi-role verification, tender and bazar management, digitized permits with digital signatures, Row-Level Security across 68 pages.",
+    description: "Community commerce platform for a parish micro-business ecosystem (umkm.servatius.id): business directory with multi-role verification workflow, tender and bazar management with a 3-layer contribution guard (UI, consent checkbox, database RLS), paper SOP forms digitized into auto-numbered PDF permits with digital signatures, and an agentic AI assistant that lets members drive the platform's full feature set through natural language. 68 static pages hardened with Row-Level Security across 25 SQL migrations.",
+    short: "Community commerce platform: multi-role verification, tender and bazar management, digitized permits with digital signatures, plus an agentic AI assistant for natural-language use of every feature.",
     tech: ["Astro", "React", "TypeScript", "Supabase", "PostgreSQL"],
     url: "https://umkm.servatius.id",
     landing: "/works/umkm-st-servatius",

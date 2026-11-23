@@ -96,7 +96,7 @@ export const works: Work[] = [
     live: "https://umkm.servatius.id",
     role: "Product, design, full-stack",
     description:
-      "Direktori dan platform komunitas untuk UMKM Paroki St. Servatius. Menyatukan profil usaha, verifikasi multi-peran, tender dan bazar, serta perizinan digital.",
+      "Direktori dan platform komunitas untuk UMKM Paroki St. Servatius. Menyatukan profil usaha, verifikasi multi-peran, tender dan bazar, perizinan digital, serta asisten AI agen yang membuat seluruh fitur platform bisa dipakai lewat bahasa sehari-hari.",
     challenge:
       "Data usaha umat tersebar di grup chat dan spreadsheet. Proses izin bazar masih berbentuk formulir kertas, sulit dilacak, dan rawan duplikasi.",
     solution:
@@ -110,6 +110,7 @@ export const works: Work[] = [
       { title: "Verifikasi multi-peran", desc: "Admin, pengurus, dan pemilik usaha punya kewenangan yang jelas." },
       { title: "Bazar & tender", desc: "Pendaftaran, seleksi, dan kuota kontribusi terkontrol tanpa saling menimpa." },
       { title: "Izin digital", desc: "Formulir kertas menjadi PDF bernomor dengan tanda tangan digital." },
+      { title: "Asisten AI agen", desc: "Seluruh fitur platform bisa dijalankan lewat percakapan bahasa sehari-hari." },
     ],
     stack: ["Astro", "React", "TypeScript", "Supabase", "PostgreSQL"],
     palette: { bg: "#FDFBF6", ink: "#1A1D1B", muted: "#6B6E68", accent: "#D4942A", card: "#FFFFFF" },
