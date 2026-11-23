@@ -20,7 +20,7 @@ const linkLabels: Record<string, string> = {
 };
 
 /* Curated master-resume projects, rendered from the master project data. */
-const RESUME_PROJECT_IDS = ["mallops-suite", "srabutan", "umkm-st-servatius", "crossyncorder"];
+const RESUME_PROJECT_IDS = ["mallops-suite", "srabutan", "umkm-st-servatius", "crossyncorder", "fx-backoffice", "baxiamarkets"];
 const resumeProjects = RESUME_PROJECT_IDS.map((id) => projects.find((p) => p.id === id)).filter(
   (p): p is NonNullable<typeof p> => Boolean(p)
 );

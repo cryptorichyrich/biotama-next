@@ -69,8 +69,10 @@ export const experiences: Experience[] = [
     highlights: [
       "Engineered payment gateway integrations at Wirecard subsidiary",
       "Connected Prisma Gateway with banking systems for corporate payment flows",
+      "Integrated bank website channels to core banking and third-party payment systems for individual internet banking (ANZ), covering host integration, TN3270, Vasco/HSM data encryption, and card systems in Java",
+      "Led host integration for the 1P project at CIMB, connecting website channels to core banking",
       "Maintained strict security, audit, and data-handling controls across all payment integrations",
     ],
-    tech: ["Java", "HTML5", "CSS3", "Spring", "Spring Boot", "Hibernate"],
+    tech: ["Java", "HTML5", "CSS3", "Spring", "Spring Boot", "Hibernate", "PrismaGateway"],
   },
 ];

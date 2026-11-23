@@ -139,9 +139,18 @@ export const projects: Project[] = [
   },
   {
     id: "baxiamarkets",
-    name: "BaxiaMarkets",
-    description: "Financial services platform delivering trading infrastructure with WordPress, Laravel, React, and Vue for a seamless client experience.",
+    name: "BaxiaMarkets & BaxiaProp",
+    description: "Forex broker frontend platforms built and shipped end-to-end: client onboarding, live account workflows, and marketing funnels on WordPress, Laravel, React, and Vue.",
+    short: "Built and shipped forex broker frontend platforms (BaxiaMarkets, BaxiaProp): client onboarding, live account workflows, and marketing funnels.",
     tech: ["WordPress", "Laravel", "React", "Vue"],
+    featured: true,
+  },
+  {
+    id: "fx-backoffice",
+    name: "FX Back Office & CRM Automation",
+    description: "Integrated FX back-office systems to client specification and built automated synchronization between the back-office CRM and the marketing CRM (HubSpot), eliminating manual re-entry between sales and operations.",
+    short: "FX back-office integration to client spec plus automated back-office-to-HubSpot CRM sync, removing manual data re-entry between sales and operations.",
+    tech: ["HubSpot", "n8n", "Python", "REST API"],
     featured: true,
   },
   {
