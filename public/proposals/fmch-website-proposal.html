@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proposal Website — FMCH Indonesia | Bio Lumbantoruan</title>
+<meta name="description" content="Proposal rebuild website FMCH Indonesia (Yayasan Balita Sehat Indonesia) oleh Bio Lumbantoruan. Audit performa, solusi, harga, dan timeline.">
+<style>
+  :root {
+    --ink: #14181f;
+    --muted: #5b6472;
+    --line: #e3e7ec;
+    --accent: #0f766e;
+    --warn: #b42318;
+    --bg: #ffffff;
+    --soft: #f6f8fa;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 820px; margin: 0 auto; padding: 56px 24px 96px; }
+  header { border-bottom: 3px solid var(--ink); padding-bottom: 20px; margin-bottom: 36px; }
+  .eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin: 0 0 10px; }
+  h1 { font-size: 32px; line-height: 1.2; margin: 0 0 12px; letter-spacing: -.02em; }
+  .sub { color: var(--muted); margin: 0; font-size: 15px; }
+  h2 { font-size: 20px; margin: 44px 0 14px; letter-spacing: -.01em; }
+  h2 .num { color: var(--accent); font-variant-numeric: tabular-nums; margin-right: 10px; }
+  h3 { font-size: 15px; margin: 22px 0 8px; letter-spacing: .01em; }
+  p { margin: 0 0 14px; }
+  ul, ol { margin: 0 0 16px; padding-left: 22px; }
+  li { margin-bottom: 7px; }
+  .lede { font-size: 17px; }
+  .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 20px 0 8px; }
+  .metric { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; background: var(--soft); }
+  .metric .label { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+  .metric .value { font-size: 26px; font-weight: 700; line-height: 1.15; margin-top: 4px; letter-spacing: -.02em; }
+  .metric .value.bad { color: var(--warn); }
+  .metric .unit { font-size: 13px; color: var(--muted); font-weight: 500; }
+  .note { font-size: 13px; color: var(--muted); margin: 10px 0 0; }
+  .box { border-left: 3px solid var(--accent); background: var(--soft); padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 20px 0; }
+  .box p:last-child { margin-bottom: 0; }
+  .price { border: 1px solid var(--line); border-radius: 12px; padding: 24px; margin: 18px 0; }
+  .price .amount { font-size: 34px; font-weight: 700; letter-spacing: -.02em; margin: 0; }
+  .price .terms { color: var(--muted); font-size: 14px; margin: 6px 0 18px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 8px 0 4px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+  td.share { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  footer { margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+  footer strong { color: var(--ink); }
+  a { color: var(--accent); }
+  .targets li { list-style: none; margin-left: -22px; padding-left: 26px; position: relative; }
+  .targets li::before { content: "→"; position: absolute; left: 0; color: var(--accent); font-weight: 700; }
+  @media print {
+    main { padding: 0; max-width: none; }
+    body { font-size: 11.5pt; }
+    h1 { font-size: 22pt; }
+    h2 { font-size: 14pt; page-break-after: avoid; }
+    .metric, .price, .box, table { page-break-inside: avoid; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+<header>
+  <p class="eyebrow">Proposal Penawaran Website</p>
+  <h1>Rebuild Website FMCH Indonesia</h1>
+  <p class="sub">Untuk: Yayasan Balita Sehat Indonesia (Foundation for Mother and Child Health)<br>
+  Dari: Bio Lumbantoruan, Web Developer · <a href="https://biotama.cv">biotama.cv</a><br>
+  Tanggal: 25 November 2026 · Batas penawaran: 27 November 2026</p>
+</header>
+
+<h2><span class="num">01</span>Temuan audit</h2>
+<p class="lede">Saya mengukur fmch-indonesia.org sebelum menulis proposal ini. Hasilnya bukan soal selera desain: situs ini secara teknis menghukum setiap orang yang membukanya.</p>
+
+<div class="metrics">
+  <div class="metric"><div class="label">Performance (mobile)</div><div class="value bad">21<span class="unit">/100</span></div></div>
+  <div class="metric"><div class="label">Largest Contentful Paint</div><div class="value bad">15,7<span class="unit"> detik</span></div></div>
+  <div class="metric"><div class="label">Total halaman</div><div class="value bad">11,8<span class="unit"> MB</span></div></div>
+  <div class="metric"><div class="label">Layout shift (CLS)</div><div class="value bad">0,414</div></div>
+  <div class="metric"><div class="label">Accessibility</div><div class="value">76<span class="unit">/100</span></div></div>
+  <div class="metric"><div class="label">SEO</div><div class="value">77<span class="unit">/100</span></div></div>
+</div>
+<p class="note">Sumber: Lighthouse 13.6, mobile, dijalankan 25 November 2026 terhadap https://fmch-indonesia.org/. Ambang batas Google: LCP baik &lt; 2,5 detik, CLS baik &lt; 0,1.</p>
+
+<p>Artinya sederhana: donatur yang membuka tautan dari WhatsApp, atau mitra korporat yang mengecek kredibilitas yayasan, melihat halaman kosong selama beberapa detik sebelum konten muncul. Sebagian besar pergi sebelum logo selesai dimuat.</p>
+
+<h2><span class="num">02</span>Diagnosis teknis</h2>
+<p>Penyebabnya bukan satu hal, dan bukan salah tema. Akarnya ada di arsitektur.</p>
+<ul>
+  <li><strong>WordPress 7.1.5 dengan 37 tag script dan 39 stylesheet</strong> di halaman depan. Lighthouse mengestimasi 712 KiB CSS dan 694 KiB JavaScript tidak terpakai, sekitar 6,4 detik pemborosan.</li>
+  <li><strong>Gambar hero PNG 3.031 KB</strong>, tidak dikompres, tidak dalam format WebP/AVIF. Satu gambar ini lebih berat dari seluruh situs yang sehat.</li>
+  <li><strong>CLS 0,414</strong>: elemen melompat saat halaman dimuat. Google menandai ini sebagai buruk di atas 0,1.</li>
+  <li><strong>Server response 1,45 detik</strong> untuk dokumen utama, dan tidak ada header <code>Cache-Control</code> sama sekali sehingga setiap kunjungan mengulang pekerjaan yang sama.</li>
+  <li><strong>Accessibility 76</strong>: tombol tanpa nama yang terbaca screen reader, rasio kontras warna gagal, urutan heading melompat. Untuk NGO yang mengajukan dana ke donor internasional, ini masalah kredibilitas, bukan detail teknis.</li>
+  <li><strong>SEO 77</strong>: meta description hilang, lima tautan tanpa teks deskriptif, anchor tidak dapat dirayapi crawler.</li>
+  <li><strong>3 permintaan tidak aman</strong> (mixed content) di halaman HTTPS.</li>
+  <li><strong>Halaman donasi hanya menampilkan nomor rekening Mandiri</strong> untuk disalin manual. Tidak ada QRIS, tidak ada tautan pembayaran, tidak ada konfirmasi otomatis. Donatur luar negeri harus menyalin nomor rekening Dollar dan menunggu verifikasi manual.</li>
+</ul>
+
+<div class="box">
+  <p><strong>Kesimpulan diagnosis.</strong> Angka 21/100 tidak bisa dinaikkan ke 90 dengan mengganti tema WordPress atau memasang plugin cache. Selama arsitekturnya masih menumpuk puluhan script dan stylesheet per halaman, hasilnya akan kembali lambat dalam hitungan bulan. Yang dibutuhkan rebuild, bukan tambalan.</p>
+</div>
+
+<h2><span class="num">03</span>Solusi yang saya tawarkan</h2>
+<p>Website dibangun ulang sebagai situs statis modern dengan Astro, ditambah panel admin ringan agar staf non-teknis tetap bisa memperbarui konten tanpa menyentuh kode.</p>
+
+<h3>Alur kerja</h3>
+<ol>
+  <li><strong>Desain dulu, kode kemudian.</strong> Dua konsep UI/UX di Figma, revisi sampai disetujui. Tidak ada satu baris kode sebelum desain final, sehingga tidak ada kejutan di tengah jalan.</li>
+  <li><strong>Migrasi konten.</strong> Seluruh halaman program, artikel, laporan tahunan, dan dokumen audit dipindahkan dan dirapikan, bukan dibiarkan sebagai PDF puluhan megabyte.</li>
+  <li><strong>Build dan uji.</strong> Setiap halaman diuji dengan Lighthouse dan pemeriksaan aksesibilitas sebelum naik ke production.</li>
+  <li><strong>Deploy di akun yayasan.</strong> Domain dan hosting tetap milik FMCH. Saya tidak menyandera aset digital klien di akun sendiri.</li>
+  <li><strong>Training dan serah terima.</strong> Satu sesi pelatihan untuk staf, plus rekaman video dan dokumentasi tertulis.</li>
+</ol>
+
+<h3>Lingkup pekerjaan</h3>
+<ul>
+  <li>Desain UI/UX di Figma: 2 konsep, revisi sampai disetujui</li>
+  <li>Rebuild seluruh halaman publik: home, tentang, program, dampak, berita, dokumen, kontak</li>
+  <li>Optimasi gambar otomatis: WebP/AVIF, responsive, lazy load. Hero 3 MB menjadi di bawah 150 KB</li>
+  <li>Dua bahasa penuh: Indonesia dan Inggris, karena halaman donasi menerima transfer Dollar</li>
+  <li>Halaman donasi baru: QRIS, virtual account, dan kartu kredit melalui payment gateway, dengan konfirmasi otomatis</li>
+  <li>Laporan tahunan dan audit report sebagai halaman web yang terbaca di ponsel</li>
+  <li>SEO teknis: meta description, struktur heading, sitemap, schema.org untuk organisasi nirlaba</li>
+  <li>Aksesibilitas WCAG 2.2 level AA</li>
+  <li>Panel admin untuk konten, dengan peran dan izin sederhana</li>
+  <li>Pelatihan staf, dokumentasi, dan rekaman video</li>
+</ul>
+
+<h3>Target terukur</h3>
+<p>Ini angka yang saya pertanggungjawabkan saat serah terima, bukan janji pemasaran.</p>
+<ul class="targets">
+  <li>Lighthouse Performance mobile minimal 90 (sekarang 21)</li>
+  <li>LCP di bawah 2,5 detik (sekarang 15,7 detik)</li>
+  <li>CLS di bawah 0,1 (sekarang 0,414)</li>
+  <li>Accessibility minimal 95 (sekarang 76)</li>
+  <li>Halaman donasi: kurang dari tiga ketukan sampai pembayaran</li>
+</ul>
+
+<h2><span class="num">04</span>Pengalaman relevan</h2>
+<p>Sebelas tahun, lebih dari dua puluh proyek web yang benar-benar berjalan di production, bukan mockup.</p>
+<ul>
+  <li><strong>Toko Vavelle</strong> (tokovavelle.com): toko online aktif dengan pipeline foto produk otomatis berbasis AI.</li>
+  <li><strong>KrispiBabi</strong> (krispibabi.com): e-commerce makanan D2C, dari katalog sampai checkout dan pembayaran, dikerjakan dan di-deploy sendiri.</li>
+  <li><strong>Beligih</strong> (beligih.com): platform commerce multi-tenant untuk UMKM Indonesia, dengan page builder lebih dari 100 blok, pembayaran DOKU, dan integrasi pengiriman.</li>
+  <li><strong>Srabutan.com</strong>: marketplace jasa dengan integrasi pembayaran Xendit di production.</li>
+  <li><strong>Mallops ERP</strong>: inventory, procurement, penagihan otomatis, dan pembayaran DOKU VA/QRIS dengan webhook idempoten bertanda tangan.</li>
+</ul>
+<p>Saya mengerjakan seluruh rantai sendiri: desain, frontend, backend, deployment, dan pelatihan. Tidak ada handoff ke pihak ketiga, tidak ada biaya agensi yang dibebankan ke yayasan.</p>
+
+<h2><span class="num">05</span>Harga dan jadwal</h2>
+
+<div class="price">
+  <p class="amount">Rp 32.500.000</p>
+  <p class="terms">Enam minggu kerja, tiga milestone pembayaran, satu lingkup yang disepakati di awal.</p>
+  <table>
+    <thead><tr><th>Milestone</th><th>Hasil</th><th class="share">Porsi</th></tr></thead>
+    <tbody>
+      <tr><td>M1 · Minggu 2</td><td>Desain Figma disetujui</td><td class="share">30% · Rp 9.750.000</td></tr>
+      <tr><td>M2 · Minggu 4</td><td>Situs staging lengkap, konten termigrasi</td><td class="share">40% · Rp 13.000.000</td></tr>
+      <tr><td>M3 · Minggu 6</td><td>Deploy production, pelatihan, serah terima</td><td class="share">30% · Rp 9.750.000</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<p><strong>Sudah termasuk:</strong> desain, development, migrasi konten, setup hosting dan domain di akun yayasan, pelatihan staf, dokumentasi, serta garansi perbaikan bug 30 hari setelah serah terima.</p>
+<p><strong>Tidak termasuk:</strong> biaya langganan hosting dan domain (dibayar langsung oleh yayasan ke penyedia, biasanya di bawah Rp 1 juta per tahun), biaya transaksi payment gateway (persentase per donasi, bukan biaya di muka), dan pembelian stok foto.</p>
+
+<h3>Opsi dua fase</h3>
+<p>Jika anggaran tahun ini terbatas, pekerjaan bisa dibagi: Fase 1 mencakup halaman publik utama (home, program, dampak, donasi, tentang) sebesar <strong>Rp 20.000.000</strong> dalam empat minggu. Fase 2 mencakup arsip artikel, dokumen, dan laporan tahunan, ditawarkan terpisah setelah Fase 1 selesai. Kedua fase memakai satu harga tetap, tanpa biaya tersembunyi.</p>
+
+<h2><span class="num">06</span>Yang perlu diketahui sebelum memutuskan</h2>
+<p>Proposal ini memang lebih mahal daripada mengganti tema WordPress seharga Rp 3–5 juta. Saya menjelaskan alasannya secara terbuka: tema tidak akan memperbaiki angka 21/100, karena masalahnya ada di arsitektur, bukan di tampilan. Tema baru di atas WordPress dengan puluhan plugin akan kembali lambat dalam beberapa bulan, dan yayasan akan membayar dua kali.</p>
+<p>Jika prioritas yayasan tahun ini adalah konten dan kampanye, bukan performa teknis, maka rebuild ini belum tepat waktunya dan saya akan mengatakan demikian. Yang saya tawarkan adalah pekerjaan sekali jalan yang masih cepat dua tahun kemudian, bukan tambalan yang harus diulang setiap tahun.</p>
+
+<h2><span class="num">07</span>Pertanyaan sebelum mulai</h2>
+<ol>
+  <li>Apakah seluruh konten (foto program, teks, laporan) sudah tersedia, atau perlu dibantu penataan?</li>
+  <li>Apakah yayasan sudah memiliki akun payment gateway? Jika belum, saya bantu proses pendaftaran Xendit atau DOKU, tanpa biaya setup dari pihak saya.</li>
+  <li>Apakah ada anggaran pemeliharaan tahunan? Opsional, Rp 750.000 per bulan untuk backup, pembaruan keamanan, dan perubahan konten kecil.</li>
+  <li>Siapa pemegang akses domain dan hosting saat ini? Ini menentukan seberapa cepat migrasi bisa dimulai.</li>
+</ol>
+
+<h2><span class="num">08</span>Langkah berikutnya</h2>
+<p>Saya bersedia mengirim satu konsep desain awal halaman utama dalam tiga hari kerja setelah konfirmasi, tanpa biaya dan tanpa komitmen. Jika konsepnya tidak sesuai arah yayasan, tidak ada yang perlu dibayar dan tidak ada kewajiban lanjutan.</p>
+
+<footer>
+  <p><strong>Bio Lumbantoruan</strong> · Web Developer<br>
+  Portfolio dan resume: <a href="https://biotama.cv">biotama.cv</a><br>
+  Email: fxwisdom1@gmail.com · WhatsApp: +62 813-9825-3186</p>
+  <p class="note">Dokumen ini disusun berdasarkan audit langsung terhadap fmch-indonesia.org pada 25 November 2026.</p>
+</footer>
+
+</main>
+</body>
+</html>
