@@ -105,9 +105,24 @@ export default async function ApplicationPage({ params }: { params: Promise<{ sl
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4">
+          {row.proposal_url && <a href={row.proposal_url} target="_blank" rel="noopener noreferrer" className="flex-1 inline-flex items-center justify-center gap-2 px-7 py-4 font-[family-name:var(--font-mono)] font-semibold rounded-lg cursor-pointer transition-all duration-300 border border-[var(--color-gold)] bg-[var(--color-gold-subtle)] text-[var(--color-gold)] hover:shadow-[0_0_20px_var(--color-gold-glow)]"><ExternalLink size={16} /> View Proposal</a>}
           <Link href={`/applications/${app.slug}/resume`} className="flex-1 inline-flex items-center justify-center gap-2 px-7 py-4 font-[family-name:var(--font-mono)] font-semibold rounded-lg cursor-pointer transition-all duration-300 border border-[var(--color-gold)] text-[var(--color-gold)] hover:bg-[var(--color-gold-subtle)] hover:shadow-[0_0_20px_var(--color-gold-glow)]"><FileText size={16} /> View Tailored Resume</Link>
           <Link href={`/applications/${app.slug}/cover-letter`} className="flex-1 inline-flex items-center justify-center gap-2 px-7 py-4 font-[family-name:var(--font-mono)] font-semibold rounded-lg cursor-pointer transition-all duration-300 border border-[var(--color-green-term-dim)] text-[var(--color-green-term)] hover:bg-[var(--color-green-term-bg)] hover:shadow-[0_0_20px_var(--color-green-term-glow)]"><Mail size={16} /> View Cover Letter</Link>
         </div>
+        {row.dm_message && (
+          <div className="glass-card p-8 md:p-10 mt-8 gold-reveal">
+            <p className="section-label mb-4"><span className="text-[var(--color-green-term)]">$</span> dm-message</p>
+            <p className="text-[var(--color-amber-text)] text-sm md:text-base font-[family-name:var(--font-mono)] leading-relaxed whitespace-pre-line">{row.dm_message}</p>
+            {row.dm_target && <p className="text-xs font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)] mt-4">Kirim ke: {row.dm_target}</p>}
+          </div>
+        )}
+        {row.proposal_email && (
+          <div className="glass-card p-8 md:p-10 mt-8 gold-reveal">
+            <p className="section-label mb-4"><span className="text-[var(--color-green-term)]">$</span> email-draft</p>
+            <p className="text-xs font-[family-name:var(--font-mono)] text-[var(--color-amber-dim)] mb-3">Subject: Website Proposal - Bio Lumbantoruan · To: {app.contact.email}</p>
+            <pre className="text-sm font-[family-name:var(--font-mono)] text-[var(--color-amber-text)] leading-relaxed whitespace-pre-wrap">{row.proposal_email}</pre>
+          </div>
+        )}
       </section>
     </main>
   );
